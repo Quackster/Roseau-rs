@@ -19,3 +19,4 @@ log/output.log
 log/output.log
 *.log
 /log
+/target
