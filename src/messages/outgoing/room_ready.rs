@@ -20,15 +20,3 @@ impl OutgoingMessage for RoomReady {
         response.append_new_argument(&self.description);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_room_ready_packet() {
-        let mut response = RoomReady::new("model_a").compose();
-
-        assert_eq!(response.get(), "#ROOM_READY\rmodel_a##");
-    }
-}

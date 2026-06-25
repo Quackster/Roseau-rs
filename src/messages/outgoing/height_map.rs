@@ -20,15 +20,3 @@ impl OutgoingMessage for HeightMap {
         response.append_new_argument(&self.height_map);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_height_map_packet() {
-        let mut response = HeightMap::new("000\r111").compose();
-
-        assert_eq!(response.get(), "#HEIGHTMAP\r000\r111##");
-    }
-}

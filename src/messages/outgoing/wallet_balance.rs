@@ -18,15 +18,3 @@ impl OutgoingMessage for WalletBalance {
         response.append_new_argument(self.credits);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_wallet_balance_packet() {
-        let mut response = WalletBalance::new(42).compose();
-
-        assert_eq!(response.get(), "#WALLETBALANCE\r42##");
-    }
-}

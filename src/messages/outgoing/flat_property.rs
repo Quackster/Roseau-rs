@@ -23,15 +23,3 @@ impl OutgoingMessage for FlatProperty {
         response.append_part_argument(&self.data);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_flat_property_packet() {
-        let mut response = FlatProperty::new("wallpaper", "101").compose();
-
-        assert_eq!(response.get(), "#FLATPROPERTY\rwallpaper/101##");
-    }
-}

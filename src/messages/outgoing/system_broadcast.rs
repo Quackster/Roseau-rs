@@ -20,15 +20,3 @@ impl OutgoingMessage for SystemBroadcast {
         response.append_new_argument(&self.message);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_system_broadcast_packet() {
-        let mut response = SystemBroadcast::new("maintenance").compose();
-
-        assert_eq!(response.get(), "#SYSTEMBROADCAST\rmaintenance##");
-    }
-}

@@ -9,15 +9,3 @@ impl OutgoingMessage for NameUnacceptable {
         response.init("NAME_UNACCEPTABLE");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_name_unacceptable_packet() {
-        let mut response = NameUnacceptable.compose();
-
-        assert_eq!(response.get(), "#NAME_UNACCEPTABLE##");
-    }
-}

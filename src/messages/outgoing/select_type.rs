@@ -10,15 +10,3 @@ impl OutgoingMessage for SelectType {
         response.append_new_argument("x");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_select_type_packet() {
-        let mut response = SelectType.compose();
-
-        assert_eq!(response.get(), "#SELECTTYPE\rx##");
-    }
-}

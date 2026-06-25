@@ -20,15 +20,3 @@ impl OutgoingMessage for DoorFlat {
         response.append_new_argument(self.room_id);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_door_flat_packet() {
-        let mut response = DoorFlat::new(12, 34).compose();
-
-        assert_eq!(response.get(), "#DOORFLAT\r12\r34##");
-    }
-}

@@ -9,15 +9,3 @@ impl OutgoingMessage for PurchaseAddStripItem {
         response.init("ADDSTRIPITEM");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_purchase_add_strip_item_packet() {
-        let mut response = PurchaseAddStripItem.compose();
-
-        assert_eq!(response.get(), "#ADDSTRIPITEM##");
-    }
-}

@@ -1,5 +1,9 @@
 pub mod bot;
+#[cfg(test)]
+mod bot_tests;
 pub mod permission;
+#[cfg(test)]
+mod permission_tests;
 pub mod player;
 pub mod player_manager;
 #[cfg(test)]

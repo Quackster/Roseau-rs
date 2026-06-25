@@ -9,15 +9,3 @@ impl OutgoingMessage for OpenUimakoppi {
         response.init("OPEN_UIMAKOPPI");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_open_uimakoppi_packet() {
-        let mut response = OpenUimakoppi.compose();
-
-        assert_eq!(response.get(), "#OPEN_UIMAKOPPI##");
-    }
-}

@@ -26,15 +26,3 @@ impl OutgoingMessage for DoorOut {
         response.append_part_argument(&self.player);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_door_out_packet() {
-        let mut response = DoorOut::new("i:", 7, "alice").compose();
-
-        assert_eq!(response.get(), "#DOOR_OUT\ri:7/alice##");
-    }
-}

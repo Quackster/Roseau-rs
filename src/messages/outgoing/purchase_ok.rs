@@ -9,15 +9,3 @@ impl OutgoingMessage for PurchaseOk {
         response.init("PURCHASE_OK");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_purchase_ok_packet() {
-        let mut response = PurchaseOk.compose();
-
-        assert_eq!(response.get(), "#PURCHASE_OK##");
-    }
-}

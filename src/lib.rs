@@ -1,17 +1,25 @@
 pub mod config;
+#[cfg(test)]
+mod config_tests;
 pub mod dao;
 pub mod game;
 pub mod logging;
 pub mod messages;
 pub mod properties_config;
+#[cfg(test)]
+mod properties_config_tests;
 pub mod protocol;
 #[cfg(test)]
 mod protocol_tests;
 pub mod resource_extractor;
+#[cfg(test)]
+mod resource_extractor_tests;
 pub mod runtime;
 pub mod server;
 pub mod settings;
 pub mod util;
+#[cfg(test)]
+mod util_tests;
 
 pub use config::{Config, ConfigError};
 pub use dao::mysql::{MySqlDriver, MySqlStorageConnector, StorageSqlExecutor};

@@ -18,15 +18,3 @@ impl OutgoingMessage for DoorbellRinging {
         response.append_new_argument(&self.name);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_doorbell_ringing_packet() {
-        let mut response = DoorbellRinging::new("alice").compose();
-
-        assert_eq!(response.get(), "#DOORBELL_RINGING\ralice##");
-    }
-}

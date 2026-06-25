@@ -18,26 +18,3 @@ impl IncomingEvent for RemoveItem {
         context.record(IncomingCommand::RemoveItem { item_id });
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::protocol::NettyRequest;
-
-    #[test]
-    fn records_remove_item_command() {
-        let mut context = IncomingContext::new();
-        RemoveItem.handle(
-            &mut context,
-            &NettyRequest::from_content("REMOVEITEM wall/99"),
-        );
-
-        assert_eq!(
-            context.commands(),
-            &[
-                IncomingCommand::ResetAfkTimer,
-                IncomingCommand::RemoveItem { item_id: 99 }
-            ]
-        );
-    }
-}

@@ -9,15 +9,3 @@ impl OutgoingMessage for BadName {
         response.init("BADNAME");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_bad_name_packet() {
-        let mut response = BadName.compose();
-
-        assert_eq!(response.get(), "#BADNAME##");
-    }
-}

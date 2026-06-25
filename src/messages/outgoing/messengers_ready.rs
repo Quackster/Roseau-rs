@@ -9,15 +9,3 @@ impl OutgoingMessage for MessengersReady {
         response.init("MESSENGERSREADY");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_messengers_ready_packet() {
-        let mut response = MessengersReady.compose();
-
-        assert_eq!(response.get(), "#MESSENGERSREADY##");
-    }
-}

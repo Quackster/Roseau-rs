@@ -1,16 +1,24 @@
 pub mod interactors;
 pub mod item;
 pub mod item_behaviour;
+#[cfg(test)]
+mod item_behaviour_tests;
 pub mod item_command_executor;
 #[cfg(test)]
 mod item_command_executor_tests;
 pub mod item_command_network_plan;
+#[cfg(test)]
+mod item_command_network_plan_tests;
 pub mod item_command_placement_executor;
 pub mod item_definition;
+#[cfg(test)]
+mod item_definition_tests;
 pub mod item_incoming_plan;
 #[cfg(test)]
 mod item_incoming_plan_tests;
 pub mod item_manager;
+#[cfg(test)]
+mod item_manager_tests;
 pub mod item_serialisation;
 #[cfg(test)]
 mod item_tests;

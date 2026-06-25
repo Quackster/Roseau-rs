@@ -1,18 +1,40 @@
 pub mod bootstrap_error;
 pub mod host_resolver;
 pub mod random_source;
+#[cfg(test)]
+mod random_source_tests;
 pub mod roseau_application_entrypoint_arguments;
+#[cfg(test)]
+mod roseau_application_entrypoint_arguments_tests;
 pub mod roseau_application_entrypoint_error;
 pub mod roseau_application_entrypoint_report;
+#[cfg(test)]
+mod roseau_application_entrypoint_report_tests;
 pub mod roseau_application_entrypoint_runner;
+#[cfg(test)]
+mod roseau_application_entrypoint_runner_tests;
 pub mod roseau_application_entrypoint_settings;
 pub mod roseau_application_entrypoint_settings_error;
+#[cfg(test)]
+mod roseau_application_entrypoint_settings_tests;
 pub mod roseau_application_entrypoint_status;
+#[cfg(test)]
+mod roseau_application_entrypoint_status_tests;
 pub mod roseau_application_entrypoint_usage;
+#[cfg(test)]
+mod roseau_application_entrypoint_usage_tests;
 pub mod roseau_application_loop_report;
+#[cfg(test)]
+mod roseau_application_loop_report_tests;
 pub mod roseau_application_loop_runner;
+#[cfg(test)]
+mod roseau_application_loop_runner_tests;
 pub mod roseau_application_prepare_readiness;
+#[cfg(test)]
+mod roseau_application_prepare_readiness_tests;
 pub mod roseau_application_prepare_report;
+#[cfg(test)]
+mod roseau_application_prepare_report_tests;
 pub mod roseau_application_runtime;
 pub mod roseau_application_runtime_accessors;
 #[cfg(test)]
@@ -32,21 +54,37 @@ mod roseau_application_runtime_tests;
 #[cfg(test)]
 mod roseau_application_runtime_tick_tests;
 pub mod roseau_application_tick_execution_report;
+#[cfg(test)]
+mod roseau_application_tick_execution_report_tests;
 pub mod roseau_application_tick_outcome;
+#[cfg(test)]
+mod roseau_application_tick_outcome_tests;
 pub mod roseau_application_tick_run_report;
+#[cfg(test)]
+mod roseau_application_tick_run_report_tests;
 pub mod roseau_bootstrap;
+#[cfg(test)]
+mod roseau_bootstrap_tests;
 pub mod roseau_bounded_tick_runtime;
 pub mod roseau_command_effect_runtime_application;
 pub mod roseau_database_application_prepare;
 pub mod roseau_game_tick_runtime_action_plan;
+#[cfg(test)]
+mod roseau_game_tick_runtime_action_plan_tests;
 pub mod roseau_incoming_execution_runtime_application;
 pub mod roseau_incoming_execution_runtime_plan;
+#[cfg(test)]
+mod roseau_incoming_execution_runtime_plan_tests;
 pub mod roseau_item_interaction_runtime_application;
 pub mod roseau_lifecycle_plan;
+#[cfg(test)]
+mod roseau_lifecycle_plan_tests;
 pub mod roseau_lifecycle_step;
 pub mod roseau_moderation_effect_runtime_plan;
 pub mod roseau_password_action_runtime_application;
 pub mod roseau_password_action_runtime_plan;
+#[cfg(test)]
+mod roseau_password_action_runtime_plan_tests;
 pub mod roseau_player_room_leave_runtime_plan;
 pub mod roseau_player_room_manager_runtime_application;
 pub mod roseau_room_effect_network_runtime_plan;
@@ -54,18 +92,36 @@ pub mod roseau_room_leave_network_runtime_plan;
 pub mod roseau_room_manager_runtime_application;
 pub mod roseau_room_user_effect_network_runtime_plan;
 pub mod roseau_runtime;
+#[cfg(test)]
+mod roseau_runtime_tests;
 pub mod roseau_scheduler_effect_network_runtime_plan;
 pub mod roseau_server_factory;
+#[cfg(test)]
+mod roseau_server_factory_tests;
 pub mod roseau_server_loop_outcome;
+#[cfg(test)]
+mod roseau_server_loop_outcome_tests;
 pub mod roseau_startup_load_runtime_report;
 pub mod roseau_startup_plan;
+#[cfg(test)]
+mod roseau_startup_plan_tests;
 pub mod roseau_startup_runtime;
 pub mod roseau_startup_runtime_error;
+#[cfg(test)]
+mod roseau_startup_runtime_error_tests;
 pub mod roseau_startup_runtime_status;
+#[cfg(test)]
+mod roseau_startup_runtime_status_tests;
+#[cfg(test)]
+mod roseau_startup_runtime_tests;
 pub mod roseau_startup_status;
+#[cfg(test)]
+mod roseau_startup_status_tests;
 pub mod roseau_tick_runtime_application;
 pub mod roseau_tick_runtime_runner;
 pub mod server_bootstrap_plan;
+#[cfg(test)]
+mod server_bootstrap_plan_tests;
 pub mod std_host_resolver;
 
 pub use bootstrap_error::BootstrapError;

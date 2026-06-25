@@ -35,15 +35,3 @@ impl OutgoingMessage for StuffDataUpdate {
         response.append_part_argument(&self.custom_data);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_stuff_data_update_packet() {
-        let mut response = StuffDataUpdate::new("i:", 7, "poster", "blue").compose();
-
-        assert_eq!(response.get(), "#STUFFDATAUPDATE\ri:7//poster/blue##");
-    }
-}

@@ -1,14 +1,34 @@
 pub mod catalogue_command_queries;
+#[cfg(test)]
+mod catalogue_command_queries_tests;
 pub mod catalogue_purchase_queries;
+#[cfg(test)]
+mod catalogue_purchase_queries_tests;
 pub mod catalogue_purchase_result_mapper;
+#[cfg(test)]
+mod catalogue_purchase_result_mapper_tests;
 pub mod catalogue_queries;
+#[cfg(test)]
+mod catalogue_queries_tests;
 pub mod catalogue_result_mapper;
+#[cfg(test)]
+mod catalogue_result_mapper_tests;
 pub mod database_engine;
+#[cfg(test)]
+mod database_engine_tests;
 pub mod decoration_command_result_mapper;
+#[cfg(test)]
+mod decoration_command_result_mapper_tests;
 pub mod entity;
 pub mod game_tick_queries;
+#[cfg(test)]
+mod game_tick_queries_tests;
 pub mod inventory_command_queries;
+#[cfg(test)]
+mod inventory_command_queries_tests;
 pub mod inventory_queries;
+#[cfg(test)]
+mod inventory_queries_tests;
 pub mod item_command_data_mapper;
 pub mod item_command_placement_mapper;
 pub mod item_command_queries;
@@ -22,54 +42,114 @@ mod item_command_result_mapper_placement_tests;
 #[cfg(test)]
 mod item_command_result_mapper_tests;
 pub mod item_interaction_queries;
+#[cfg(test)]
+mod item_interaction_queries_tests;
 pub mod item_queries;
 #[cfg(test)]
 mod item_queries_tests;
 pub mod item_result_mapper;
+#[cfg(test)]
+mod item_result_mapper_tests;
 pub mod mapper;
+#[cfg(test)]
+mod mapper_tests;
 pub mod messenger_command_queries;
+#[cfg(test)]
+mod messenger_command_queries_tests;
 pub mod messenger_queries;
+#[cfg(test)]
+mod messenger_queries_tests;
 pub mod messenger_result_mapper;
+#[cfg(test)]
+mod messenger_result_mapper_tests;
 pub mod my_sql_application_tick_execution_report;
+#[cfg(test)]
+mod my_sql_application_tick_execution_report_tests;
 pub mod my_sql_application_tick_executor;
+#[cfg(test)]
+mod my_sql_application_tick_executor_tests;
 pub mod my_sql_catalogue_dao;
+#[cfg(test)]
+mod my_sql_catalogue_dao_tests;
 pub mod my_sql_dao;
 pub mod my_sql_dao_connection_report;
+#[cfg(test)]
+mod my_sql_dao_connection_report_tests;
 pub mod my_sql_dao_effect;
 pub mod my_sql_dao_facades;
 #[cfg(test)]
+mod my_sql_dao_facades_tests;
+#[cfg(test)]
 mod my_sql_dao_tests;
 pub mod my_sql_driver;
+#[cfg(test)]
+mod my_sql_driver_tests;
 pub mod my_sql_game_tick_executor;
+#[cfg(test)]
+mod my_sql_game_tick_executor_tests;
 pub mod my_sql_inventory_dao;
+#[cfg(test)]
+mod my_sql_inventory_dao_tests;
 pub mod my_sql_item_dao;
+#[cfg(test)]
+mod my_sql_item_dao_tests;
 pub mod my_sql_messenger_dao;
+#[cfg(test)]
+mod my_sql_messenger_dao_tests;
 pub mod my_sql_navigator_dao;
+#[cfg(test)]
+mod my_sql_navigator_dao_tests;
 pub mod my_sql_player_dao;
 #[cfg(test)]
 mod my_sql_player_dao_tests;
 pub mod my_sql_player_password_action_execution_report;
+#[cfg(test)]
+mod my_sql_player_password_action_execution_report_tests;
 pub mod my_sql_player_password_action_executor;
+#[cfg(test)]
+mod my_sql_player_password_action_executor_tests;
 pub mod my_sql_player_password_action_report;
+#[cfg(test)]
+mod my_sql_player_password_action_report_tests;
 pub mod my_sql_room_dao;
 #[cfg(test)]
 mod my_sql_room_dao_tests;
 pub mod my_sql_storage_connector;
+#[cfg(test)]
+mod my_sql_storage_connector_tests;
 pub mod navigator_command_queries;
+#[cfg(test)]
+mod navigator_command_queries_tests;
 pub mod navigator_queries;
+#[cfg(test)]
+mod navigator_queries_tests;
 pub mod navigator_result_mapper;
+#[cfg(test)]
+mod navigator_result_mapper_tests;
 pub mod player_command_queries;
+#[cfg(test)]
+mod player_command_queries_tests;
 pub mod player_effect_queries;
+#[cfg(test)]
+mod player_effect_queries_tests;
 pub mod player_password_action_queries;
+#[cfg(test)]
+mod player_password_action_queries_tests;
 pub mod player_password_queries;
+#[cfg(test)]
+mod player_password_queries_tests;
 pub mod player_queries;
 #[cfg(test)]
 mod player_queries_tests;
 pub mod player_result_mapper;
+#[cfg(test)]
+mod player_result_mapper_tests;
 pub mod room_command_queries;
 #[cfg(test)]
 mod room_command_queries_tests;
 pub mod room_effect_queries;
+#[cfg(test)]
+mod room_effect_queries_tests;
 pub mod room_queries;
 #[cfg(test)]
 mod room_queries_tests;
@@ -77,26 +157,52 @@ pub mod room_result_mapper;
 #[cfg(test)]
 mod room_result_mapper_tests;
 pub mod room_user_effect_queries;
+#[cfg(test)]
+mod room_user_effect_queries_tests;
 pub mod sql_batch_executor;
+#[cfg(test)]
+mod sql_batch_executor_tests;
 pub mod sql_driver;
 pub mod sql_execution_batch_result;
+#[cfg(test)]
+mod sql_execution_batch_result_tests;
 pub mod sql_execution_kind;
 pub mod sql_execution_plan;
+#[cfg(test)]
+mod sql_execution_plan_tests;
 pub mod sql_execution_result;
+#[cfg(test)]
+mod sql_execution_result_tests;
 pub mod sql_executor;
 pub mod sql_parameter;
+#[cfg(test)]
+mod sql_parameter_tests;
 pub mod sql_query;
 pub mod sql_row;
+#[cfg(test)]
+mod sql_row_tests;
 pub mod sql_value;
 #[cfg(test)]
+mod sql_value_tests;
+#[cfg(test)]
 mod std_storage_connector;
+#[cfg(test)]
+mod std_storage_connector_tests;
 pub mod storage;
 pub mod storage_connection_effect;
 pub mod storage_connection_outcome;
+#[cfg(test)]
+mod storage_connection_outcome_tests;
 pub mod storage_connector;
 pub mod storage_sql_executor;
 #[cfg(test)]
+mod storage_sql_executor_tests;
+#[cfg(test)]
+mod storage_tests;
+#[cfg(test)]
 mod unconfigured_sql_driver;
+#[cfg(test)]
+mod unconfigured_sql_driver_tests;
 
 pub use catalogue_command_queries::CatalogueCommandQueries;
 pub use catalogue_purchase_queries::CataloguePurchaseQueries;

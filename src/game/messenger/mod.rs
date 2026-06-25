@@ -4,12 +4,26 @@ pub mod messenger_command_executor;
 mod messenger_command_executor_tests;
 pub mod messenger_effect;
 pub mod messenger_effect_network_plan;
+#[cfg(test)]
+mod messenger_effect_network_plan_tests;
 pub mod messenger_friend;
 pub mod messenger_friend_refresh_executor;
+#[cfg(test)]
+mod messenger_friend_refresh_executor_tests;
 pub mod messenger_incoming_plan;
+#[cfg(test)]
+mod messenger_incoming_plan_tests;
 pub mod messenger_location;
+#[cfg(test)]
+mod messenger_location_tests;
 pub mod messenger_message;
+#[cfg(test)]
+mod messenger_message_tests;
+#[cfg(test)]
+mod messenger_tests;
 pub mod messenger_user;
+#[cfg(test)]
+mod messenger_user_tests;
 
 pub use messenger::Messenger;
 pub use messenger_command_executor::{MessengerCommandExecutor, MessengerCommandOutcome};

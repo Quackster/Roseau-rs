@@ -2,7 +2,7 @@
 
 Rust port of Roseau, a Habbo Hotel v1 server for the 2001 client revision.
 
-The repository contains the Rust server implementation, runtime, protocol handling, MySQL persistence layer, and seed database dump. The legacy Java/Gradle server tree and bundled JVM artifacts have been removed so this repo can be managed as a Rust project.
+The repository contains the Rust server implementation, runtime, protocol handling, MySQL persistence layer, and seed database dump. It is managed as a Rust project with Cargo.
 
 ## Status
 

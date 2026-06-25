@@ -10,15 +10,3 @@ impl OutgoingMessage for ItemMessage {
         response.append_new_argument("SELECTTYPE x");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_item_message_packet() {
-        let mut response = ItemMessage.compose();
-
-        assert_eq!(response.get(), "#ITEMMSG 0\rSELECTTYPE x##");
-    }
-}

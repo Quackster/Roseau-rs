@@ -9,15 +9,3 @@ impl OutgoingMessage for Hello {
         response.init("HELLO");
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_hello_packet() {
-        let mut response = Hello.compose();
-
-        assert_eq!(response.get(), "#HELLO##");
-    }
-}

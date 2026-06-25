@@ -18,15 +18,3 @@ impl OutgoingMessage for SecretKey {
         response.append_new_argument(&self.key);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn composes_secret_key_packet() {
-        let mut response = SecretKey::new("abc").compose();
-
-        assert_eq!(response.get(), "#SECRET_KEY\rabc##");
-    }
-}
