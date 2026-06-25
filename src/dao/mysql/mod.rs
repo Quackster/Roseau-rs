@@ -12,6 +12,8 @@ pub mod inventory_queries;
 pub mod item_command_data_mapper;
 pub mod item_command_placement_mapper;
 pub mod item_command_queries;
+#[cfg(test)]
+mod item_command_queries_tests;
 pub mod item_command_result_mapper;
 #[cfg(test)]
 mod item_command_result_mapper_ignore_tests;
@@ -21,6 +23,8 @@ mod item_command_result_mapper_placement_tests;
 mod item_command_result_mapper_tests;
 pub mod item_interaction_queries;
 pub mod item_queries;
+#[cfg(test)]
+mod item_queries_tests;
 pub mod item_result_mapper;
 pub mod mapper;
 pub mod messenger_command_queries;
@@ -33,6 +37,8 @@ pub mod my_sql_dao;
 pub mod my_sql_dao_connection_report;
 pub mod my_sql_dao_effect;
 pub mod my_sql_dao_facades;
+#[cfg(test)]
+mod my_sql_dao_tests;
 pub mod my_sql_driver;
 pub mod my_sql_game_tick_executor;
 pub mod my_sql_inventory_dao;
@@ -57,13 +63,19 @@ pub mod player_effect_queries;
 pub mod player_password_action_queries;
 pub mod player_password_queries;
 pub mod player_queries;
+#[cfg(test)]
+mod player_queries_tests;
 pub mod player_result_mapper;
 pub mod room_command_queries;
+#[cfg(test)]
+mod room_command_queries_tests;
 pub mod room_effect_queries;
 pub mod room_queries;
 #[cfg(test)]
 mod room_queries_tests;
 pub mod room_result_mapper;
+#[cfg(test)]
+mod room_result_mapper_tests;
 pub mod room_user_effect_queries;
 pub mod sql_batch_executor;
 pub mod sql_driver;

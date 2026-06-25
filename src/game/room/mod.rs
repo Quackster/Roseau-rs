@@ -4,6 +4,8 @@ pub mod room;
 pub mod room_access_control;
 pub mod room_chat_executor;
 pub mod room_command_executor;
+#[cfg(test)]
+mod room_command_executor_tests;
 pub mod room_command_outcome;
 pub mod room_connection;
 pub mod room_data;
@@ -33,6 +35,8 @@ pub mod room_leave_user_executor;
 pub mod room_manager;
 pub mod room_mapping;
 pub mod room_mapping_occupants;
+#[cfg(test)]
+mod room_mapping_tests;
 pub mod room_navigator_entry;
 pub mod room_occupant;
 pub mod room_pool_network_plan;

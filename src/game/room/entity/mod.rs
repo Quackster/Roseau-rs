@@ -3,6 +3,8 @@ pub mod room_user;
 pub mod room_user_chat;
 pub mod room_user_chat_network_plan;
 pub mod room_user_command_executor;
+#[cfg(test)]
+mod room_user_command_executor_tests;
 pub mod room_user_effect;
 pub mod room_user_effect_network_plan;
 #[cfg(test)]

@@ -5,6 +5,8 @@ pub mod catalogue_manager;
 pub mod catalogue_order_info_network_plan;
 pub mod catalogue_order_info_plan;
 pub mod catalogue_purchase_executor;
+#[cfg(test)]
+mod catalogue_purchase_executor_tests;
 pub mod catalogue_purchase_item_plan;
 pub mod catalogue_purchase_network_plan;
 pub mod catalogue_purchase_outcome;

@@ -8,6 +8,8 @@ pub mod item_command_network_plan;
 pub mod item_command_placement_executor;
 pub mod item_definition;
 pub mod item_incoming_plan;
+#[cfg(test)]
+mod item_incoming_plan_tests;
 pub mod item_manager;
 pub mod item_serialisation;
 #[cfg(test)]

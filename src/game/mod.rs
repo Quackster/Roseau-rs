@@ -13,6 +13,8 @@ pub mod game_runtime_scheduler_executor;
 pub mod game_runtime_scheduler_plan;
 pub mod game_runtime_task;
 pub mod game_scheduler;
+#[cfg(test)]
+mod game_tests;
 pub mod game_tick_effect;
 pub mod game_tick_runtime_effect;
 pub mod game_variables;

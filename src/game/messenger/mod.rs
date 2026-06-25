@@ -1,5 +1,7 @@
 pub mod messenger;
 pub mod messenger_command_executor;
+#[cfg(test)]
+mod messenger_command_executor_tests;
 pub mod messenger_effect;
 pub mod messenger_effect_network_plan;
 pub mod messenger_friend;

@@ -9,6 +9,8 @@ pub mod item_interaction_effect_network_plan;
 #[cfg(test)]
 mod item_interaction_effect_network_plan_tests;
 pub mod item_interaction_effect_room_executor;
+#[cfg(test)]
+mod item_interaction_effect_room_executor_tests;
 pub mod item_interaction_runtime_effect;
 pub mod item_interaction_runtime_executor;
 pub mod item_interaction_runtime_plan;

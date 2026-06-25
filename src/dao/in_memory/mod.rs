@@ -6,6 +6,8 @@ pub mod in_memory_messenger_dao;
 pub mod in_memory_navigator_dao;
 pub mod in_memory_player_dao;
 pub mod in_memory_room_dao;
+#[cfg(test)]
+mod in_memory_room_dao_tests;
 
 pub use in_memory_catalogue_dao::InMemoryCatalogueDao;
 pub use in_memory_dao::InMemoryDao;

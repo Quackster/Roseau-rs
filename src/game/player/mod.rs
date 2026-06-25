@@ -10,6 +10,8 @@ pub mod player_command_network_plan;
 pub mod player_command_outcome;
 pub mod player_details;
 pub mod player_details_serialisation;
+#[cfg(test)]
+mod player_details_tests;
 pub mod player_effect;
 pub mod player_effect_inventory_executor;
 pub mod player_effect_network_plan;
@@ -20,16 +22,22 @@ pub mod player_login_executor;
 pub mod player_login_network_plan;
 pub mod player_login_outcome;
 pub mod player_manager;
+#[cfg(test)]
+mod player_manager_tests;
 pub mod player_name_approval;
 pub mod player_name_approval_network_plan;
 pub mod player_password_action_effect_plan;
 pub mod player_password_action_executor;
+#[cfg(test)]
+mod player_password_action_executor_tests;
 pub mod player_password_action_network_plan;
 pub mod player_password_action_outcome;
 pub mod player_password_action_report;
 pub mod player_profile_update_executor;
 pub mod player_registration_executor;
 pub mod player_registration_network_plan;
+#[cfg(test)]
+mod player_tests;
 
 pub use bot::Bot;
 pub use find_user_network_plan::FindUserNetworkPlan;

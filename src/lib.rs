@@ -6,6 +6,8 @@ pub mod logging;
 pub mod messages;
 pub mod properties_config;
 pub mod protocol;
+#[cfg(test)]
+mod protocol_tests;
 pub mod resource_extractor;
 pub mod runtime;
 pub mod server;
