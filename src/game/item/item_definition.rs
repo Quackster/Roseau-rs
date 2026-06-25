@@ -1,0 +1,123 @@
+use super::ItemBehaviour;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ItemDefinition {
+    id: i32,
+    sprite: String,
+    color: String,
+    length: i32,
+    width: i32,
+    height: f64,
+    behaviour_flags: String,
+    behaviour: ItemBehaviour,
+    name: String,
+    description: String,
+    data_class: String,
+}
+
+impl ItemDefinition {
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: i32,
+        sprite: impl Into<String>,
+        color: impl Into<String>,
+        length: i32,
+        width: i32,
+        height: f64,
+        behaviour_flags: impl Into<String>,
+        name: impl Into<String>,
+        description: impl Into<String>,
+        data_class: impl Into<String>,
+    ) -> Self {
+        let behaviour_flags = behaviour_flags.into();
+        let behaviour = ItemBehaviour::parse(&behaviour_flags);
+        let height = if !behaviour.can_sit_on_top()
+            && !behaviour.can_lay_on_top()
+            && !behaviour.can_stack_on_top()
+        {
+            0.001
+        } else {
+            height
+        };
+
+        Self {
+            id,
+            sprite: sprite.into(),
+            color: color.into(),
+            length,
+            width,
+            height,
+            behaviour_flags,
+            behaviour,
+            name: name.into(),
+            description: description.into(),
+            data_class: data_class.into(),
+        }
+    }
+
+    pub fn id(&self) -> i32 {
+        self.id
+    }
+
+    pub fn sprite(&self) -> &str {
+        &self.sprite
+    }
+
+    pub fn color(&self) -> &str {
+        &self.color
+    }
+
+    pub fn length(&self) -> i32 {
+        self.length
+    }
+
+    pub fn width(&self) -> i32 {
+        self.width
+    }
+
+    pub fn height(&self) -> f64 {
+        self.height
+    }
+
+    pub fn behaviour_flags(&self) -> &str {
+        &self.behaviour_flags
+    }
+
+    pub fn behaviour(&self) -> &ItemBehaviour {
+        &self.behaviour
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+
+    pub fn data_class(&self) -> &str {
+        &self.data_class
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn lowers_height_for_non_stackable_non_seating_items() {
+        let definition = ItemDefinition::new(1, "poster", "red", 1, 1, 2.5, "IW", "Poster", "", "");
+
+        assert_eq!(definition.height(), 0.001);
+        assert!(definition.behaviour().is_on_wall());
+    }
+
+    #[test]
+    fn keeps_height_for_sittable_items() {
+        let definition =
+            ItemDefinition::new(2, "chair", "blue", 1, 1, 1.25, "SFC", "Chair", "", "");
+
+        assert_eq!(definition.height(), 1.25);
+        assert!(definition.behaviour().can_sit_on_top());
+    }
+}

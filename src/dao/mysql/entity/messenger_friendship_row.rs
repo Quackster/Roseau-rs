@@ -1,0 +1,67 @@
+use crate::dao::{mysql::SqlRow, DaoError};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct MessengerFriendshipRow {
+    pub id: i32,
+    pub sender: i32,
+    pub receiver: i32,
+}
+
+impl MessengerFriendshipRow {
+    pub const TABLE: &'static str = "messenger_friendships";
+
+    pub const fn new(id: i32, sender: i32, receiver: i32) -> Self {
+        Self {
+            id,
+            sender,
+            receiver,
+        }
+    }
+}
+
+impl TryFrom<&SqlRow> for MessengerFriendshipRow {
+    type Error = DaoError;
+
+    fn try_from(row: &SqlRow) -> Result<Self, Self::Error> {
+        Ok(Self::new(
+            row.required_i32("id")?,
+            row.required_i32("sender")?,
+            row.required_i32("receiver")?,
+        ))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::dao::mysql::SqlValue;
+
+    #[test]
+    fn builds_messenger_friendship_row_from_sql_row() {
+        let row = SqlRow::new([
+            ("id", SqlValue::Integer(1)),
+            ("sender", SqlValue::Integer(2)),
+            ("receiver", SqlValue::Integer(3)),
+        ]);
+
+        assert_eq!(
+            MessengerFriendshipRow::try_from(&row).unwrap(),
+            MessengerFriendshipRow::new(1, 2, 3)
+        );
+    }
+
+    #[test]
+    fn reports_invalid_messenger_friendship_columns() {
+        let row = SqlRow::new([
+            ("id", SqlValue::Integer(1)),
+            ("sender", SqlValue::Integer(2)),
+        ]);
+
+        assert_eq!(
+            MessengerFriendshipRow::try_from(&row)
+                .unwrap_err()
+                .message(),
+            "Missing or invalid SQL column `receiver` as i32"
+        );
+    }
+}

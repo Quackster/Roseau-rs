@@ -2,6 +2,12 @@
 
 Goal: port the whole Roseau project to Rust using only safe Rust.
 
+## Porting Rules
+
+- Keep one primary implementation, type, service, or struct per Rust source file; split supporting implementations into focused sibling modules when a file starts accumulating unrelated responsibilities.
+- Use idiomatic Rust naming throughout the port: modules and variables in `snake_case`, types and traits in `PascalCase`, constants in `SCREAMING_SNAKE_CASE`, and APIs shaped around Rust ownership, borrowing, errors, and iterators.
+- Replace references to Java libraries, Java framework concepts, and Java package naming with Rust-native crates, modules, and terminology that fit the Rust implementation.
+
 ## Current Status
 
 - Started a native Rust crate at the project root with `Cargo.toml` and `src/lib.rs`.
@@ -9,26 +15,472 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - `NettyRequest` header/body splitting and argument access.
   - Decimal length-prefixed frame decoding using ISO-8859-1 byte mapping.
   - `NettyResponse` packet composition, delimiter helpers, object serialisation hook, finalisation, and debug body rendering.
+  - Rust-native network decoder and encoder helpers for request frames, text output, response output, and outgoing message output.
+- Ported the first outgoing message composer layer:
+  - `OutgoingMessage` trait for composing packets into `NettyResponse`.
+  - Idiomatic Rust outgoing packet types for `HELLO`, `ENCRYPTION_OFF`, `OK`, `CHAT`, `SYSTEMBROADCAST`, and `WALLETBALANCE`.
+  - Additional outgoing packet types for `BADNAME`, `NAME_APPROVED`, `NAME_UNACCEPTABLE`, `NOSUCHUSER`, `LOGOUT`, `DOORFLAT`, `SELECTTYPE`, `SHOWPROGRAM`, `PH_TICKETS`, and `PH_NOTICKETS`.
+  - Additional outgoing packet types for `CRYFORHELP`, `ERROR`, `FLATCREATED`, `ITEMMSG`, `JUMPINGPLACE_OK`, `MYPERSISTENTMSG`, `OPEN_GAMEBOARD`, `OPEN_UIMAKOPPI`, `PURCHASEOK`, `REMOVEWALLITEM`, `ROOM_READY`, and `SECRET_KEY`.
+  - Additional outgoing packet types for `DOOR_IN`, `DOOR_OUT`, `DOORBELL_RINGING`, `FLAT_LETIN`, `HEIGHTMAP`, `MESSENGERREADY`, `MESSENGERSREADY`, `MESSENGERSMSACCOUNT`, `ACTIVEOBJECT_REMOVE`, `ADDITEM`, `UPDATEITEM`, and `STUFFDATAUPDATE`.
+  - Additional outgoing packet types for `YOUARECONTROLLER`, `YOUARENOTCONTROLLER`, `YOUAREOWNER`, `JUMPDATA`, `FLATPROPERTY`, `ORDERINFO`, `PURCHASE_ADDSTRIPITEM`, `MESSENGER_MSG`, `BUDDYADDREQUESTS`, and `BUSY_FLAT_RESULTS`.
+  - Additional outgoing packet types for `ACTIVEOBJECT_ADD`, `ACTIVEOBJECT_UPDATE`, `ACTIVE_OBJECTS`, `ALLUNITS`, `SETFLATINFO`, `ITEMS`, `OBJECTS WORLD`, `UNITMEMBERS`, `USEROBJECT`, and `USERS`.
+  - Final outgoing packet types for `BUDDYLIST`, `MEMBERINFO`, `STATUS`, and `STRIPINFO`.
+  - All Java outgoing composer files now have Rust packet composer coverage.
+  - One primary message type per source file under `src/messages/outgoing/`.
+- Started the incoming message handler layer:
+  - `IncomingEvent` trait plus `IncomingContext` and `IncomingCommand` command recording for safe, testable handler behavior before full player/game systems are ported.
+  - Initial incoming handler ports for `VERSIONCHECK`, `GETCREDITS`, `STATUSOK`, `Dance`, `STOP`, `GETSTRIP`, and `MESSENGER_MARKREAD`.
+  - Additional incoming handler ports for `APPROVENAME`, `GIVE_TICKETS`, `GOAWAY`, `Sign`, `MESSENGER_ASSIGNPERSMSG`, `MESSENGER_ACCEPTBUDDY`, `MESSENGER_DECLINEBUDDY`, `MESSENGER_REMOVEBUDDY`, `MESSENGER_REQUESTBUDDY`, and `MESSENGER_SENDMSG`.
+  - Additional incoming handler ports for `Move`, `LOOKTO`, `CarryItem`, `CarryDrink`, `IntoDoor`, `LETUSERIN`, `REMOVEITEM`, `REMOVESTUFF`, `ASSIGNRIGHTS`, `REMOVERIGHTS`, and `KILLUSER`.
+  - Additional incoming handler ports for `ADDITEM`, `ADDSTRIPITEM`, `CREATEFLAT`, `DELETEFLAT`, `GETFLATINFO`, `GETORDERINFO`, `GETUNITUSERS`, `GOTOFLAT`, `INITUNITLISTENER`, and `JUMPPERF`.
+  - Additional incoming handler ports for `CLOSE_UIMAKOPPI`, `CRYFORHELP`, `INFORETRIEVE`, `MESSENGER_INIT`, and `MOVESTUFF`.
+  - Additional incoming handler ports for `FINDUSER`, `FLATPROPERTYBYITEM`, `SETITEMDATA`, `SETSTRIPITEMDATA`, `SETSTUFFDATA`, and `SPLASHPOSITION`.
+  - Additional incoming handler ports for `LOGIN`, `REGISTER`, `SEARCHBUSYFLATS`, `SEARCHFLAT`, `SEARCHFLATFORUSER`, and `TRYFLAT`.
+  - Final Java incoming handler file coverage for `PLACEITEMFROMSTRIP`, `PLACESTUFFFROMSTRIP`, `PURCHASE`, `SETFLATINFO`, `TALK`, `UPDATE`, and `UPDATEFLAT`.
+  - Tightened incoming context parity for configured carry-drink status timeouts and pool-only sign handling against the Java `GameVariables.CARRY_DRINK_TIME` and `pool_b` checks.
+  - Added incoming context connection-scope state so `MESSENGERINIT` honors the Java main-server-only guard before recording messenger initialisation work.
+  - Added current-room-name context for `UPDATEFLAT` so short submitted room names fall back to the loaded room name before command planning, matching the Java room-data preservation behavior.
+  - Added incoming context enterable-door item validation so `IntoDoor` only records teleporter entry work after the room/item/adjacency checks represented by the Java handler have been satisfied.
+  - Added explicit incoming AFK reset command/effect planning so `TALK` mirrors the Java handler's room-user AFK reset before chat validation and dispatch.
+  - Added explicit incoming AFK reset records for Java item placement, item return/removal, room-item movement, and room kick handlers that refresh the room-user timer before domain work.
+  - All Java incoming handler files now have Rust handler coverage, with domain side effects represented as command records until the corresponding Rust game, DAO, room, inventory, and catalogue layers are ported.
+  - Ported the Java message dispatcher into a Rust `MessageHandler` registry that maps incoming headers to existing handler implementations and dispatches into `IncomingContext`.
+  - Completed incoming command execution planning coverage by exhaustively translating command records into Rust domain effects, including messenger init, buddy request/accept/decline/remove, messenger message send, personal-message assignment, away status, door entry, doorbell approval, item removal/return, wall item creation, room item movement, rights assignment/removal, kicks, room creation/deletion/info lookup, catalogue order lookup and purchase, unit-user lookup, room entry listener setup, jump performance, pool booth close, user info retrieval, user search, decoration application, item data updates, strip-item use, splash position handling, navigator searches, room password entry, inventory placement, flat info updates, pool figure updates, and room metadata updates.
+  - Split incoming messenger command planning into a focused Rust module so buddy, message, personal-message, and messenger-init effects are separated from the generic incoming-command dispatcher.
+  - Split incoming command executor tests into a focused Rust test module so the command dispatcher source keeps production planning separate from parity coverage.
+  - Split incoming command executor routing tests into a focused Rust test module so room, catalogue, navigation, purchase, profile, and room-update mappings stay separate from command-manager, auth, and messenger coverage.
+  - Added Rust MySQL planning for incoming room create, delete, and metadata update effects so `CREATEFLAT`, `DELETEFLAT`, and `UPDATEFLAT` command execution can produce database mutation plans.
+  - Added Rust MySQL planning for incoming room description, password, and all-super-user update effects so `SETFLATINFO` command execution can produce a database mutation plan.
+  - Added Rust MySQL planning for incoming messenger read-receipt and send-message effects so `MESSENGER_MARKREAD` and `MESSENGER_SENDMSG` command execution can produce message persistence plans.
 - Ported foundational utility/configuration pieces:
   - INI-style configuration parsing for the existing `roseau.properties` shape.
   - Typed config lookups and boolean parsing.
-  - Java-compatible input filtering and IPv4 validation helpers.
+  - Java-compatible input filtering, null/empty string trimming, and IPv4 validation helpers, including the original no-leading-zero octet rules.
+  - Java-compatible two-decimal numeric formatting, including negative fractional rounding behavior, and Rust-native resource extraction helpers.
+  - Ported Java flat properties configuration loading and non-reflection packaged-resource URL helpers into Rust-native utility types.
   - `GameSettings` constants plus a safe atomic item ID counter.
-- Added focused Rust tests for the ported protocol, config, settings-adjacent utility behavior.
+- Started the game domain layer:
+  - Ported item behaviour flag parsing and Java-order flag rendering.
+  - Ported item definition metadata with the Java height adjustment for non-stackable, non-seating items.
+  - Ported item manager definition lookup/reload state.
+  - Ported item runtime value state, teleporter target parsing, custom-data truncation, walkability checks, affected-tile collision helpers, lock-coordinate parsing, and Java-compatible item packet serialisation.
+  - Split item packet serialisation into a focused Rust module so the item model keeps state and behavior separate from wire-format rendering.
+  - Split item model tests into a focused Rust test module so construction, teleporter custom data, serialization, collision, walkability, and lock-coordinate coverage stays separate from the runtime item model.
+  - Ported inventory item collection, Java-compatible pagination/cursor behavior, item add/remove lookup, and refresh result modeling.
+  - Ported room model position parsing, distance helpers, directional square helpers, and rotation direction calculation.
+  - Ported affected-tile calculation for item footprints, including Java-compatible non-square rotation handling.
+  - Ported room state/type, navigator request, entity type, permission, messenger message/user, and moderation call-for-help value models.
+  - Ported the Java entity abstraction into an idiomatic Rust trait for details, room-user linkage, and entity-type access.
+  - Added Rust player command and find-user network planning so `INFORETRIEVE`, ticket, and `FINDUSER` outcomes emit Java-compatible `USEROBJECT`, `PH_TICKETS`, `MEMBERINFO`, or `NOSUCHUSER` packets.
+  - Added Rust player name-approval network planning so `APPROVENAME` outcomes emit Java-compatible `NAME_APPROVED` or `NAME_UNACCEPTABLE` packets.
+  - Added Rust login network planning so failed `LOGIN` outcomes emit the Java-compatible `ERROR Login incorrect` packet while authenticated login continues through player effects.
+  - Added Rust registration network planning so `REGISTER` outcomes emit Java-compatible `OK` or `BADNAME` packets after persistence decisions.
+  - Ported messenger runtime state for friends, requests, request packets, sorted buddy-list packets, online-friend status refresh effects, disposal cleanup, and location text.
+  - Added Rust messenger command execution bridging for Java-compatible buddy request, accept, decline, removal, message send, and read-receipt DAO behavior with current messenger-state validation.
+  - Added Rust messenger incoming planning so messenger-related incoming effects route through the DAO-backed command executor and return explicit command outcomes for runtime follow-up.
+  - Added Rust messenger-effect network planning for Java-compatible direct buddy-request and buddy-list packet delivery while leaving friend-list refreshes explicit for runtime messenger lookup.
+  - Added Rust messenger friend-list refresh execution that rebuilds buddy-list packets from messenger DAO friendships, player DAO details, and current player-manager online sessions.
+  - Ported catalogue item, deal, and manager lookup models, including Java-compatible deal item extra-data expansion.
+  - Added Rust catalogue order-info planning for Java-compatible `GETORDERINFO` call ID normalisation, deal/item lookup ordering, and decoration extra-data echoing.
+  - Added Rust catalogue order-info network planning so resolved `GETORDERINFO` requests write Java-compatible `ORDERINFO` packets to the requesting connection.
+  - Added Rust catalogue purchase planning for item and deal credit checks, inventory item creation requests, decoration/post-it/deal extra data, and teleporter pair creation markers.
+  - Added Rust catalogue purchase execution bridging for Java-compatible item/deal purchases over catalogue, inventory, item, and player DAOs, including call-id normalisation, credit debit persistence, decoration/post-it extra data, and cross-linked teleporter pairs.
+  - Added Rust catalogue purchase outcome planning for Java-compatible successful `ADDSTRIPITEM` responses and insufficient-credit `SYSTEMBROADCAST` responses.
+  - Added Rust catalogue purchase network planning so purchase outcomes write Java-compatible `ADDSTRIPITEM` or insufficient-credit `SYSTEMBROADCAST` packets to the requesting connection.
+  - Added Rust catalogue ticket purchase planning for the Java `hyppy` branch, including recipient sanitising, ticket grant amount, credit threshold, and charged credit amount.
+  - Added Rust catalogue ticket purchase execution bridging for Java-compatible `hyppy` purchases over the player DAO, including insufficient-credit and missing-target outcomes, self-purchase ticket/credit persistence, and cross-player ticket/credit persistence.
+  - Added Rust catalogue ticket purchase outcome planning for Java-compatible buyer and recipient alert messages across insufficient-credit, missing-target, self-purchase, and cross-player purchase cases.
+  - Added Rust catalogue ticket purchase network planning so buyer alerts and online recipient alerts become Java-compatible `SYSTEMBROADCAST` packets while missing offline recipient sessions stay silent.
+  - Added Rust catalogue incoming planning so `GETORDERINFO` and `PURCHASE` effects route through order-info, normal purchase, and ticket purchase executors while keeping packet planning separate.
+  - Added Rust navigator search network planning so `SEARCHBUSYFLATS`, `SEARCHFLAT`, and `SEARCHFLATFORUSER` outcomes emit Java-compatible `BUSY_FLAT_RESULTS` packets, including the empty Java fallback.
+  - Ported room data, room connection, room tile state, and room model height-map parsing with Java-compatible blocked-tile, door, public-room patch, and coordinate behavior.
+  - Started the Rust room aggregate with rights handling, doorbell recipient selection, first-entry scheduler/event effects, privilege refresh effects, player/bot tracking, and disposal decisions.
+  - Split room aggregate tests into a focused Rust test module so the room source stays limited to room lifecycle, runtime state, and aggregate accessors.
+  - Split room access-control behavior into a focused Rust module so rights checks, doorbells, flat entry, kicks, and privilege refreshes stay separate from room lifecycle state.
+  - Added Rust room command outcome planning for Java-compatible `CREATEFLAT` `FLATCREATED` packets and `GETFLATINFO` `SETFLATINFO` packets from loaded or newly-created room data.
+  - Added Rust room command execution bridging for Java-compatible create, read-flat-info, delete, update-flat, and set-flat-info persistence over the room DAO with explicit owner-rights gating and Java short-name/description preservation.
+  - Added Rust room incoming planning so room command effects route through the room DAO executor with explicit owner-rights context before network outcome planning.
+  - Added Rust room-entry outcome planning for Java-compatible `TRYFLAT` password checks, doorbell recipient routing, `FLAT_LETIN`/error packet mapping, and `LETUSERIN` rights gating.
+  - Added Rust room-entry incoming planning so `TRYFLAT` effects flow through the room aggregate's rights, password, and doorbell checks before network or room-effect planning.
+  - Added Rust room-entry network planning so `TRYFLAT` let-in and rejected-password outcomes write Java-compatible `FLAT_LETIN` or `ERROR` packets while doorbell routing stays with room effects.
+  - Added Rust `LETUSERIN` room effects so approved waiting users carry explicit room assignment and `FLAT_LETIN` runtime work instead of a boolean-only gate.
+  - Added Rust room-pool network planning so direct `JUMPPERF` and `SPLASH_POSITION` effects broadcast Java-compatible `JUMPDATA` and `SHOWPROGRAM` packets to room players while close-booth remains a runtime-only action.
+  - Added Rust room-unit incoming planning so `INITUNITLISTENER` and `GETUNITUSERS` effects resolve loaded public rooms and current room-member names before unit packet planning.
+  - Added Rust room-unit network planning so public-room listener and unit-member outcomes emit Java-compatible `ALLUNITS` and `UNITMEMBERS` packets to the requesting connection.
+  - Added Rust room kick planning for Java-compatible `KILLUSER` rights checks and protected-target permission gating.
+  - Added Rust room rights assignment/revocation planning for Java-compatible `ASSIGNRIGHTS` and `REMOVERIGHTS` owner/all-rights sender gating.
+  - Added Rust room-effect server-listen planning so public-room startup effects map into concrete server listen plans.
+  - Added Rust room-effect network planning for Java-compatible doorbell, room privilege, `LETUSERIN`, and room-kick packets or connection closes using current player sessions.
+  - Added Rust application-runtime planning and application for room-effect network effects so doorbells, privileges, let-in responses, and kicks can reach active startup connections.
+  - Split room-effect network application-runtime packet bridging into a focused Rust runtime module so doorbell, privilege, let-in, and kick packet delivery stays isolated from the main runtime coordinator.
+  - Added Rust room-effect bot execution for loading room bots from the room DAO into runtime bot state.
+  - Added Rust room-effect item execution for loading passive public-room objects from the item DAO and regenerating room collision maps from loaded items.
+  - Added Rust room-effect manager execution for loaded-room removal so room disposal effects update the runtime room manager state.
+  - Added Rust application-runtime application for room manager effects so room disposal follow-ups can remove loaded rooms from the running game state.
+  - Split room-manager runtime application into a focused Rust runtime module so loaded-room removal stays isolated from the main runtime coordinator.
+  - Added Rust room-effect runtime scheduler planning so room walk/event tick scheduling and room disposal cancellation reach the scheduler boundary.
+  - Added Rust room-effect runtime-state execution for clearing loaded room items and bots from explicit room cleanup effects.
+  - Added Rust room-user room-effect execution for privilege/status updates and `LETUSERIN` room assignment so runtime room effects can mutate loaded room-user state explicitly.
+  - Added Rust public-room unit outcome planning for Java-compatible `INITUNITLISTENER` `ALLUNITS` packets and `GETUNITUSERS` `ALLUNITS` plus `UNITMEMBERS` packets.
+  - Added Rust MySQL room-effect planning for Java room-right saves, mapping rights replacement into delete-then-insert SQL execution plans.
+  - Ported Java room leave lifecycle into explicit Rust leave effects for private-room connection close, player removal, pool item reopening, room-user disposal, logout broadcast, room disposal, inventory disposal, and messenger refresh.
+  - Added Rust room-leave room execution for player removal and empty-room disposal, returning follow-up room effects such as runtime-data clearing and loaded-room removal.
+  - Added Rust room-leave item execution for opening current pool lift/booth items and unlocking their mapped tiles when a user leaves.
+  - Added Rust room-leave room-user execution for disposing matching room-user runtime state during leave handling.
+  - Added Rust room-leave inventory execution for clearing the matching player's runtime inventory from explicit room-leave effects.
+  - Added Rust room-leave messenger execution for main-server friend-list status refresh effects from a loaded messenger.
+  - Added Rust room-leave network planning for private-room connection closes and logout broadcasts to remaining room sessions.
+  - Added Rust application-runtime planning and application for room-leave network effects so private-room closes and logout broadcasts can reach active startup connections.
+  - Split room-leave network application-runtime packet bridging into a focused Rust runtime module so private-room close and logout packet delivery stays isolated from the main runtime coordinator.
+  - Ported Java room navigator serialisation into a focused Rust room navigator entry type with owner-name visibility rules and Java-compatible field ordering.
+  - Added Rust room chat execution bridging for Java-compatible chatlog persistence across `CHAT`, `SHOUT`, and delivered `WHISPER` messages.
+  - Ported room mapping collision-map regeneration, tile height/highest-item tracking, tile walkability checks, occupant/goal blocking, nearby occupant lookup, and room walkway ID storage.
+  - Split room mapping occupant lookup into a focused Rust module so nearby/current/goal occupant queries stay separate from collision-map regeneration.
+  - Ported pathfinder node state and path search with Java-compatible move ordering, path reconstruction, and final-step validation hook.
+  - Ported room chat emote/word/garble helpers and room-user status ticking semantics.
+  - Ported player details serialisation, credit/ticket packet helpers, bot trigger/response behavior, and player manager session/permission lookup behavior.
+  - Split player details serialisation into a focused Rust module so the player details model stays separate from `USEROBJECT` wire-format rendering.
+  - Aligned Rust player credit and ticket total setters with the original Java assignment behavior.
+  - Ported Java player name approval into a Rust domain outcome shared by `APPROVENAME` and `REGISTER`, preserving reserved-prefix, length, wildcard, allowed-character, and approval/unacceptable packet behavior.
+  - Added Rust `FINDUSER` outcome planning for Java-compatible found-user `MEMBERINFO` packets and missing-user `NOSUCHUSER` packets.
+  - Added Rust player command outcome planning for Java-compatible `INFORETRIEVE` `USEROBJECT` packets and `GIVE_TICKETS` ticket packets.
+  - Added Rust player incoming planning so `INFORETRIEVE`, `GIVE_TICKETS`, and `FINDUSER` effects produce command/find-user outcomes through current player state and DAO-backed user lookup.
+  - Added Rust login outcome planning for Java-compatible successful authentication state, raw-password retention, duplicate connection close effects, last-login effects, public-room login lookup IDs, and failed-login `ERROR` packets.
+  - Added Rust login execution bridging for Java-compatible `LOGIN` behavior over the player DAO and player manager, including missing-user/wrong-password errors, raw password retention, same-port duplicate connection closure, last-login effects, and public-room lookup IDs.
+  - Added Rust registration execution bridging for Java-compatible `REGISTER` persistence behavior over the player DAO, including name-taken no-op handling and configured default-credit creation.
+  - Added explicit Rust password operation planning for login verification, registration hashing, and profile-update hashing so authentication work is separated from incoming parsing and SQL planning while preserving the full Java registration and profile-update payloads through hashing.
+  - Added Rust password incoming planning so `Password` incoming effects are extracted into ordered password actions before hashing, verification, or SQL planning.
+  - Added Rust profile-update detail application for Java-compatible password, email, figure, mission, and sex updates, including clearing the pool figure when sex changes.
+  - Added Rust profile-update execution bridging for Java-compatible `UPDATE` persistence behavior over the player DAO, including profile detail saves, sex-change pool-figure clearing, mismatched-user no-op handling, and direct pool-figure saves.
+  - Added Rust-native bcrypt password hashing and verification with Java-compatible `jBCrypt` cost and hash-version output for registration, login, and profile-update execution layers.
+  - Ported Java player state into a Rust player model with explicit effects for alerts, kicks, owned-room disposal, room leave, inventory cleanup, messenger cleanup, and cross-connection lookup.
+  - Added Rust player-effect network planning for Java-compatible hotel alerts and connection-close effects while leaving persistence, room cleanup, and inventory disposal to their focused runtime layers.
+  - Added Rust player-effect inventory execution for clearing the matching player's runtime inventory from explicit player disposal effects.
+  - Added Rust player-effect room-manager execution for removing loaded owned room summaries from runtime state during main-server player disposal.
+  - Added Rust application-runtime application for player room-manager effects so main-server disposal can remove visible owned rooms from the loaded game room manager.
+  - Split player room-manager runtime application into a focused Rust runtime module so owned-room disposal updates stay isolated from the main runtime coordinator.
+  - Added Rust player-effect room-leave planning for room-connection disposal, mapping current-room leave effects into room leave work for the matching session.
+  - Added Rust application-runtime planning for player room-leave effects so disposal work can derive room leave effects from the loaded player manager.
+  - Split player room-leave runtime planning into a focused Rust runtime module so room-leave derivation stays isolated from the main runtime coordinator.
+  - Ported the Java player login side effect into an explicit Rust last-login update effect so successful authentication can drive DAO persistence without global runtime state.
+  - Added an idiomatic Rust game constructor for injecting an existing player manager, replacing the Java test game subclass pattern with explicit owned state.
+  - Added Rust item command execution bridging for Java-compatible item/stuff data updates, post-it strip-item consumption, item deletion, wall/floor inventory placement, and room-item movement over the item DAO with explicit rights gating.
+  - Split item command executor tests into a focused Rust test module so the executor source stays limited to item command execution and result modeling.
+  - Split item placement and movement command execution into a focused Rust module so wall/floor placement and room-item movement stay separate from generic item data and inventory-return command handling.
+  - Ported item interactor behavior for blank items, beds, chairs, teleporters, pool change booths, pool ladders, pool lifts, and pool queues as explicit Rust interaction effects.
+- Added Rust item-interaction state execution for Java-compatible room-user status, rotation, walking, position, goal, and current-item trigger effects emitted by item interactors.
+- Added Rust item-interaction item execution for Java-compatible runtime custom-data changes emitted by delayed teleporter effects.
+- Added Rust item-interaction network planning for Java-compatible show-program, pool UI, jump, ticket, and teleporter door packets emitted by item interactors.
+- Extended Rust item-interaction network planning for Java-compatible floor and wall item status update packets.
+  - Split item-interaction network planning tests into a focused Rust test module so the planner source stays limited to packet planning and session routing.
+- Added Rust item-interaction room execution for Java-compatible item tile lock/unlock, path building, walk-to behavior, and pool ticket gating.
+- Added Rust item-interaction runtime planning for delayed nested effects and teleporter room leave/load work.
+  - Added Rust pool change booth close-UI planning for Java-compatible booth open/unlock, walk re-enable, and custom-data exit movement effects.
+  - Added Rust pool lift jump-performance planning for Java-compatible `JUMPPERF` `JUMPDATA` broadcast effects.
+  - Added Rust MySQL item-interaction planning for the Java pool-lift ticket decrement/save behavior, mapping saved ticket changes into focused player ticket update SQL.
+  - Added Rust moderation command execution bridging for Java-compatible call-for-help delivery, filtering main-server sessions by the `answer_call_for_help` permission and preserving semicolon sanitising.
+  - Added Rust moderation-effect network planning for Java-compatible `CRYFORHELP` packet delivery to moderator connections.
+  - Added Rust application-runtime planning and application for moderation-effect network packets so call-for-help deliveries can reach active moderator connections.
+  - Split moderation-effect application-runtime packet bridging into a focused Rust runtime module so the runtime layer keeps one primary bridge responsibility per source file.
+  - Split moderation-effect application-runtime network tests into a focused Rust test module so call-for-help packet planning and active-connection delivery coverage stays separate from room, scheduler, and room-leave runtime network tests.
+  - Ported Java `CRYFORHELP` private/public-room distress-message extraction into a focused Rust moderation parser for execution-layer room metadata wiring.
+  - Added Rust moderation incoming planning so raw `CRYFORHELP` effects combine room context, sender name, moderator permissions, and Java-compatible distress parsing into moderator delivery effects.
+  - Ported command trait/manager registration plus `about`, `help`, `sit`, and optional item-definition reload command behavior as explicit Rust command effects.
+  - Added Rust command incoming planning so `Command` incoming effects are extracted into ordered command effects before command runtime or network planning.
+  - Added Rust command-effect network planning for Java-compatible direct command alert packets, leaving room-status command effects and item-definition reload work explicit for their focused executors.
+  - Added Rust command-effect execution for item-definition reloads, refreshing the item manager from the item DAO while keeping room-user command status changes in the room-user executor.
+  - Added Rust application-runtime application for command effects so item-definition reload commands refresh the loaded game item manager through an injected item DAO.
+  - Split command-effect runtime application into a focused Rust runtime module so item-definition reload handling stays isolated from the main runtime coordinator.
+  - Ported room scheduler event primitives, event scheduling, user-status ticking, bot movement decisions, and public-room lido/disco program decisions as explicit Rust scheduler effects.
+  - Added typed Rust room-event registration mapping for Java room event names emitted by room load effects.
+  - Ported room walk scheduler tick behavior for applying pending next positions, validating path steps, clearing invalid paths, emitting movement status updates, stopping at path end, triggering current items, and batching status updates.
+  - Ported room-user runtime state for status management, walking/path state, look rotation, AFK reset, chat/status/users effect modeling, and height updates.
+  - Split room-user chat behavior into a focused Rust module so chat, shout, whisper parsing, bot delayed chat, and talk-status updates stay separate from room-user lifecycle/accessors.
+  - Split room-user movement behavior into a focused Rust module so walking, go-away, pool-lift splash movement, look rotation, and height updates stay separate from chat/status serialization.
+  - Split room-user state and movement tests into a focused Rust test module so the room-user source stays limited to runtime state, status accessors, and packet entity builders.
+  - Added a focused room-user command execution bridge for incoming status, AFK reset, look rotation, talk, and colon-command room-user effects.
+  - Added Rust room-user incoming planning so room-user effects apply through the focused command executor before room-user network or persistence planning.
+  - Added Rust room-user network planning for Java-compatible room-scoped chat, status, users, show-program broadcasts, direct no-ticket responses, and direct kick closes from room-user effects.
+  - Split room-user chat network planning into a focused Rust module so nearby chat, shout broadcasts, and whisper routing stay separate from status/users/direct effect packet planning.
+  - Split room-user effect network planning tests into a focused Rust test module so packet-routing parity coverage stays separate from the production planner.
+  - Added Rust application-runtime planning and application for room-user network effects so chat, status, users, show-program, no-ticket, and kick effects can reach active startup connections.
+  - Split room-user effect network application-runtime packet bridging into a focused Rust runtime module so room chat/status/user packet delivery stays isolated from the main runtime coordinator.
+  - Added Rust room-user `GOAWAY` behavior for Java-compatible walk-to-door with kick-on-stop and immediate-kick fallback decisions.
+  - Added Rust room-user `SPLASH_POSITION` behavior for Java-compatible pool-lift splash broadcasts, landing position updates, swim status, walk re-enable, and pool-exit movement planning.
+  - Added Rust scheduler-effect network planning for Java-compatible room walk `STATUS` broadcasts and disco/lido `SHOWPROGRAM` broadcasts from scheduler output.
+  - Added Rust application-runtime planning and application for scheduler-effect network effects so room status and program scheduler output can reach active startup connections.
+  - Split scheduler-effect network application-runtime packet bridging into a focused Rust runtime module so scheduler packet delivery stays isolated from the main runtime coordinator.
+  - Added Rust scheduler-effect state execution for Java-compatible room-user walk/status timer mutations, including stop-walking handoff into room-user effects.
+  - Ported game-level variable loading from hotel configuration, including scheduler, registration, bot, player, debug, teleporter, and inventory-page settings.
+  - Ported Java game load ordering into explicit Rust load effects for variables, room/item/catalogue/command manager loads, and one-second game tick scheduling.
+  - Added Rust game-load runtime action mapping so load effects feed manager-loading work and scheduler setup through typed runtime actions.
+  - Added Rust game-load runtime reporting for manager-load flags and scheduler setup actions emitted from load runtime actions.
+  - Added Rust game-load readiness reporting so startup/runtime boundaries can verify variables, managers, command registration, and game-tick scheduling from one focused summary.
+  - Added a Rust game-load runtime executor that applies load runtime actions into the startup report boundary.
+  - Exposed Rust application startup load reporting so prepared runtimes surface manager-load completion flags and scheduler setup work together.
+  - Added Rust runtime scheduler planning for the Java game scheduler worker pool, fixed-rate game/room ticks, delayed bot/teleporter tasks, and room task cancellation.
+  - Added Rust runtime scheduler execution reporting for worker-pool creation, fixed-rate tasks, delayed tasks, and room-task cancellation.
+  - Ported the top-level game scheduler tick into explicit Rust effects for credit awards, player saves, configured host resolution, and AFK room kicks.
+  - Added Rust MySQL game-tick planning for scheduler credit awards, mapping awarded balances into timestamp-free player credit update SQL plans while leaving network-only tick effects outside DAO execution.
+  - Added a Rust MySQL game-tick executor that runs persistent scheduler tick plans through the SQL executor while preserving network-only tick effects for higher runtime layers.
+  - Added a Rust MySQL application-tick executor that persists database-backed game effects directly from the bounded application tick outcome while leaving server/network outcomes to runtime layers.
+  - Added a Rust MySQL application-tick execution report that returns database batch results alongside runtime-only game tick effects such as server-IP resolution and AFK kicks.
+  - Added typed Rust runtime actions for non-persistent game tick effects so server-IP resolution and AFK kicks can be handled explicitly after database-backed tick persistence.
+  - Added Rust runtime planning for non-persistent game tick actions, mapping configured-host resolution and AFK user kicks into explicit runtime/network effects.
+  - Added a Rust application tick execution report that combines the MySQL tick report with planned runtime/network actions for host resolution and AFK connection closes.
+  - Added a Rust application runtime tick execution path that runs a bounded tick, persists database-backed game effects, and returns planned runtime/network actions in one report.
+  - Added Rust runtime application for tick network plans so AFK close actions from a persisted bounded tick can be applied to active TCP connections while unresolved host-resolution work remains explicit.
+  - Added a Rust host-resolution boundary for game tick runtime plans so configured hostnames can refresh the advertised server IP while failed resolutions remain explicit unapplied work.
+  - Split Rust application-runtime host-resolution tests into a focused Rust test module so configured-host success and failure coverage stays separate from bounded tick, persistence, network, and composed tick-run coverage.
+  - Added a composed Rust bounded tick run report that runs scheduler/server work, persists database-backed effects, applies runtime plans, and returns unapplied runtime work from one call.
+  - Extended the composed Rust bounded tick run report to preserve the server loop outcome so the application loop can make continue/stop decisions from the same report.
+  - Split database-backed tick execution and composed tick-run helpers into a focused Rust runtime module so tick persistence/report orchestration stays isolated from application preparation.
+  - Added a bounded Rust application loop runner and loop report so the entrypoint can repeatedly execute composed tick runs and stop on the preserved server-loop decision.
+  - Added Rust application entrypoint runner/report/error types that prepare database-backed runtime state, skip the loop when the database connection fails, and run the bounded loop after successful startup preparation.
+  - Added Rust application entrypoint status reporting so preparation readiness, loop execution, completed bounded ticks, and loop stop state are exposed through one focused runtime summary.
+  - Added a Rust binary entrypoint that wires bootstrap config creation, standard TCP binding, standard host resolution, storage connection checks, and the bounded application entrypoint runner.
+  - Added Rust standard runtime adapters for storage connection checks and explicit SQL-driver failure reporting so the binary can start without silently dropping persistence work.
+  - Added Rust entrypoint report log-line aggregation so database connection and server startup lines can be emitted from the same runtime report used by the binary.
+  - Added Rust application entrypoint settings for default config paths and bounded startup loop parameters so the binary no longer hardcodes the Java main-equivalent startup knobs.
+  - Added Rust binary argument parsing for entrypoint settings, covering config paths, bounded tick count, connection ID seed, listener index, accept behavior, and read size without adding a command-line dependency.
+  - Split Rust entrypoint settings errors into a focused module so the entrypoint settings area continues to follow the one-primary-type-per-file porting rule.
+  - Added a focused Rust entrypoint usage module and wired `-h`/`--help` handling into the binary before settings parsing.
+  - Added a Rust entrypoint argument decision enum so help requests, valid settings, and parse errors are routed through one binary boundary with usage text on invalid input.
+  - Carried the Rust logger through application preparation reports and applied entrypoint output log lines through the logger so binary output can also append to `log/output.log` when configured.
+  - Added Rust logger exception-line formatting for Java-compatible error banners before optional error-log file persistence.
+  - Added Rust logger exception writing that applies Java-compatible exception banners to configured output logs and stack text to configured error logs.
+  - Added a Rust game container that owns player, room, item, catalogue, command, moderation, and scheduler state and performs the current load sequence.
+  - Exposed Rust game startup scheduler effects for the Java worker-pool construction and one-second game tick schedule so application startup can surface the scheduler work created by game load.
+  - Added room summary and room manager support for loaded-room lookup, public-room ordering, popular-room ordering, owner rooms, room name, room ID, and port lookup.
+  - Added moderation manager support for call-for-help effects and Java-compatible distress-message sanitising.
+  - Started the DAO layer with Rust-native MySQL row structs for catalogue, item, messenger, room, and user tables plus mapper functions into existing domain models.
+  - Ported the DAO interface layer into Rust traits for catalogue, inventory, item, messenger, navigator, player, and room persistence contracts with explicit error handling and request structs.
+  - Ported database engine parsing, Rust-native connection URL construction, storage settings from config, and initial `MySqlDao` connection-state shell.
+  - Added a Rust SQL batch generated-ID narrowing helper and migrated teleporter purchase result mapping to keep insert-id validation inside the shared batch result boundary.
+  - Added a Rust SQL row-mapping helper and migrated catalogue, item, messenger, navigator, player, and room result mappers to share row validation and iterator-style conversion.
+  - Added a Rust MySQL driver adapter backed by the `mysql` crate, including parameter conversion, row/value conversion, generated-id extraction, affected-row handling, and credential-aware construction from storage settings.
+  - Added a Rust MySQL storage connector backed by the same driver and wired the binary entrypoint to build tick persistence from configured storage settings.
+  - Reused the configured Rust MySQL driver across binary startup connection validation and tick persistence so startup no longer creates a separate transitional SQL connection boundary.
+  - Updated the crate-level Rust API exports to surface the real MySQL driver, storage connector, and SQL executor instead of the transitional persistence adapter.
+  - Narrowed the Rust MySQL module API so transitional connection scaffolding stays private while the public persistence path exposes the real driver-backed connector.
+  - Hardened the Rust MySQL driver boundary with explicit database-engine validation before URL parsing so non-MySQL storage settings fail with a focused DAO error.
+  - Hardened the Rust MySQL storage connector boundary so startup validation rejects non-MySQL storage settings even when reusing an existing driver pool.
+  - Added Rust-native storage connection planning for database driver crate selection and credential-aware connection attempts.
+  - Added Rust MySQL DAO lifecycle effects for Java-compatible connection logging and player, room, item, catalogue, inventory, navigator, and messenger DAO facade construction order.
+  - Added Rust navigator command execution for Java-compatible busy-room, room-name, and online-user room searches, producing `BUSY_FLAT_RESULTS` outcomes from room/player managers and navigator/room DAOs.
+  - Added a typed Rust MySQL DAO facade bundle so the aggregate DAO can construct player, room, item, catalogue, inventory, navigator, and messenger facades from one executor plus runtime variables, item definitions, room models, owner-name context, and time.
+  - Added Rust query-plan coverage for Java MySQL catalogue and inventory DAO table reads, filtered item lookup, and inventory item creation.
+  - Added Rust MySQL catalogue result mapping from validated SQL rows into DAO `HashMap` results for buyable items and catalogue deals.
+  - Added a Rust MySQL catalogue DAO facade that executes Rust SQL read plans through the executor trait, validates result kinds, and maps database results into the `CatalogueDao` contract.
+  - Added a Rust MySQL inventory DAO facade that executes inventory SQL plans through the executor trait, validates result kinds, hydrates items from definitions, and returns created inventory items from generated IDs.
+  - Added Rust inventory command execution for Java-compatible strip refreshes, loading user inventory items from the inventory DAO and producing `STRIPINFO` outcomes through the existing Rust packet composer.
+  - Added Rust query-plan coverage for incoming inventory refresh effects, mapping `GETSTRIP`/`RefreshInventory` work into inventory item read plans before `STRIPINFO` outcome composition.
+  - Added Rust query-plan coverage for incoming catalogue order and purchase effects, mapping `GETORDERINFO` and catalogue `PURCHASE` work into catalogue item/deal read plans before order or purchase resolution.
+  - Added Rust MySQL purchase planning for catalogue purchases, mapping planned item creations into insert-returning-ID plans, planned credit deductions into player credit update plans, Java teleporter pair purchases into two-phase insert-then-cross-link SQL plans once generated item IDs are available, and Java ticket purchases into target ticket plus buyer credit update plans.
+  - Added Rust catalogue purchase SQL result mapping for teleporter pair insert batches, validating generated item IDs before producing cross-link and buyer-credit update plans.
+  - Added Rust query-plan coverage for Java MySQL item DAO definition/public-room/room-item reads, single item lookup, save updates, deletion, and teleporter extra-data fallback.
+  - Added Rust MySQL item result mapping from validated SQL rows into item-definition, room-item, public-room-item, and optional single-item DAO results with definition lookup validation.
+  - Added a Rust MySQL item DAO facade that executes item SQL plans through the executor trait, validates result kinds, hydrates item rows from cached definitions, and maps saves/deletes into mutation plans.
+  - Added Rust query-plan coverage for translating incoming item command effects into executable MySQL item updates, including item extra-data changes, set-stuff data normalisation, post-it amount updates/deletion, inventory placement, and inventory return plans.
+  - Added Rust query-plan coverage for Java MySQL messenger DAO friend/request reads, bidirectional request/friend predicates, request/friend mutations, unread message reads, message creation, and read-state updates.
+  - Added Rust MySQL messenger result mapping from validated SQL rows into friend, request, request-exists, unread-message, and created-message-ID DAO results.
+  - Added a Rust MySQL messenger DAO facade that executes messenger SQL plans through the executor trait, validates result kinds, preserves Java request-exists semantics, and maps persistence results into the `MessengerDao` contract.
+  - Added Rust query-plan coverage for translating incoming messenger command effects into executable MySQL read-state update and message insert plans.
+  - Added Rust query-plan coverage for Java MySQL navigator DAO private-room name searches.
+  - Added Rust MySQL navigator result mapping from validated private-room search rows into room data and room-summary results with execution-supplied owner-name context.
+  - Added a Rust MySQL navigator DAO facade that executes private-room search plans through the executor trait, validates result kinds, and maps rows into the `NavigatorDao` contract.
+  - Added Rust query-plan coverage for translating incoming navigator room-name search effects into executable private-room lookup plans while keeping runtime-only popular/user-room searches out of DAO execution.
+  - Added Rust navigator search outcome planning for Java-compatible `BUSY_FLAT_RESULTS` packets across popular, private-owner, search, and empty popular-room result paths.
+  - Added Rust navigator incoming planning so navigator search effects execute through the navigator and room DAO-backed command executor before packet planning.
+  - Added Rust query-plan coverage for Java MySQL player DAO creation, login/details/name/id lookups, profile updates, last-login updates, and permission reads.
+  - Added Rust MySQL player result mapping from validated SQL rows into optional player details, optional user IDs, name-exists checks, permissions, and created-player IDs.
+  - Added a Rust MySQL player DAO facade that executes SQL plans through a Rust executor trait, validates result kinds, hashes and verifies passwords, and maps database results into the `PlayerDao` contract.
+  - Split Rust MySQL player DAO facade tests into a focused Rust test module so creation, login, lookup, permission, update, and result-validation coverage stays separate from the production facade.
+  - Aligned Rust MySQL login row handling with the shared optional first-row SQL result helper so authentication lookups use the same typed row boundary as other DAO mappers.
+  - Added Rust query-plan coverage for focused player credit balance updates used by scheduler award execution.
+  - Added Rust query-plan coverage for focused player ticket balance updates used by pool item interaction execution.
+  - Added Rust query-plan coverage for translating incoming player profile command effects into focused personal-greeting and pool-figure update plans.
+  - Added Rust query-plan coverage for translating incoming player lookup command effects into executable MySQL user-detail reads for `FINDUSER`.
+  - Added Rust MySQL player password planning that performs Java-compatible bcrypt hashing/verification before producing registration, login, and profile-update SQL execution plans.
+  - Added Rust MySQL player-effect planning for the Java login last-online update, mapping the explicit player effect into the existing timestamped SQL execution plan.
+  - Added Rust query-plan coverage for Java MySQL room DAO public/private room reads, public-room IDs, room connections, rights replacement operations, room creation/deletion/update, chatlog insertion, bot/model reads, and chat-type mapping.
+  - Split Rust MySQL room query tests into a focused Rust test module so the room query builder source stays limited to SQL construction and table metadata.
+  - Added Rust MySQL room result mapping from validated SQL rows into room data, room summaries, public IDs, room rights, public-room connections, room models, bots, and created-room IDs.
+  - Added a Rust MySQL room DAO facade that executes room SQL plans through the executor trait, validates result kinds, maps room reads and related data, preserves deduplicated rights replacement, and returns created rooms from generated IDs.
+  - Split Rust MySQL room DAO tests into a focused Rust test module so the DAO facade source stays limited to persistence contract implementation.
+  - Aligned Rust room update SQL with the imported Roseau schema column name for the legacy all-super-user room flag.
+  - Added Rust query-plan coverage for translating room-right runtime effects into executable MySQL rights replacement plans.
+  - Added Rust query-plan coverage for translating incoming room command effects into executable MySQL room create, delete, flat update, and flat-info update plans.
+  - Added Rust query-plan coverage for translating incoming room lookup command effects into executable MySQL room reads for flat-info and room-entry fallback paths.
+  - Added Rust query-plan coverage for translating incoming chat and shout effects into executable MySQL room chatlog insert plans using execution-supplied room, user, and timestamp context.
+  - Added Rust SQL execution planning for read, execute, and insert-returning-ID operations so MySQL DAO query plans can be handed to a database execution layer without embedding driver-specific APIs in DAO methods.
+  - Added Rust SQL execution result validation for read rows, affected-row counts, and insert IDs so database driver adapters can prove result kinds against their execution plans before DAO mapping.
+  - Added a Rust SQL optional first-row result helper and migrated lookup mappers to use it instead of repeating row-vector inspection.
+  - Added a Rust SQL row-presence helper and migrated existence mappers to use it for name/request checks.
+  - Added a Rust SQL generated-ID narrowing helper and migrated player, room, messenger, inventory, and catalogue purchase ID mapping to reuse the shared overflow check.
+  - Added a Rust SQL mutation-result helper and migrated DAO mutation paths that only need affected-row validation to use the shared result boundary.
+  - Added Rust SQL parameter-count validation so generated query plans fail before driver execution when placeholders and bound parameters do not match.
+  - Added Rust SQL parameter-to-value conversion helpers so storage drivers can translate bound query parameters through the same driver-neutral value carrier used by mapped result rows.
+  - Added Rust SQL execution-plan parameter projection so storage driver adapters can read bound values from the full plan without matching every parameter variant themselves.
+  - Aligned Rust SQL parameter validation with quoted SQL literals so literal question marks do not count as bound placeholders.
+  - Added a Rust SQL driver bridge and storage executor wrapper so database adapters can run typed SQL plans while validating returned result kinds before DAO facade mapping.
+  - Added a Rust SQL batch executor that runs ordered plan lists through the executor trait and returns typed batch results for insert-heavy DAO flows.
+  - Added Rust SQL batch execution result validation for multi-plan DAO operations, including ordered result-kind checks and generated-ID extraction for insert-heavy purchase flows.
+  - Added Rust SQL row/value result carriers with typed accessors so database execution results can be validated before mapping into the existing DAO row structs and domain models.
+  - Added Rust SQL boolean value/row accessors and converted permission, room, room-model, and messenger unread flag persistence rows to idiomatic `bool` fields while still accepting legacy 0/1 database values.
+  - Added nullable Rust SQL row accessors so result mappers can distinguish SQL `NULL` from missing or invalid database columns.
+  - Added Rust SQL boolean parameters and migrated room and messenger flag query bindings away from ad hoc integer encoding.
+  - Added redacted Rust SQL parameter diagnostics so storage drivers can report plan parameters without exposing text payloads such as password hashes or room passwords.
+  - Added redacted SQL plan context to driver errors so persistence boundaries report the failing operation without leaking text parameters.
+  - Centralised redacted SQL execution-plan diagnostics so driver adapters can reuse the same operation summary for safe error reporting.
+  - Added nullable Rust SQL parameters, including optional-value conversion and driver-neutral `NULL` projection for storage adapters.
+  - Added Rust SQL-row conversion for catalogue item and catalogue deal persistence rows, matching the Java catalogue table column names before domain model mapping.
+  - Added Rust SQL-row conversion for item definitions, private-room items, and public-room items, including Java-compatible `dataclass`, `extra_data`, and `definitionid` column handling.
+  - Added Rust SQL-row conversion for messenger friendship, request, and message persistence rows, including Java-compatible `from_id`, `to_id`, and `time_sent` column handling.
+  - Added Rust SQL-row conversion for user and permission persistence rows, including Java-compatible `pool_figure`, `join_date`, `last_online`, and `personal_greeting` column handling.
+  - Added Rust SQL-row conversion for room, room model, public-room connection, room right, chatlog, and bot persistence rows, including legacy `allsuperuser` and annotated room column handling.
+  - Ported Java test persistence stubs into Rust in-memory DAO support for player creation, login, lookup, profile updates, last-login updates, and aggregate DAO connection state.
+  - Added in-memory catalogue, item, and inventory DAO implementations for buyable items/deals, item definitions, room/public/inventory item storage, item creation, saving, and deletion.
+  - Added in-memory messenger DAO support for friend requests, bidirectional friendships, unread messages, and read-state updates.
+  - Added in-memory room DAO support for public/private/latest room lookup, room creation/update/deletion, rights, room models, public-room connections, bots, and chatlog capture.
+  - Added a Rust storage connector boundary and explicit connection outcome for MySQL DAO startup so connection state can be driven by real database-open results instead of inferred URL presence.
+  - Added Rust storage connection-plan validation so startup connectors verify driver-load and open-connection effects before reporting a successful persistence connection.
+  - Added a Rust MySQL DAO connection report that bundles connector success/failure with Java-compatible connection log effects for startup orchestration.
+- Started the server/runtime layer:
+  - Ported the Java bootstrap configuration defaults and server startup planning into Rust-native runtime types for config creation, server IP binding behavior, database engine validation, and public-room port expansion.
+  - Added Rust bootstrap-plan reporting for Java-compatible listen status selection, including wildcard binds for hostnames and resolved advertised listen addresses.
+  - Ported the Java main startup ordering into explicit Rust lifecycle steps for config creation, logging startup, runtime load, database opening, game load, server handler construction, optional host resolution, and listener startup.
+  - Ported Java entrypoint startup status lines into a focused Rust status enum for server setup, rejected database engine, listen success, and listen failure reporting.
+  - Added a Rust application runtime preparation boundary that loads config, builds the startup plan, prepares listener/runtime state, and exposes Java-compatible startup log lines for ready and bind-failed startup outcomes.
+  - Added a Rust application preparation report and connector-backed startup path so listener setup is skipped when database connection fails, matching the Java entrypoint gate before game/server load.
+  - Added Rust application preparation readiness reporting so database connection, game-load readiness, and listener startup status are checked together before the bounded loop runs.
+  - Split startup load reporting into a focused Rust runtime module so startup scheduler effects and manager-load readiness stay isolated from application preparation.
+  - Split application runtime accessors and status helpers into a focused Rust runtime module so runtime state exposure stays isolated from application preparation.
+  - Split connector-backed application preparation into a focused Rust runtime module so database-gated startup stays isolated from plain runtime preparation.
+  - Split application runtime tests into a focused Rust test module so the runtime implementation file keeps only the primary runtime type and preparation path.
+  - Split application-runtime database/readiness tests into a focused Rust test module so connector-gated startup coverage stays separate from tick, network, and effect application coverage.
+  - Split application-runtime loaded-game effect tests into a focused Rust test module so item ticket sync, player room-manager, player room-leave, and room-manager coverage stays separate from startup and packet-delivery coverage.
+  - Split application-runtime network packet tests into a focused Rust test module so password, incoming command, room, room-user, scheduler, moderation, and room-leave packet delivery coverage stays separate from startup and tick orchestration.
+  - Split application-runtime password and direct incoming network tests into a focused Rust test module so login/register packet, duplicate-session close, and command-alert delivery coverage stays separate from room-scoped packet routing.
+  - Split application-runtime tick orchestration tests into a focused Rust test module so bounded ticks, persistence planning, host resolution, and composed tick runs stay separate from startup and command-effect coverage.
+  - Wired the Rust application runtime to own a loaded game container before listener startup so the entrypoint path now mirrors Java's database, game-load, then server-setup ordering.
+  - Added a Rust-native server factory for constructing the supported server handler and listen plan from bootstrap settings, replacing Java reflection class loading with explicit Rust module selection.
+  - Added a composed Rust startup plan that ties bootstrap settings, lifecycle steps, server handler construction, listen planning, and Java-compatible startup log lines together.
+  - Ported logging/date-time helpers into Rust-native runtime types for timestamp formatting, startup line construction, output/error file appending, and logging flag loading from config.
+  - Ported the Java `Util.load` runtime role into a Rust runtime loader that owns main and hotel config state, game variables, logger configuration, and a runtime random source.
+  - Ported the Java player network abstraction into a Rust trait plus a recorded network implementation for deterministic tests.
+  - Extended the Rust recorded player network to retain sent response objects as well as packet strings, matching the Java test network stub role.
+  - Ported the Java Netty player network wrapper into Rust-native network write/close effects and Java-compatible local-address port parsing.
+  - Added a standard-library TCP player network implementation that writes encoded responses to a `TcpStream`, derives the server port from the local address, and tracks close/error state.
+  - Added Rust player-network effect execution so queued write/close effects can be applied to recorded or TCP-backed player networks by connection ID.
+  - Added Rust TCP stream frame decoding that buffers partial reads, emits multiple complete requests per read, and delegates complete frames into the existing Netty request decoder.
+  - Ported session tracking into Rust-native session and session manager types keyed by connection ID with optional player identity.
+  - Added Rust session lifecycle effects for player-network creation, player attachment, player-manager registration, session storage, and cleanup on disconnect.
+  - Aligned the Rust server handler with the Java handler contract by owning the message registry, exposing session/message state, and dispatching requests through the registered incoming handlers.
+  - Ported Java Netty connection handler lifecycle into explicit Rust effects for hello sending, session add/remove, connection and packet logging, password-redacted request dispatch, player disposal, and exception-triggered close.
+  - Added Rust server connection-effect execution for applying handler effects into session state, network write/close effects, connection/packet logs, and message dispatch results.
+  - Added a Rust server connection driver that combines incremental stream decoding, connection handler effects, effect execution, session mutation, packet logging, and message dispatch for a single TCP connection.
+  - Added a standard-library TCP connection runtime adapter that combines a live `TcpStream`, player-network effect execution, connection driver reads, hello writes, decode-error closes, and Java-compatible session close semantics for deterministic runtime tests.
+  - Added live TCP stream reads to the Rust connection runtime so owned sockets can read available bytes, dispatch decoded frames, record read errors, and trigger the close lifecycle on EOF.
+  - Added nonblocking TCP read support and explicit idle read outcomes so bounded server ticks can keep idle accepted sockets open without blocking or treating no-ready-bytes as an error.
+  - Added Rust TCP listener acceptance support that turns retained bound listeners into connection runtimes with deterministic connection IDs and recorded accept errors.
+  - Added nonblocking listener acceptance for bounded TCP server ticks so no-pending-connection ticks do not block and real accept failures are preserved in the tick outcome.
+  - Added explicit bounded TCP accept outcomes for skipped, idle, accepted, and failed accept attempts so server loops do not need to infer accept state from optional IDs and errors.
+  - Added a bounded Rust TCP server runtime coordinator that accepts retained listeners, opens connection runtimes, tracks active connections, reads one active connection step, and applies close lifecycle behavior without requiring a permanent blocking loop.
+  - Split bounded TCP server runtime tests into a focused Rust test module so accept/read/cleanup orchestration stays separate from socket-backed parity coverage.
+  - Added bounded active-connection read outcomes for the Rust TCP server runtime so loops can read each current connection once and distinguish data reads, EOF closes, and read errors by connection ID.
+  - Added explicit active-connection cleanup for the Rust TCP server runtime so closed connection outcomes can be inspected and then removed from the bounded runtime without dropping unrelated open sessions.
+  - Split TCP server external network-effect application into a focused Rust module so queued write/close effects are applied separately from accept/read/cleanup orchestration.
+  - Added a bounded Rust TCP server tick outcome that reads existing active connections, removes closed runtimes, and then accepts one pending listener connection so idle newly-accepted sockets do not block the tick.
+  - Wired Rust server factory construction into the bounded TCP server runtime so bootstrap plans can now produce a runnable handler/connection-handler/acceptor bundle with explicit logging flags.
+  - Wired loaded runtime configuration into TCP server runtime construction so `log.connections` and `log.packets` drive the Rust connection handler behavior during accepted socket handling.
+  - Added a Rust startup runtime preparation step that applies the listen plan to a socket binder, records bind failures, exposes Java-compatible startup log lines, and constructs the bounded TCP runtime only after successful binding.
+  - Added a startup-level bounded TCP tick wrapper so prepared startup runtime instances can drive accept/read/cleanup steps and report a clear error when startup failed to bind.
+  - Added a structured Rust startup runtime error for bounded tick attempts when startup did not reach the listening state, replacing raw string matching at the startup boundary.
+  - Added an explicit Rust server loop outcome for bounded startup runtime ticks so the application loop can distinguish continue and stop decisions without stringly error handling.
+  - Added a bounded Rust application tick outcome that advances the loaded game scheduler and prepared server loop together, returning game tick effects beside the server tick/stop outcome.
+  - Split bounded application tick execution into a focused Rust runtime module so scheduler advancement and server-loop stepping stay isolated from application preparation.
+  - Split tick runtime application into a focused Rust runtime module so player credit synchronisation, startup network packet application, and configured-host resolution stay isolated from preparation and tick orchestration.
+  - Added runtime planning for Java-compatible scheduler credit-balance packets so periodic credit awards persist and send `WALLETBALANCE` updates to active player sessions.
+  - Added runtime application of scheduler credit awards to active Rust player sessions before packet writes, matching Java's in-memory `PlayerDetails` update.
+  - Added item-interaction runtime planning for saved ticket decrements so pool-lift ticket usage can sync active Rust player sessions alongside packet and SQL plans.
+  - Added item-interaction runtime execution for active-session ticket synchronisation while leaving delayed and room-transfer effects explicit for their runtime boundaries.
+  - Added Rust application-runtime application for item-interaction runtime effects so saved pool-ticket changes update active player sessions through the loaded game state.
+  - Split item-interaction runtime application into a focused Rust runtime module so active-session ticket synchronisation stays isolated from the main runtime coordinator.
+  - Added incoming-execution network planning for command alert effects so colon-command alerts can flow through the same Rust network-effect boundary as other outgoing packets.
+  - Added Rust incoming-execution runtime planning and application so direct command-alert packets from incoming effects are applied to active startup network connections.
+  - Split incoming-execution runtime application into a focused Rust runtime module so direct command-alert packet delivery stays isolated from the main runtime coordinator.
+  - Aligned incoming talk command dispatch so colon-prefixed whispers remain chat text while normal chat and shout still invoke the Rust command manager, matching the Java `TALK` handler branch ordering.
+  - Added target-aware Rust room-user whisper effects and network planning so whispers echo to the sender and optionally deliver to the named online target instead of broadcasting to the room.
+  - Added Java-compatible room-user talk status handling for chat and shout, including emote `gest` detection, finite `talk` status duration, and no talk-status mutation for whispers.
+  - Aligned Rust user-status scheduler ticks with Java `RoomUserStatus.tick()` semantics by applying finite status duration decrements before expiry removal without recreating status entries.
+  - Added Rust MySQL room-user effect planning for delivered whisper chatlogs, preserving Java's sender, original target-name prefix, chat type, and online non-self target gate.
+  - Aligned room-user chat network planning with Java `TALK` delivery by sending normal chat only to the speaker and nearby room users while keeping shout room-wide.
+  - Aligned catalogue decoration payload handling for order-info and purchase planning with Java's literal `split(" ")[1]` behavior, preserving the second token including empty repeated-space cases.
+  - Aligned incoming `SETFLATINFO` parsing with Java's full message-body replacement so slashes inside description or password fields are preserved.
+  - Aligned incoming `UPDATE` profile parsing with Java's split-based password/email/sex handling while preserving substring-style figure and custom-data fields.
+  - Aligned incoming `REGISTER` parsing with Java's split-based name/password/email/birthday/sex handling while preserving substring-style figure and custom-data fields.
+  - Split incoming password command planning into a focused Rust module so login, registration, and profile-update commands construct password actions outside the generic incoming-command dispatcher.
+  - Added a Rust player password-action executor that routes parsed login, registration, and profile-update password actions into the focused player DAO executors while keeping storage-specific hashing inside the DAO boundary.
+  - Added a typed Rust player password-action outcome stream so parsed login, registration, and profile-update password actions can execute through one boundary before network and persistence follow-up planning.
+  - Added Rust player password-action network planning so login errors and registration outcomes emit Java-compatible packets from the aggregate password-action outcome stream while profile updates remain packet-silent.
+  - Added Rust player password-action effect planning so successful login follow-up work, including duplicate-session closes and last-login persistence effects, can be extracted from aggregate password-action outcomes.
+  - Added Rust MySQL password-action persistence planning so aggregate password-action outcomes can produce last-login SQL updates through the existing player-effect query boundary.
+  - Added a Rust player password-action report that carries aggregate password outcomes together with derived network effects and player follow-up effects for runtime application.
+  - Added a Rust MySQL player password-action report that combines the player-layer password-action report with derived SQL persistence plans for database-backed runtime application.
+  - Added a Rust MySQL player password-action executor that runs report persistence plans through the shared SQL batch executor and validates database result kinds.
+  - Added a Rust MySQL player password-action execution report so database-backed password handling can retain the original runtime report alongside the validated SQL batch result.
+  - Added Rust password-action runtime planning and application so login/register packets plus duplicate-session close effects are applied through the same startup network boundary as tick runtime effects.
+  - Split password-action runtime application into a focused Rust runtime module so login/register packet and duplicate-session close delivery stays isolated from the main runtime coordinator.
+  - Aligned empty-body `SEARCHBUSYFLATS` handling with Java's empty popular-room result fallback instead of dropping the response.
+  - Aligned wall-item placement with Java's inventory item custom-data suffix stripping before persisting the wall position.
+  - Added Rust room-mapping support for Java's rotation-only item adjustment, rotating same-tile stacked items at or above the moved item's height.
+  - Aligned wall and floor item placement with Java's `DIR` data-class behavior by writing the placed item's rotation into custom data.
+  - Aligned item data updates with Java's item-definition data-class normalization, including transient non-persisted `DOOROPEN` runtime updates.
+  - Added Rust item-command network planning for Java-compatible `STUFFDATAUPDATE` broadcasts from persisted and transient item data updates.
+  - Added Rust item-command network planning for Java-compatible room item removal broadcasts across floor and wall items.
+  - Added Rust item-command network planning for Java-compatible room item placement and movement broadcasts across floor and wall items.
+  - Aligned Rust room-item movement with Java's `DIR` update behavior by accepting a runtime-sampled rotation and persisting it as custom data.
+  - Added Rust MySQL item-command planning for Java-compatible room item movement persistence, including cleared or `DIR` custom data plus position and rotation updates.
+  - Added Rust MySQL item-command read planning for item-loading effects such as room movement, removal, stuff-data updates, strip-item use, and inventory placement.
+  - Added Rust MySQL item-command mutation planning from moved floor-item domain state so Java-compatible movement executor output can be persisted without rebuilding SQL parameters manually.
+  - Added Rust MySQL item-command result mapping from loaded item rows plus `MOVESTUFF` effects into Java-compatible movement mutation plans, including `DIR` custom-data rotation.
+  - Added Rust MySQL item-command result mapping from loaded post-it rows plus `SETSTRIPITEMDATA` effects into Java-compatible amount decrement or deletion plans.
+  - Added Rust MySQL item-command result mapping from loaded item rows plus `SETSTUFFDATA` effects into Java-compatible normalized persistence plans while skipping transient `DOOROPEN` and ignored data classes.
+  - Added Rust MySQL item-command result mapping from loaded `REMOVEITEM`/`REMOVESTUFF` item rows into Java-compatible deletion plans.
+  - Added Rust MySQL item-command result mapping from loaded `ADDSTRIPITEM` item rows into Java-compatible floor and wall inventory-return plans.
+  - Added Rust item-command execution for Java-compatible `ADDSTRIPITEM` inventory returns, including owner-right checks, floor item `(-1, -1)` positioning, wall item room clearing, room-removal broadcasts, and `last` inventory refresh planning.
+  - Added Rust item incoming planning so item mutation effects route through the item DAO-backed command executor with explicit room, inventory-owner, rights, and sampled movement-rotation context.
+  - Added Rust MySQL item-command result mapping from loaded inventory item rows into Java-compatible wall and floor placement plans, including wall custom-data suffix stripping and `DIR` rotation custom data.
+  - Split Rust MySQL item placement and movement mapping into a focused mapper module so loaded-item placement normalization is separated from the broader item-command result dispatcher.
+  - Split Rust MySQL item data command mapping into a focused mapper module so post-it use, `SETITEMDATA`, and `SETSTUFFDATA` persistence stay separate from remove/return result dispatching.
+  - Split Rust MySQL item-command result mapper tests into a focused Rust test module so the mapper source stays limited to result-to-plan delegation and remove/return mapping.
+  - Split Rust MySQL item-command result mapper no-op tests into a focused Rust test module so ignored and missing-result coverage stays separate from positive mutation-plan mapping.
+  - Split Rust MySQL item-command result mapper placement tests into a focused Rust test module so wall and floor inventory placement coverage stays separate from movement, data, remove, and return mapping coverage.
+  - Aligned Rust MySQL `SETITEMDATA` planning with Java by loading the current item row and applying the existing custom-data prefix guard before producing an extra-data update.
+  - Added Rust MySQL decoration-command result mapping for Java-compatible `FLATPROPERTYBYITEM`, validating loaded decoration items, deleting the consumed inventory item, and updating room wallpaper or floor data.
+  - Added Rust room decoration incoming planning so `FLATPROPERTYBYITEM` effects validate and consume decoration items, update room wallpaper or floor state through DAOs, and return decoration outcomes for packet planning.
+  - Added Rust room decoration outcome and network planning that map applied wallpaper and floor updates into Java-compatible `FLATPROPERTY` packets while preserving ignored no-packet cases.
+  - Added Rust inventory-command network planning so refreshed inventory executions map into Java-compatible `STRIPINFO` packets for the requesting connection while empty refreshes stay silent.
+  - Added Rust inventory incoming planning so `RefreshInventory` effects execute through the inventory DAO and produce focused `STRIPINFO` command outcomes before network packet planning.
+  - Added a Rust startup runtime status outcome for ready and bind-failed startup states, including bound address reporting and active connection counts for bounded runtime execution.
+  - Ported Java server listen setup into a Rust-native listen plan for worker-pool creation, encoder/decoder/handler pipeline ordering, and per-port bind address effects.
+  - Added a Rust server socket binder boundary and listen-effect executor that applies worker-pool, pipeline, and bind effects while preserving Java-compatible first-bind-failure behavior.
+  - Added a standard-library TCP socket binder that retains bound listeners for the server runtime and plugs into the listen-effect executor.
+  - Added Rust server listen outcome modeling for all configured bind addresses, preserving Java-compatible single startup success/failure reporting while retaining the failed bind address for execution-layer diagnostics.
+  - Ported server handler state for ports, bind IP, extra data, and connection open/close session lifecycle.
+- Added focused Rust tests for the ported protocol, config, settings-adjacent utility behavior, outgoing composers, and initial incoming handlers.
 
 ## Verification
 
-- Pending after this edit: run `cargo test`.
-- Pending after this edit: run a source scan for the forbidden Rust keyword.
+- `cargo fmt --check` passes.
+- `cargo test` passes: 1132 unit tests and 0 doctests.
+- Source scan for the forbidden Rust keyword passes across `Cargo.toml`, `src/`, and this progress file.
 
 ## Remaining Porting Work
 
-- Server bootstrap and runtime lifecycle (`Roseau`, logging, scheduler).
-- TCP server implementation and connection/session management.
-- DAO layer and database persistence.
-- Game domain managers and entities.
-- Room model, mapping, pathfinding, schedulers, and interactors.
-- Incoming message handlers.
-- Outgoing message composers.
-- Test stubs and compatibility tests against Java behavior.
+- Continue splitting large Rust modules into focused sibling files where production logic, tests, or multiple responsibilities still share one source file.
+- Expand end-to-end runtime coverage around live TCP startup, database-backed DAO facades, and full incoming-command flows across game, persistence, scheduler, and network boundaries.
+- Audit Java parity for edge cases that are currently covered by focused unit tests but not yet by broad scenario tests.
+- Remove or archive Java/Gradle build once equivalent Rust coverage exists and the Rust runtime has been validated as the replacement.
 - Remove or archive Java/Gradle build once equivalent Rust coverage exists.

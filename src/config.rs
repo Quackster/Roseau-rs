@@ -57,10 +57,11 @@ impl Config {
     }
 
     pub fn required(&self, section: &str, key: &str) -> Result<&str, ConfigError> {
-        self.get(section, key).ok_or_else(|| ConfigError::MissingKey {
-            section: section.to_owned(),
-            key: key.to_owned(),
-        })
+        self.get(section, key)
+            .ok_or_else(|| ConfigError::MissingKey {
+                section: section.to_owned(),
+                key: key.to_owned(),
+            })
     }
 
     pub fn parse_value<T>(&self, section: &str, key: &str) -> Result<T, ConfigError>
@@ -69,12 +70,14 @@ impl Config {
         T::Err: Display,
     {
         let value = self.required(section, key)?;
-        value.parse::<T>().map_err(|error| ConfigError::InvalidValue {
-            section: section.to_owned(),
-            key: key.to_owned(),
-            value: value.to_owned(),
-            error: error.to_string(),
-        })
+        value
+            .parse::<T>()
+            .map_err(|error| ConfigError::InvalidValue {
+                section: section.to_owned(),
+                key: key.to_owned(),
+                value: value.to_owned(),
+                error: error.to_string(),
+            })
     }
 
     pub fn get_bool(&self, section: &str, key: &str) -> Result<bool, ConfigError> {
@@ -153,7 +156,10 @@ mod tests {
         .unwrap();
 
         assert_eq!(config.get("Server", "server.ip"), Some("127.0.0.1"));
-        assert_eq!(config.parse_value::<u16>("Server", "server.port").unwrap(), 37120);
+        assert_eq!(
+            config.parse_value::<u16>("Server", "server.port").unwrap(),
+            37120
+        );
         assert!(config.get_bool("Logging", "log.packets").unwrap());
     }
 

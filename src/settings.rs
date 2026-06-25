@@ -3,6 +3,12 @@ use std::sync::atomic::{AtomicI32, Ordering};
 pub const CHAT_FLOOD_SECONDS: i32 = 4;
 pub const CHAT_FLOOD_WAIT: i32 = 10;
 pub const MAX_CHAT_BEFORE_FLOOD: i32 = 4;
+pub const BOT_RESPONSE_DELAY_MS: i32 = 2500;
+pub const CARRY_DRINK_INTERVAL_TICKS: i64 = 10;
+pub const CARRY_DRINK_DURATION_TICKS: i64 = 60;
+pub const TALK_LOOK_RESET_TICKS: i64 = 10;
+pub const TALK_DISTANCE: i32 = 3;
+pub const DEFAULT_AFK_ROOM_KICK_TICKS: i32 = 120;
 
 pub const MAX_ROOMS_PER_ACCOUNT: i32 = 40;
 
@@ -13,6 +19,7 @@ pub const MAX_ROLLERS_PER_ROOM: i32 = 35;
 pub const MAX_USER_INROOM: i32 = 200;
 pub const MAX_FAVORITES_ROOMS: i32 = 30;
 pub const MAX_INVENTORY_ITEMS_COUNT: i32 = 1450;
+pub const MAX_ITEMS_PER_PAGE: usize = 9;
 pub const MAX_DISCOUNT_VALUE: i32 = 50;
 pub const MAX_FRIENDS_DEFAULT: i32 = 300;
 pub const MAX_FRIENDS_BASIC: i32 = 800;

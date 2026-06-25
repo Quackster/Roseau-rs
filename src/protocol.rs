@@ -19,7 +19,8 @@ impl NettyRequest {
             return Err(DecodeError::FrameTooShort);
         }
 
-        let length_text = std::str::from_utf8(&frame[..4]).map_err(|_| DecodeError::InvalidLength)?;
+        let length_text =
+            std::str::from_utf8(&frame[..4]).map_err(|_| DecodeError::InvalidLength)?;
         let length = length_text
             .trim()
             .parse::<usize>()
@@ -75,7 +76,11 @@ impl ClientMessage for NettyRequest {
     }
 
     fn get_argument_amount_with(&self, delimiter: &str) -> usize {
-        split_arguments(&self.content, delimiter).count()
+        if delimiter.is_empty() {
+            1
+        } else {
+            self.content.split(delimiter).count()
+        }
     }
 
     fn get_argument(&self, index: usize) -> Option<&str> {
@@ -83,18 +88,11 @@ impl ClientMessage for NettyRequest {
     }
 
     fn get_argument_with(&self, index: usize, delimiter: &str) -> Option<&str> {
-        split_arguments(&self.content, delimiter).nth(index)
-    }
-}
-
-fn split_arguments<'a>(
-    content: &'a str,
-    delimiter: &'a str,
-) -> Box<dyn Iterator<Item = &'a str> + 'a> {
-    if delimiter.is_empty() {
-        Box::new(std::iter::once(content))
-    } else {
-        Box::new(content.split(delimiter))
+        if delimiter.is_empty() {
+            (index == 0).then_some(self.content.as_str())
+        } else {
+            self.content.split(delimiter).nth(index)
+        }
     }
 }
 
@@ -111,7 +109,10 @@ impl Display for DecodeError {
             Self::FrameTooShort => write!(f, "frame is shorter than the 4-byte length prefix"),
             Self::InvalidLength => write!(f, "frame length prefix is not a valid integer"),
             Self::IncompleteFrame { expected, actual } => {
-                write!(f, "frame body is incomplete: expected {expected} bytes, got {actual}")
+                write!(
+                    f,
+                    "frame body is incomplete: expected {expected} bytes, got {actual}"
+                )
             }
         }
     }
@@ -272,7 +273,7 @@ mod tests {
 
     #[test]
     fn decode_frame_reads_decimal_length_and_latin1_body() {
-        let request = NettyRequest::decode_frame(b"0011TALK caf\xe9").unwrap();
+        let request = NettyRequest::decode_frame(b"0009TALK caf\xe9").unwrap();
 
         assert_eq!(request.get_header(), "TALK");
         assert_eq!(request.content(), "café");
@@ -286,9 +287,15 @@ mod tests {
         response.append_kv_argument("key", "value");
         response.append_object(&ExampleObject);
 
-        assert_eq!(response.get(), "#CHAT hello*world\rline\rkey=value object##");
+        assert_eq!(
+            response.get(),
+            "#CHAT hello*world\rline\rkey=value object##"
+        );
         assert!(response.is_finalised());
-        assert_eq!(response.get(), "#CHAT hello*world\rline\rkey=value object##");
+        assert_eq!(
+            response.get(),
+            "#CHAT hello*world\rline\rkey=value object##"
+        );
     }
 
     #[test]
