@@ -76,7 +76,7 @@ fn runs_bounded_ticks_until_limit_when_server_continues() {
     executor.push_result(SqlExecutionResult::affected_rows(1));
     let tick_executor = MySqlApplicationTickExecutor::new(executor);
     let mut afk_states = Vec::new();
-    let runner = RoseauApplicationLoopRunner::new(2);
+    let runner = RoseauApplicationLoopRunner::bounded(2);
 
     let report = runner
         .run(

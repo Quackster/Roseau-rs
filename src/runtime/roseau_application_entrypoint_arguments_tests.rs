@@ -15,7 +15,7 @@ fn routes_valid_arguments_to_run_settings() {
     let parsed = RoseauApplicationEntrypointArguments::parse([
         "--main-config".to_owned(),
         "custom.properties".to_owned(),
-        "--max-ticks".to_owned(),
+        "--first-connection-id".to_owned(),
         "3".to_owned(),
     ]);
 
@@ -23,7 +23,7 @@ fn routes_valid_arguments_to_run_settings() {
         panic!("expected run settings");
     };
     assert_eq!(settings.main_config_path(), Path::new("custom.properties"));
-    assert_eq!(settings.max_ticks(), 3);
+    assert_eq!(settings.first_connection_id(), 3);
 }
 
 #[test]

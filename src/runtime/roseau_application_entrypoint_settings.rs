@@ -8,7 +8,6 @@ use crate::runtime::{
 pub struct RoseauApplicationEntrypointSettings {
     main_config_path: PathBuf,
     hotel_config_path: PathBuf,
-    max_ticks: usize,
     first_connection_id: i32,
     listener_index: usize,
     accept_connection: bool,
@@ -23,7 +22,6 @@ impl RoseauApplicationEntrypointSettings {
         Self {
             main_config_path: main_config_path.into(),
             hotel_config_path: hotel_config_path.into(),
-            max_ticks: 1,
             first_connection_id: 1,
             listener_index: 0,
             accept_connection: true,
@@ -37,10 +35,6 @@ impl RoseauApplicationEntrypointSettings {
 
     pub fn hotel_config_path(&self) -> &Path {
         &self.hotel_config_path
-    }
-
-    pub fn max_ticks(&self) -> usize {
-        self.max_ticks
     }
 
     pub fn first_connection_id(&self) -> i32 {
@@ -57,11 +51,6 @@ impl RoseauApplicationEntrypointSettings {
 
     pub fn max_bytes(&self) -> usize {
         self.max_bytes
-    }
-
-    pub fn with_max_ticks(mut self, max_ticks: usize) -> Self {
-        self.max_ticks = max_ticks;
-        self
     }
 
     pub fn with_first_connection_id(mut self, first_connection_id: i32) -> Self {
@@ -98,9 +87,6 @@ impl RoseauApplicationEntrypointSettings {
                 "--hotel-config" => {
                     settings.hotel_config_path = required_arg(&mut args, "--hotel-config")?.into();
                 }
-                "--max-ticks" => {
-                    settings.max_ticks = parse_arg(&mut args, "--max-ticks")?;
-                }
                 "--first-connection-id" => {
                     settings.first_connection_id = parse_arg(&mut args, "--first-connection-id")?;
                 }
@@ -135,7 +121,7 @@ impl RoseauApplicationEntrypointSettings {
     }
 
     pub fn loop_runner(&self) -> RoseauApplicationLoopRunner {
-        RoseauApplicationLoopRunner::new(self.max_ticks)
+        RoseauApplicationLoopRunner::new()
     }
 }
 

@@ -99,7 +99,7 @@ fn skips_loop_when_database_connection_fails() {
     let binder = StdTcpSocketBinder::new();
     let tick_executor = MySqlApplicationTickExecutor::new(RecordingExecutor::default());
     let mut afk_states = Vec::new();
-    let runner = RoseauApplicationEntrypointRunner::new(RoseauApplicationLoopRunner::new(1));
+    let runner = RoseauApplicationEntrypointRunner::new(RoseauApplicationLoopRunner::bounded(1));
 
     let report = runner
         .run(
@@ -134,7 +134,7 @@ fn prepares_and_runs_loop_after_database_connection() {
     executor.push_result(SqlExecutionResult::affected_rows(1));
     let tick_executor = MySqlApplicationTickExecutor::new(executor);
     let mut afk_states = Vec::new();
-    let runner = RoseauApplicationEntrypointRunner::new(RoseauApplicationLoopRunner::new(1));
+    let runner = RoseauApplicationEntrypointRunner::new(RoseauApplicationLoopRunner::bounded(1));
 
     let report = runner
         .run(

@@ -2,7 +2,7 @@
 
 Rust port of Roseau, a Habbo Hotel v1 server for the 2001 client revision.
 
-The repository contains the Rust server implementation, runtime, protocol handling, MySQL persistence layer, and seed database dump. It is managed as a Rust project with Cargo.
+The project contains the Rust server runtime, protocol handling, game domain code, MySQL persistence layer, and the Roseau seed database.
 
 ## Status
 
@@ -11,12 +11,12 @@ The Rust server can:
 - decode and encode the v1 wire protocol;
 - compose outgoing packets for the original client;
 - dispatch incoming commands through typed Rust handlers;
-- run bounded TCP listener ticks using the standard library;
 - connect to MariaDB/MySQL through the `mysql` crate;
 - load the seeded Roseau schema from `tools/roseau.sql`;
-- start locally, bind `127.0.0.1:37120`, accept a TCP client, and send `#HELLO##`.
+- bind the main hotel port, private room port, and every visible public room port;
+- run indefinitely from `cargo run`.
 
-The port is still being hardened. See [PORT_PROGRESS.md](PORT_PROGRESS.md) for the detailed migration log, verification notes, and remaining work.
+The public room ports follow the original Java Roseau behavior: the server listens on `server.port + room_id` for each enabled, non-hidden public room returned by the database.
 
 ## Requirements
 
@@ -29,7 +29,7 @@ The port is still being hardened. See [PORT_PROGRESS.md](PORT_PROGRESS.md) for t
 - `src/` - Rust server, game domain, protocol, runtime, DAO, and TCP code
 - `tools/roseau.sql` - schema and seed data for the Roseau database
 - `tools/dcr0910.zip` - client asset archive retained for local testing
-- `PORT_PROGRESS.md` - porting status and remaining validation work
+- `PORT_PROGRESS.md` - porting status and validation notes
 - `Cargo.toml` / `Cargo.lock` - Rust package metadata and locked dependencies
 
 ## Database Setup
@@ -42,7 +42,7 @@ mysql -h127.0.0.1 -P3306 -uroot -p -e \
 mysql -h127.0.0.1 -P3306 -uroot -p roseau < tools/roseau.sql
 ```
 
-Create a local `roseau.properties` if one does not already exist. The binary can generate defaults, but for the Rust server handler the important values are:
+Create a local `roseau.properties` if one does not already exist:
 
 ```ini
 [Server]
@@ -67,7 +67,7 @@ log.connections=true
 log.packets=true
 ```
 
-`roseau.properties`, `habbohotel.properties`, and runtime logs are local files and are ignored by git.
+The binary creates default `roseau.properties` and `habbohotel.properties` if they are missing. Local config files and runtime logs are ignored by git.
 
 ## Build And Test
 
@@ -79,19 +79,22 @@ cargo test
 
 ## Run
 
-Run one bounded server tick without accepting a client:
+Start the server:
 
 ```sh
-cargo run -- --max-ticks 1 --no-accept-connection
+cargo run
 ```
 
-Run a longer bounded loop that can accept a local client:
+On startup, the server validates database connectivity, queries public room IDs, binds all configured listener ports, prints startup logs, then continues running until the process is stopped.
+
+Useful options:
 
 ```sh
-cargo run -- --max-ticks 1000000 --accept-connection
+cargo run -- --main-config roseau.properties --hotel-config habbohotel.properties
+cargo run -- --no-accept-connection
 ```
 
-A basic TCP smoke test should receive:
+A basic TCP smoke test against a bound listener should receive:
 
 ```text
 #HELLO##
@@ -99,6 +102,7 @@ A basic TCP smoke test should receive:
 
 ## Notes
 
-- The binary validates database connectivity before listener startup.
-- The runtime loop is bounded through CLI options while the port is being validated.
+- Main hotel listener: `server.port`.
+- Private room listener: `server.private.port`.
+- Public room listeners: `server.port + room_id` for every enabled, visible public room.
 - Broader live-flow testing is still needed for login, room entry, inventory, catalogue, messenger, moderation, and disconnect behavior.

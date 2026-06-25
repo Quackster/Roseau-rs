@@ -9,12 +9,11 @@ fn defaults_match_rust_entrypoint_startup_parameters() {
         settings.hotel_config_path(),
         Path::new("habbohotel.properties")
     );
-    assert_eq!(settings.max_ticks(), 1);
     assert_eq!(settings.first_connection_id(), 1);
     assert_eq!(settings.listener_index(), 0);
     assert!(settings.accept_connection());
     assert_eq!(settings.max_bytes(), 4096);
-    assert_eq!(settings.loop_runner().max_ticks(), 1);
+    assert_eq!(settings.loop_runner().max_ticks(), None);
     assert_eq!(
         settings.bootstrap().main_config_path(),
         Path::new("roseau.properties")
@@ -28,8 +27,6 @@ fn parses_supported_entrypoint_arguments() {
         "custom.properties".to_owned(),
         "--hotel-config".to_owned(),
         "hotel.properties".to_owned(),
-        "--max-ticks".to_owned(),
-        "5".to_owned(),
         "--first-connection-id".to_owned(),
         "10".to_owned(),
         "--listener-index".to_owned(),
@@ -42,7 +39,6 @@ fn parses_supported_entrypoint_arguments() {
 
     assert_eq!(settings.main_config_path(), Path::new("custom.properties"));
     assert_eq!(settings.hotel_config_path(), Path::new("hotel.properties"));
-    assert_eq!(settings.max_ticks(), 5);
     assert_eq!(settings.first_connection_id(), 10);
     assert_eq!(settings.listener_index(), 2);
     assert!(!settings.accept_connection());
@@ -58,12 +54,9 @@ fn rejects_unknown_or_invalid_entrypoint_arguments() {
         "unknown argument --bad"
     );
     assert_eq!(
-        RoseauApplicationEntrypointSettings::from_args([
-            "--max-ticks".to_owned(),
-            "many".to_owned()
-        ])
-        .unwrap_err()
-        .message(),
-        "invalid value for --max-ticks"
+        RoseauApplicationEntrypointSettings::from_args(["--max-ticks".to_owned()])
+            .unwrap_err()
+            .message(),
+        "unknown argument --max-ticks"
     );
 }

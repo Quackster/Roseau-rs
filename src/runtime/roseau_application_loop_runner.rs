@@ -6,15 +6,21 @@ use crate::server::ServerSocketBinder;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RoseauApplicationLoopRunner {
-    max_ticks: usize,
+    max_ticks: Option<usize>,
 }
 
 impl RoseauApplicationLoopRunner {
-    pub fn new(max_ticks: usize) -> Self {
-        Self { max_ticks }
+    pub fn new() -> Self {
+        Self { max_ticks: None }
     }
 
-    pub fn max_ticks(&self) -> usize {
+    pub fn bounded(max_ticks: usize) -> Self {
+        Self {
+            max_ticks: Some(max_ticks),
+        }
+    }
+
+    pub fn max_ticks(&self) -> Option<usize> {
         self.max_ticks
     }
 
@@ -33,7 +39,14 @@ impl RoseauApplicationLoopRunner {
         let mut tick_reports = Vec::new();
         let mut stopped = false;
 
-        for _ in 0..self.max_ticks {
+        loop {
+            if self
+                .max_ticks
+                .is_some_and(|max_ticks| tick_reports.len() >= max_ticks)
+            {
+                break;
+            }
+
             let report = application.run_tick_and_apply_runtime_plans(
                 tick_executor,
                 resolver,

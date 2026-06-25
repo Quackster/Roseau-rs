@@ -1,10 +1,12 @@
 use roseau::dao::mysql::{
-    MySqlApplicationTickExecutor, MySqlDriver, MySqlStorageConnector, Storage, StorageSqlExecutor,
+    MySqlApplicationTickExecutor, MySqlDaoEffect, MySqlDriver, MySqlRoomDao, MySqlStorageConnector,
+    Storage, StorageSqlExecutor,
 };
-use roseau::{
-    RoseauApplicationEntrypointArguments, RoseauApplicationEntrypointRunner,
-    RoseauApplicationEntrypointUsage, StdHostResolver, StdTcpSocketBinder,
-};
+use roseau::dao::RoomDao;
+use roseau::runtime::RoseauApplicationRuntime;
+use roseau::{RoseauApplicationEntrypointArguments, RoseauApplicationEntrypointUsage};
+use roseau::{StdHostResolver, StdTcpSocketBinder};
+use std::collections::HashMap;
 
 fn main() {
     let settings = match RoseauApplicationEntrypointArguments::parse(std::env::args().skip(1)) {
@@ -45,36 +47,85 @@ fn main() {
         }
     };
     let connector = MySqlStorageConnector::with_driver(driver.clone());
+    let room_dao = MySqlRoomDao::new(
+        StorageSqlExecutor::new(driver.clone()),
+        "",
+        HashMap::new(),
+        0,
+    );
+    let public_room_ids = match room_dao.public_room_ids() {
+        Ok(public_room_ids) => public_room_ids,
+        Err(error) => {
+            eprintln!("{error:?}");
+            return;
+        }
+    };
     let tick_executor = MySqlApplicationTickExecutor::new(StorageSqlExecutor::new(driver));
     let resolver = StdHostResolver::new();
-    let runner = RoseauApplicationEntrypointRunner::new(settings.loop_runner());
     let mut room_afk_states = Vec::new();
 
-    match runner.run(
+    let prepare_report = match RoseauApplicationRuntime::prepare_with_database_connector(
         &bootstrap,
         &binder,
         &connector,
-        &tick_executor,
-        &resolver,
-        [],
+        public_room_ids,
         settings.first_connection_id(),
         None,
+    ) {
+        Ok(report) => report,
+        Err(error) => {
+            eprintln!("{error:?}");
+            return;
+        }
+    };
+
+    let mut log_lines = prepare_report
+        .database_report()
+        .effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            MySqlDaoEffect::LogLine(line) => Some(line.clone()),
+            MySqlDaoEffect::ConnectStorage
+            | MySqlDaoEffect::ConstructPlayerDao
+            | MySqlDaoEffect::ConstructRoomDao
+            | MySqlDaoEffect::ConstructItemDao
+            | MySqlDaoEffect::ConstructCatalogueDao
+            | MySqlDaoEffect::ConstructInventoryDao
+            | MySqlDaoEffect::ConstructNavigatorDao
+            | MySqlDaoEffect::ConstructMessengerDao => None,
+        })
+        .collect::<Vec<_>>();
+    if let Some(application_runtime) = prepare_report.application_runtime() {
+        log_lines.extend(application_runtime.startup_log_lines().iter().cloned());
+    }
+    for line in &log_lines {
+        println!("{line}");
+        if let Err(error) = prepare_report.logger().write_output_line(line) {
+            eprintln!("{error:?}");
+        }
+    }
+
+    if !prepare_report.ready() {
+        return;
+    }
+
+    let mut application = prepare_report
+        .into_application_runtime()
+        .expect("ready prepare report has runtime");
+    let main_server_players = Vec::<(i32, i32)>::new();
+    let loop_runner = settings.loop_runner();
+
+    if let Err(error) = loop_runner.run(
+        &mut application,
+        &tick_executor,
+        &resolver,
+        &binder,
         settings.listener_index(),
         settings.accept_connection(),
         settings.max_bytes(),
-        &[],
+        &main_server_players,
         &mut room_afk_states,
     ) {
-        Ok(report) => {
-            for line in report.log_lines() {
-                println!("{line}");
-            }
-            if let Err(error) = report.write_output_logs() {
-                eprintln!("{error:?}");
-            }
-        }
-        Err(error) => {
-            eprintln!("{error:?}");
-        }
+        eprintln!("{error:?}");
     }
 }
