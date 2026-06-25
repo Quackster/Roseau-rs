@@ -49,3 +49,7 @@ impl<E: SqlExecutor> MySqlPlayerPasswordActionExecutor<E> {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_player_password_action_executor_tests.rs"]
+mod tests;

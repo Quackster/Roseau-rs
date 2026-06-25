@@ -55,3 +55,7 @@ impl RoomEffectRuntimeSchedulerPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_effect_runtime_scheduler_plan_tests.rs"]
+mod tests;

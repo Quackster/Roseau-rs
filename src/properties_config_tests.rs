@@ -1,6 +1,6 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use super::properties_config::*;
+use super::*;
 
 fn temp_file(name: &str) -> PathBuf {
     let nonce = SystemTime::now()

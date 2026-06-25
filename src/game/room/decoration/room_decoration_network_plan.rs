@@ -29,3 +29,7 @@ impl RoomDecorationNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_decoration_network_plan_tests.rs"]
+mod tests;

@@ -1,4 +1,5 @@
-use super::config::*;
+use super::*;
+use super::*;
 
 #[test]
 fn parses_ini_sections_and_typed_values() {

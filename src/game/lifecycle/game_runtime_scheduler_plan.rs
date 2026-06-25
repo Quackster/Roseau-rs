@@ -82,3 +82,7 @@ impl Default for GameRuntimeSchedulerPlan {
         Self::java_default()
     }
 }
+
+#[cfg(test)]
+#[path = "game_runtime_scheduler_plan_tests.rs"]
+mod tests;

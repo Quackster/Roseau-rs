@@ -33,3 +33,7 @@ impl RoomLeaveRoomExecutor {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_leave_room_executor_tests.rs"]
+mod tests;

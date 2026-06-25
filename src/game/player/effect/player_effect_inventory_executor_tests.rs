@@ -1,4 +1,4 @@
-use super::player_effect_inventory_executor::*;
+use super::*;
 use crate::game::item::{Item, ItemDefinition};
 use crate::game::player::PlayerDetails;
 use crate::messages::outgoing::SystemBroadcast;

@@ -29,3 +29,7 @@ impl IncomingEvent for Talk {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "talk_tests.rs"]
+mod tests;

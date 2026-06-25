@@ -122,3 +122,7 @@ where
         value.map(Into::into).unwrap_or(Self::Null)
     }
 }
+
+#[cfg(test)]
+#[path = "sql_parameter_tests.rs"]
+mod tests;

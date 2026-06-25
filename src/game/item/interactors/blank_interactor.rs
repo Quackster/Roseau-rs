@@ -21,3 +21,7 @@ impl Interaction for BlankInteractor {
         ]
     }
 }
+
+#[cfg(test)]
+#[path = "blank_interactor_tests.rs"]
+mod tests;

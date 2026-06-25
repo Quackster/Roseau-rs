@@ -99,3 +99,7 @@ impl GameVariables {
         self.afk_room_kick
     }
 }
+
+#[cfg(test)]
+#[path = "game_variables_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::moderation_effect_network_plan::*;
+use super::*;
 use crate::game::moderation::CallForHelp;
 
 #[test]

@@ -1,4 +1,4 @@
-use super::system_broadcast::*;
+use super::*;
 
 #[test]
 fn composes_system_broadcast_packet() {

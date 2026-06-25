@@ -1,4 +1,4 @@
-use super::door_flat::*;
+use super::*;
 
 #[test]
 fn composes_door_flat_packet() {

@@ -36,3 +36,7 @@ impl RoomConnection {
         self.door
     }
 }
+
+#[cfg(test)]
+#[path = "room_connection_tests.rs"]
+mod tests;

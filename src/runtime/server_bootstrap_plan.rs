@@ -96,3 +96,7 @@ impl ServerBootstrapPlan {
         self.listen_status(outcome.listened(), resolved_config_ip)
     }
 }
+
+#[cfg(test)]
+#[path = "server_bootstrap_plan_tests.rs"]
+mod tests;

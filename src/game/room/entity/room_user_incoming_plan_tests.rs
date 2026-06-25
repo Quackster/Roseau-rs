@@ -1,4 +1,4 @@
-use super::room_user_incoming_plan::*;
+use super::*;
 use crate::game::commands::CommandEffect;
 use crate::game::room::model::Position;
 

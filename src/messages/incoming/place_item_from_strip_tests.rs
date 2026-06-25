@@ -1,4 +1,4 @@
-use super::place_item_from_strip::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

@@ -1,4 +1,4 @@
-use super::player_password_action_outcome::*;
+use super::*;
 
 #[test]
 fn exposes_typed_outcome_accessors() {

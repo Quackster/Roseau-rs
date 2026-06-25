@@ -20,3 +20,7 @@ impl RoomEffectManagerExecutor {
             .count()
     }
 }
+
+#[cfg(test)]
+#[path = "room_effect_manager_executor_tests.rs"]
+mod tests;

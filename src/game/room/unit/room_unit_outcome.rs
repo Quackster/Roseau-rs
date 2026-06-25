@@ -68,3 +68,7 @@ fn public_unit(room: &RoomSummary, base_port: i32) -> PublicUnit {
 fn users_now(player_count: usize) -> i32 {
     i32::try_from(player_count).unwrap_or(i32::MAX)
 }
+
+#[cfg(test)]
+#[path = "room_unit_outcome_tests.rs"]
+mod tests;

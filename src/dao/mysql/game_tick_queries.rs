@@ -22,3 +22,7 @@ impl GameTickQueries {
         PlayerQueries::update_credits(user_id, new_balance).execute_plan()
     }
 }
+
+#[cfg(test)]
+#[path = "game_tick_queries_tests.rs"]
+mod tests;

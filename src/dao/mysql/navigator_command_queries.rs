@@ -14,3 +14,7 @@ impl NavigatorCommandQueries {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "navigator_command_queries_tests.rs"]
+mod tests;

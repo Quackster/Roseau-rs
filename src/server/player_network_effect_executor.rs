@@ -40,3 +40,7 @@ impl PlayerNetworkEffectExecutor {
         &self.skipped_effects
     }
 }
+
+#[cfg(test)]
+#[path = "player_network_effect_executor_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::chat_utility::*;
+use super::*;
 
 #[test]
 fn detects_classic_emotes_case_insensitively() {

@@ -1,4 +1,4 @@
-use super::door_in::*;
+use super::*;
 
 #[test]
 fn composes_door_in_packet() {

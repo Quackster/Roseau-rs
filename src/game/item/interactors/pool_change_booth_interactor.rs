@@ -56,3 +56,7 @@ impl Interaction for PoolChangeBoothInteractor {
         effects
     }
 }
+
+#[cfg(test)]
+#[path = "pool_change_booth_interactor_tests.rs"]
+mod tests;

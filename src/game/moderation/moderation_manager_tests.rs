@@ -1,4 +1,4 @@
-use super::moderation_manager::*;
+use super::*;
 
 #[test]
 fn builds_call_for_help_effects_for_moderators() {

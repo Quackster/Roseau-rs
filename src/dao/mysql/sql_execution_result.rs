@@ -103,3 +103,7 @@ fn result_kind_error(actual: &'static str, expected: &'static str) -> DaoError {
         "SQL execution result contains {actual}, expected {expected}"
     ))
 }
+
+#[cfg(test)]
+#[path = "sql_execution_result_tests.rs"]
+mod tests;

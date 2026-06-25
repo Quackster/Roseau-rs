@@ -13,3 +13,7 @@ impl IncomingEvent for VersionCheck {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "version_check_tests.rs"]
+mod tests;

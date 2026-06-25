@@ -21,3 +21,7 @@ impl IncomingEvent for Move {
         context.record(IncomingCommand::WalkTo { x, y });
     }
 }
+
+#[cfg(test)]
+#[path = "move_event_tests.rs"]
+mod tests;

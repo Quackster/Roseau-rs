@@ -35,3 +35,7 @@ impl OutgoingMessage for StuffDataUpdate {
         response.append_part_argument(&self.custom_data);
     }
 }
+
+#[cfg(test)]
+#[path = "stuff_data_update_tests.rs"]
+mod tests;

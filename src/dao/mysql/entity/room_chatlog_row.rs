@@ -46,3 +46,7 @@ impl TryFrom<&SqlRow> for RoomChatlogRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "room_chatlog_row_tests.rs"]
+mod tests;

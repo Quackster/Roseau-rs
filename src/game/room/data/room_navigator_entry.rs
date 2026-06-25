@@ -73,3 +73,7 @@ impl SerializableObject for RoomNavigatorEntry {
         response.append_part_argument(self.data.description());
     }
 }
+
+#[cfg(test)]
+#[path = "room_navigator_entry_tests.rs"]
+mod tests;

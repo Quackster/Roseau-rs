@@ -27,3 +27,7 @@ impl IncomingEvent for FlatPropertyByItem {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "flat_property_by_item_tests.rs"]
+mod tests;

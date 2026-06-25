@@ -1,4 +1,4 @@
-use super::chair_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn chair() -> Item {

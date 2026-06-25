@@ -37,3 +37,7 @@ impl CataloguePurchaseNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_purchase_network_plan_tests.rs"]
+mod tests;

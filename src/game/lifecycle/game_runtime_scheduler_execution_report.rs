@@ -82,3 +82,7 @@ impl Default for GameRuntimeSchedulerExecutionReport {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "game_runtime_scheduler_execution_report_tests.rs"]
+mod tests;

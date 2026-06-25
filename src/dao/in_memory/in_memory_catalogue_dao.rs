@@ -41,3 +41,7 @@ impl CatalogueDao for InMemoryCatalogueDao {
         Ok(self.item_deals.borrow().clone())
     }
 }
+
+#[cfg(test)]
+#[path = "in_memory_catalogue_dao_tests.rs"]
+mod tests;

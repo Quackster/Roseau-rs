@@ -1,4 +1,4 @@
-use super::pool_change_booth_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn booth() -> Item {

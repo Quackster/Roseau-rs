@@ -1,4 +1,4 @@
-use super::sit_command::*;
+use super::*;
 use crate::game::commands::RoomUserCommandState;
 
 #[test]

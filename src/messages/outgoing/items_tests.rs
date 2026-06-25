@@ -1,4 +1,4 @@
-use super::items::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct WallItem(&'static str);

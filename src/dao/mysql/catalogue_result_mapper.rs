@@ -36,3 +36,7 @@ impl CatalogueResultMapper {
             .collect())
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_result_mapper_tests.rs"]
+mod tests;

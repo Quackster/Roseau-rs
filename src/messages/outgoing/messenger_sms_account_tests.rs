@@ -1,4 +1,4 @@
-use super::messenger_sms_account::*;
+use super::*;
 
 #[test]
 fn composes_messenger_sms_account_packet() {

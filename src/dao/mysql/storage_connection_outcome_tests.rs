@@ -1,4 +1,4 @@
-use super::storage_connection_outcome::*;
+use super::*;
 
 #[test]
 fn maps_connector_results_to_connection_state() {

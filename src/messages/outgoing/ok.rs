@@ -9,3 +9,7 @@ impl OutgoingMessage for Ok {
         response.init("OK");
     }
 }
+
+#[cfg(test)]
+#[path = "ok_tests.rs"]
+mod tests;

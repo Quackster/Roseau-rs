@@ -33,3 +33,7 @@ impl NavigatorDao for InMemoryNavigatorDao {
             .collect())
     }
 }
+
+#[cfg(test)]
+#[path = "in_memory_navigator_dao_tests.rs"]
+mod tests;

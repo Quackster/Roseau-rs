@@ -13,3 +13,7 @@ impl IncomingEvent for CloseUimakoppi {
         context.record(IncomingCommand::ClosePoolChangeBooth);
     }
 }
+
+#[cfg(test)]
+#[path = "close_uimakoppi_tests.rs"]
+mod tests;

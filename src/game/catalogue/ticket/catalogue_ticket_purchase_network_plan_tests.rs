@@ -1,4 +1,4 @@
-use super::catalogue_ticket_purchase_network_plan::*;
+use super::*;
 
 #[test]
 fn maps_self_purchase_to_buyer_alert() {

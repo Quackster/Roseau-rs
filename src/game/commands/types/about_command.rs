@@ -10,3 +10,7 @@ impl Command for AboutCommand {
         )]
     }
 }
+
+#[cfg(test)]
+#[path = "about_command_tests.rs"]
+mod tests;

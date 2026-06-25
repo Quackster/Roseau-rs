@@ -1,4 +1,4 @@
-use super::player_command_queries::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlParameter};
 
 #[test]

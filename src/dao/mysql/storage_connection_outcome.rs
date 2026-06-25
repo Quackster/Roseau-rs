@@ -27,3 +27,7 @@ impl StorageConnectionOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "storage_connection_outcome_tests.rs"]
+mod tests;

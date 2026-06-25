@@ -1,4 +1,4 @@
-use super::password_hasher::*;
+use super::*;
 
 #[test]
 fn hashes_with_java_bcrypt_shape() {

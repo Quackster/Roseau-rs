@@ -1,4 +1,4 @@
-use super::player_name_approval_network_plan::*;
+use super::*;
 
 #[test]
 fn maps_approved_name_to_current_connection_packet() {

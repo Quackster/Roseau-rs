@@ -1,4 +1,4 @@
-use super::pool_lift_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn lift() -> Item {

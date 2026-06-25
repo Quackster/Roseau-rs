@@ -41,3 +41,7 @@ impl RoseauApplicationEntrypointStatus {
         self.loop_stopped
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_entrypoint_status_tests.rs"]
+mod tests;

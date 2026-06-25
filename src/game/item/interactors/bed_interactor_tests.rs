@@ -1,4 +1,4 @@
-use super::bed_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn bed(rotation: i32) -> Item {

@@ -1,4 +1,4 @@
-use super::catalogue_ticket_purchase_outcome::*;
+use super::*;
 use crate::messages::OutgoingMessage;
 
 #[test]

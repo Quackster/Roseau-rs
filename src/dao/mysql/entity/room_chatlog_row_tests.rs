@@ -1,4 +1,4 @@
-use super::room_chatlog_row::*;
+use super::*;
 use crate::dao::mysql::SqlValue;
 
 #[test]

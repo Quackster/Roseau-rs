@@ -45,3 +45,7 @@ impl RoomUserStatus {
         self.duration -= 1;
     }
 }
+
+#[cfg(test)]
+#[path = "room_user_status_tests.rs"]
+mod tests;

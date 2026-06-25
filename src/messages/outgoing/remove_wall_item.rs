@@ -18,3 +18,7 @@ impl OutgoingMessage for RemoveWallItem {
         response.append_new_argument(self.item_id);
     }
 }
+
+#[cfg(test)]
+#[path = "remove_wall_item_tests.rs"]
+mod tests;

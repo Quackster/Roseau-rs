@@ -1,4 +1,4 @@
-use super::purchase::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

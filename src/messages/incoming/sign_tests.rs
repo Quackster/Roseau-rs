@@ -1,4 +1,4 @@
-use super::sign::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

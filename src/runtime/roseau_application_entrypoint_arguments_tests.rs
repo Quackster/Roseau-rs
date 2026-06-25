@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use super::roseau_application_entrypoint_arguments::*;
+use super::*;
 
 #[test]
 fn routes_help_requests_to_usage() {

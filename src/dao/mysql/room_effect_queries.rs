@@ -41,3 +41,7 @@ impl RoomEffectQueries {
         plans
     }
 }
+
+#[cfg(test)]
+#[path = "room_effect_queries_tests.rs"]
+mod tests;

@@ -65,3 +65,7 @@ impl OutgoingMessage for AllUnits {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "all_units_tests.rs"]
+mod tests;

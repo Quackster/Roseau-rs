@@ -1,4 +1,4 @@
-use super::door_out::*;
+use super::*;
 
 #[test]
 fn composes_door_out_packet() {

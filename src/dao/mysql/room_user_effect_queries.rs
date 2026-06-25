@@ -37,3 +37,7 @@ impl RoomUserEffectQueries {
         Some(RoomQueries::save_chatlog(&chatlog, now).execute_plan())
     }
 }
+
+#[cfg(test)]
+#[path = "room_user_effect_queries_tests.rs"]
+mod tests;

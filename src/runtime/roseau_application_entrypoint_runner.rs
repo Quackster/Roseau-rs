@@ -69,3 +69,7 @@ impl RoseauApplicationEntrypointRunner {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_entrypoint_runner_tests.rs"]
+mod tests;

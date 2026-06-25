@@ -12,3 +12,7 @@ impl IncomingEvent for MessengerRemoveBuddy {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_remove_buddy_tests.rs"]
+mod tests;

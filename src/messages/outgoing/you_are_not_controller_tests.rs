@@ -1,4 +1,4 @@
-use super::you_are_not_controller::*;
+use super::*;
 
 #[test]
 fn composes_you_are_not_controller_packet() {

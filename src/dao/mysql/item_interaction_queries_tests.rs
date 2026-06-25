@@ -1,4 +1,4 @@
-use super::item_interaction_queries::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlParameter};
 
 #[test]

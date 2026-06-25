@@ -69,3 +69,7 @@ impl<E: SqlExecutor> ItemDao for MySqlItemDao<E> {
         ItemResultMapper::optional_item(result, &self.definitions)
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_item_dao_tests.rs"]
+mod tests;

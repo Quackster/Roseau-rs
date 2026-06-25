@@ -56,3 +56,7 @@ impl NavigatorIncomingPlan {
         Ok(outcomes)
     }
 }
+
+#[cfg(test)]
+#[path = "navigator_incoming_plan_tests.rs"]
+mod tests;

@@ -33,3 +33,7 @@ impl GameLoadRuntimeAction {
         effects.iter().map(Self::from_effect).collect()
     }
 }
+
+#[cfg(test)]
+#[path = "game_load_runtime_action_tests.rs"]
+mod tests;

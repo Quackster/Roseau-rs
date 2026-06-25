@@ -1,4 +1,4 @@
-use super::active_object_remove::*;
+use super::*;
 
 #[test]
 fn composes_active_object_remove_packet() {

@@ -116,3 +116,7 @@ fn append_mssql_options(url: String, options: &str) -> String {
         format!("{url};{options}")
     }
 }
+
+#[cfg(test)]
+#[path = "database_engine_tests.rs"]
+mod tests;

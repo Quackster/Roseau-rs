@@ -54,3 +54,7 @@ impl<E: SqlExecutor> MySqlApplicationTickExecutor<E> {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_application_tick_executor_tests.rs"]
+mod tests;

@@ -19,3 +19,7 @@ impl PlayerPasswordActionQueries {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "player_password_action_queries_tests.rs"]
+mod tests;

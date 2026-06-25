@@ -20,3 +20,7 @@ impl IncomingEvent for CarryItem {
         context.record(IncomingCommand::MarkRoomNeedsUpdate);
     }
 }
+
+#[cfg(test)]
+#[path = "carry_item_tests.rs"]
+mod tests;

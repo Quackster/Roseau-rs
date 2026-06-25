@@ -1,4 +1,4 @@
-use super::room_effect_runtime_scheduler_plan::*;
+use super::*;
 use crate::game::GameRuntimeTask;
 
 #[test]

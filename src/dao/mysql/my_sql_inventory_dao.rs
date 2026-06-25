@@ -80,3 +80,7 @@ impl<E: SqlExecutor> InventoryDao for MySqlInventoryDao<E> {
         .map_err(|error| DaoError::new(error.to_string()))
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_inventory_dao_tests.rs"]
+mod tests;

@@ -73,3 +73,7 @@ impl ServerHandler {
         self.session_manager.remove_session(connection_id);
     }
 }
+
+#[cfg(test)]
+#[path = "server_handler_tests.rs"]
+mod tests;

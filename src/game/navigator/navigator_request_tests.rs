@@ -1,4 +1,4 @@
-use super::navigator_request::*;
+use super::*;
 
 #[test]
 fn exposes_java_navigator_request_variants() {

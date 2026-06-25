@@ -1,4 +1,4 @@
-use super::item_result_mapper::*;
+use super::*;
 use crate::dao::mysql::{SqlRow, SqlValue};
 
 fn definition_row(id: i32, sprite: &str, behaviour: &str) -> SqlRow {

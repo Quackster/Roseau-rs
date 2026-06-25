@@ -41,3 +41,7 @@ impl RoomLeaveItemExecutor {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_leave_item_executor_tests.rs"]
+mod tests;

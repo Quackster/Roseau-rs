@@ -84,3 +84,7 @@ impl ItemDao for InMemoryItemDao {
         Ok(self.items.borrow().get(&item_id).cloned())
     }
 }
+
+#[cfg(test)]
+#[path = "in_memory_item_dao_tests.rs"]
+mod tests;

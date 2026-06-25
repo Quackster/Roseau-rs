@@ -1,4 +1,4 @@
-use super::kill_user::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

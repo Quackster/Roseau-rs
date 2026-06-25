@@ -20,3 +20,7 @@ impl OutgoingMessage for Error {
         response.append_argument(&self.message);
     }
 }
+
+#[cfg(test)]
+#[path = "error_tests.rs"]
+mod tests;

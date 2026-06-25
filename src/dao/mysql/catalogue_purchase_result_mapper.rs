@@ -30,3 +30,7 @@ impl CataloguePurchaseResultMapper {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_purchase_result_mapper_tests.rs"]
+mod tests;

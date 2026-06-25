@@ -1,4 +1,4 @@
-use super::no_such_user::*;
+use super::*;
 
 #[test]
 fn composes_no_such_user_packet() {

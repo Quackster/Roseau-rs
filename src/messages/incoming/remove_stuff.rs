@@ -17,3 +17,7 @@ impl IncomingEvent for RemoveStuff {
         context.record(IncomingCommand::RemoveItem { item_id });
     }
 }
+
+#[cfg(test)]
+#[path = "remove_stuff_tests.rs"]
+mod tests;

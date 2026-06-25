@@ -1,4 +1,4 @@
-use super::objects_world::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct PassiveObject(&'static str);

@@ -42,3 +42,7 @@ impl RoomEffectRuntimeStateExecutor {
             .count()
     }
 }
+
+#[cfg(test)]
+#[path = "room_effect_runtime_state_executor_tests.rs"]
+mod tests;

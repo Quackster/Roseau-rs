@@ -1,4 +1,4 @@
-use super::active_objects::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct FloorItem(&'static str);

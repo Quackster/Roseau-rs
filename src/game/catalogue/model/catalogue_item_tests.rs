@@ -1,4 +1,4 @@
-use super::catalogue_item::*;
+use super::*;
 
 #[test]
 fn stores_catalogue_item_fields() {

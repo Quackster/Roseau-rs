@@ -15,3 +15,7 @@ impl IncomingEvent for JumpPerformance {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "jump_performance_tests.rs"]
+mod tests;

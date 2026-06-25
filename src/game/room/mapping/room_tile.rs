@@ -54,3 +54,7 @@ impl Default for RoomTile {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "room_tile_tests.rs"]
+mod tests;

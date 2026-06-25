@@ -172,3 +172,7 @@ impl Display for ItemBehaviour {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "item_behaviour_tests.rs"]
+mod tests;

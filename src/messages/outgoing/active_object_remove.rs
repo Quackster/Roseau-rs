@@ -23,3 +23,7 @@ impl OutgoingMessage for ActiveObjectRemove {
         response.append(self.item_id);
     }
 }
+
+#[cfg(test)]
+#[path = "active_object_remove_tests.rs"]
+mod tests;

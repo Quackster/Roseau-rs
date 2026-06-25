@@ -42,3 +42,7 @@ impl DecorationCommandResultMapper {
         ])
     }
 }
+
+#[cfg(test)]
+#[path = "decoration_command_result_mapper_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::random_source::*;
+use super::*;
 
 #[test]
 fn produces_repeatable_values_from_seed() {

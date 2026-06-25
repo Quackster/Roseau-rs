@@ -91,3 +91,7 @@ impl TryFrom<&SqlRow> for UserRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "user_row_tests.rs"]
+mod tests;

@@ -22,3 +22,7 @@ impl GameRuntimeSchedulerExecutor {
         report
     }
 }
+
+#[cfg(test)]
+#[path = "game_runtime_scheduler_executor_tests.rs"]
+mod tests;

@@ -20,3 +20,7 @@ impl GameLoadRuntimeExecutor {
         report
     }
 }
+
+#[cfg(test)]
+#[path = "game_load_runtime_executor_tests.rs"]
+mod tests;

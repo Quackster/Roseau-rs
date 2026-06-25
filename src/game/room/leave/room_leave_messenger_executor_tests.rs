@@ -1,4 +1,4 @@
-use super::room_leave_messenger_executor::*;
+use super::*;
 use crate::game::messenger::MessengerFriend;
 
 fn friend(user_id: i32, online: bool, initialised: bool) -> MessengerFriend {

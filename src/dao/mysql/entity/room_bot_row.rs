@@ -75,3 +75,7 @@ impl TryFrom<&SqlRow> for RoomBotRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "room_bot_row_tests.rs"]
+mod tests;

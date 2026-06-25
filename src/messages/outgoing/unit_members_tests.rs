@@ -1,4 +1,4 @@
-use super::unit_members::*;
+use super::*;
 
 #[test]
 fn composes_unit_members_packet() {

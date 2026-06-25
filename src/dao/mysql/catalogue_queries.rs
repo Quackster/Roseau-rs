@@ -13,3 +13,7 @@ impl CatalogueQueries {
         SqlQuery::select_all(CatalogueDealRow::TABLE)
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_queries_tests.rs"]
+mod tests;

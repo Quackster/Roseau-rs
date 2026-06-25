@@ -12,3 +12,7 @@ impl IncomingEvent for LetUserIn {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "let_user_in_tests.rs"]
+mod tests;

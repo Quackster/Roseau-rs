@@ -79,3 +79,7 @@ fn unit_members(
             .map(|session| session.details().username().to_owned()),
     )
 }
+
+#[cfg(test)]
+#[path = "room_unit_incoming_plan_tests.rs"]
+mod tests;

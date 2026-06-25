@@ -152,3 +152,7 @@ impl PlayerDao for InMemoryPlayerDao {
         Ok(self.by_username.borrow().get(username).cloned())
     }
 }
+
+#[cfg(test)]
+#[path = "in_memory_player_dao_tests.rs"]
+mod tests;

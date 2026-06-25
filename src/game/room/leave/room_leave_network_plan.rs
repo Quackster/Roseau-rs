@@ -61,3 +61,7 @@ impl RoomLeaveNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_leave_network_plan_tests.rs"]
+mod tests;

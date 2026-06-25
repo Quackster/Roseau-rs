@@ -38,3 +38,7 @@ impl PlayerRegistrationNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_registration_network_plan_tests.rs"]
+mod tests;

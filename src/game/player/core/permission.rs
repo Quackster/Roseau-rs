@@ -26,3 +26,7 @@ impl Permission {
         self.rank
     }
 }
+
+#[cfg(test)]
+#[path = "permission_tests.rs"]
+mod tests;

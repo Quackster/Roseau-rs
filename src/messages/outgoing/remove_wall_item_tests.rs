@@ -1,4 +1,4 @@
-use super::remove_wall_item::*;
+use super::*;
 
 #[test]
 fn composes_remove_wall_item_packet() {

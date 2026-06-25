@@ -70,3 +70,7 @@ impl RoomDecorationIncomingPlan {
         Ok(outcomes)
     }
 }
+
+#[cfg(test)]
+#[path = "room_decoration_incoming_plan_tests.rs"]
+mod tests;

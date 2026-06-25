@@ -1,4 +1,4 @@
-use super::doorbell_ringing::*;
+use super::*;
 
 #[test]
 fn composes_doorbell_ringing_packet() {

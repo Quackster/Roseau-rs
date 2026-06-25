@@ -75,3 +75,7 @@ impl RoseauGameTickRuntimeActionPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_game_tick_runtime_action_plan_tests.rs"]
+mod tests;

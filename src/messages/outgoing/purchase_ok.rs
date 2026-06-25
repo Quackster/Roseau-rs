@@ -9,3 +9,7 @@ impl OutgoingMessage for PurchaseOk {
         response.init("PURCHASE_OK");
     }
 }
+
+#[cfg(test)]
+#[path = "purchase_ok_tests.rs"]
+mod tests;

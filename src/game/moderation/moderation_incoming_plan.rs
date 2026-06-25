@@ -71,3 +71,7 @@ impl<'a> ModerationRoomContext<'a> {
         self.room_type
     }
 }
+
+#[cfg(test)]
+#[path = "moderation_incoming_plan_tests.rs"]
+mod tests;

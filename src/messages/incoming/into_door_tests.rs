@@ -1,4 +1,4 @@
-use super::into_door::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

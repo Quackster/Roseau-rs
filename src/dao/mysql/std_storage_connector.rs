@@ -45,3 +45,7 @@ fn validate_connection_plan(
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "std_storage_connector_tests.rs"]
+mod tests;

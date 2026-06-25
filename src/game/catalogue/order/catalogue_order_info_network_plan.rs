@@ -25,3 +25,7 @@ impl CatalogueOrderInfoNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_order_info_network_plan_tests.rs"]
+mod tests;

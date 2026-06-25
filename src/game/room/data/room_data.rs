@@ -180,3 +180,7 @@ impl RoomData {
         self.show_owner_name = show_owner_name;
     }
 }
+
+#[cfg(test)]
+#[path = "room_data_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::ok::*;
+use super::*;
 
 #[test]
 fn composes_ok_packet() {

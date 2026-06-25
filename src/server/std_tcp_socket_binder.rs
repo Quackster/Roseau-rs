@@ -65,3 +65,7 @@ impl ServerSocketBinder for StdTcpSocketBinder {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "std_tcp_socket_binder_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::close_uimakoppi::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

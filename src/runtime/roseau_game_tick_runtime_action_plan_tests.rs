@@ -1,4 +1,4 @@
-use super::roseau_game_tick_runtime_action_plan::*;
+use super::*;
 use crate::game::player::{PlayerDetails, PlayerSession};
 
 fn details(id: i32, username: &str) -> PlayerDetails {

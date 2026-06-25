@@ -1,4 +1,4 @@
-use super::rotation::*;
+use super::*;
 
 #[test]
 fn calculates_java_room_direction_values() {

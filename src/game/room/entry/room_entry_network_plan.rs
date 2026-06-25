@@ -31,3 +31,7 @@ impl RoomEntryNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_entry_network_plan_tests.rs"]
+mod tests;

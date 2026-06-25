@@ -11,3 +11,7 @@ impl IncomingEvent for MessengerMarkRead {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_mark_read_tests.rs"]
+mod tests;

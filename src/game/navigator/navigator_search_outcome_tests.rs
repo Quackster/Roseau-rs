@@ -1,4 +1,4 @@
-use super::navigator_search_outcome::*;
+use super::*;
 use crate::game::room::settings::RoomType;
 use crate::game::room::RoomData;
 use crate::messages::OutgoingMessage;

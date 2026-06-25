@@ -1,4 +1,4 @@
-use super::my_sql_storage_connector::*;
+use super::*;
 use crate::dao::mysql::DatabaseEngine;
 
 #[test]

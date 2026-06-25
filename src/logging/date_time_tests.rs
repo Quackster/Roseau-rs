@@ -1,4 +1,4 @@
-use super::date_time::*;
+use super::*;
 
 #[test]
 fn formats_epoch_with_existing_log_pattern() {

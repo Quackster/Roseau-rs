@@ -1,4 +1,5 @@
-use super::in_memory_dao::*;
+use super::*;
+use super::*;
 
 #[test]
 fn exposes_player_dao_and_connection_state() {

@@ -1,4 +1,4 @@
-use super::tcp_server_step_outcome::*;
+use super::*;
 
 #[test]
 fn exposes_common_connection_id_and_read_bytes() {

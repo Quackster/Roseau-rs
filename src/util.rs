@@ -47,3 +47,7 @@ pub fn display_two_place_value(value: f64) -> String {
         .trim_end_matches('.')
         .to_owned()
 }
+
+#[cfg(test)]
+#[path = "util_tests.rs"]
+mod tests;

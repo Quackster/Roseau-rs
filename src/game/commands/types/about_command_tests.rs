@@ -1,4 +1,4 @@
-use super::about_command::*;
+use super::*;
 
 #[test]
 fn creates_java_about_alert_text() {

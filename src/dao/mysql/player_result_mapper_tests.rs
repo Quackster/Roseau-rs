@@ -1,4 +1,4 @@
-use super::player_result_mapper::*;
+use super::*;
 use crate::dao::mysql::{SqlRow, SqlValue};
 
 fn user_row(id: i32, username: &str) -> SqlRow {

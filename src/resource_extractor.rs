@@ -67,3 +67,7 @@ impl ResourceExtractor {
         Ok(None)
     }
 }
+
+#[cfg(test)]
+#[path = "resource_extractor_tests.rs"]
+mod tests;

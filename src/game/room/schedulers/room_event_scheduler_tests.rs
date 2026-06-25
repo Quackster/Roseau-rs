@@ -1,4 +1,4 @@
-use super::room_event_scheduler::*;
+use super::*;
 
 #[test]
 fn collects_effects_from_registered_events() {

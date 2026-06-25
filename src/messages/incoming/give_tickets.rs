@@ -9,3 +9,7 @@ impl IncomingEvent for GiveTickets {
         context.record(IncomingCommand::SendTickets);
     }
 }
+
+#[cfg(test)]
+#[path = "give_tickets_tests.rs"]
+mod tests;

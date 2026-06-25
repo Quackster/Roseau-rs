@@ -30,3 +30,7 @@ impl IncomingEvent for Sign {
         context.record(IncomingCommand::MarkRoomNeedsUpdate);
     }
 }
+
+#[cfg(test)]
+#[path = "sign_tests.rs"]
+mod tests;

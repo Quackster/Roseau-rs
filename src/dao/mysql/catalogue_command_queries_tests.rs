@@ -1,4 +1,5 @@
-use super::catalogue_command_queries::*;
+use super::*;
+use super::*;
 use crate::dao::mysql::SqlExecutionKind;
 
 #[test]

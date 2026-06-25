@@ -1,4 +1,4 @@
-use super::mapper::*;
+use super::*;
 
 #[test]
 fn maps_item_definition_row_to_domain_definition() {

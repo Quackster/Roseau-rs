@@ -33,3 +33,7 @@ impl TryFrom<&SqlRow> for UserPermissionRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "user_permission_row_tests.rs"]
+mod tests;

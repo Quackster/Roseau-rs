@@ -51,3 +51,7 @@ fn skip_chars(value: &str, count: usize) -> &str {
         .map(|(index, _)| &value[index..])
         .unwrap_or_default()
 }
+
+#[cfg(test)]
+#[path = "distress_message_tests.rs"]
+mod tests;

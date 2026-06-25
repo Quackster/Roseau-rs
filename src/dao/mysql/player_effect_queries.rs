@@ -24,3 +24,7 @@ impl PlayerEffectQueries {
         PlayerQueries::update_last_login(user_id, now).execute_plan()
     }
 }
+
+#[cfg(test)]
+#[path = "player_effect_queries_tests.rs"]
+mod tests;

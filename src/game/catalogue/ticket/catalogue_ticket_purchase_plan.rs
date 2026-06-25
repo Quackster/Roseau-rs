@@ -41,3 +41,7 @@ impl CatalogueTicketPurchasePlan {
         self.charged_credits
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_ticket_purchase_plan_tests.rs"]
+mod tests;

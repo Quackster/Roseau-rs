@@ -1,4 +1,4 @@
-use super::room_event_registration::*;
+use super::*;
 
 #[test]
 fn maps_java_room_event_names_to_rust_registrations() {

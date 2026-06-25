@@ -9,3 +9,7 @@ impl OutgoingMessage for OpenUimakoppi {
         response.init("OPEN_UIMAKOPPI");
     }
 }
+
+#[cfg(test)]
+#[path = "open_uimakoppi_tests.rs"]
+mod tests;

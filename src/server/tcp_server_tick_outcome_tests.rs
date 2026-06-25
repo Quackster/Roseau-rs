@@ -1,4 +1,4 @@
-use super::tcp_server_tick_outcome::*;
+use super::*;
 
 #[test]
 fn stores_tick_components() {

@@ -34,3 +34,7 @@ impl IncomingEvent for MoveStuff {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "move_stuff_tests.rs"]
+mod tests;

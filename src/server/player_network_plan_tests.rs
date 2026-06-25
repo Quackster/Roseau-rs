@@ -1,4 +1,4 @@
-use super::player_network_plan::*;
+use super::*;
 
 #[test]
 fn parses_java_channel_local_address_port() {

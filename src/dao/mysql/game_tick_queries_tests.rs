@@ -1,4 +1,4 @@
-use super::game_tick_queries::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlParameter};
 
 #[test]

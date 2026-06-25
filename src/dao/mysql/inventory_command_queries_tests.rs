@@ -1,4 +1,4 @@
-use super::inventory_command_queries::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlParameter};
 
 #[test]

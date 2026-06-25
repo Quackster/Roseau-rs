@@ -1,4 +1,4 @@
-use super::bot_move_room_event::*;
+use super::*;
 
 #[test]
 fn sends_bot_back_to_start_when_players_are_nearby() {

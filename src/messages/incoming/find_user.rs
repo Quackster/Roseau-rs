@@ -17,3 +17,7 @@ impl IncomingEvent for FindUser {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "find_user_tests.rs"]
+mod tests;

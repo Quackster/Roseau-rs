@@ -1,4 +1,4 @@
-use super::command_effect_network_plan::*;
+use super::*;
 
 #[test]
 fn plans_alert_command_as_system_broadcast_to_current_connection() {

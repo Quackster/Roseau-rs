@@ -17,3 +17,7 @@ impl IncomingEvent for MessengerRequestBuddy {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_request_buddy_tests.rs"]
+mod tests;

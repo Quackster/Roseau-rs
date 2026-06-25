@@ -1,4 +1,4 @@
-use super::messenger::*;
+use super::*;
 use crate::messages::OutgoingMessage;
 
 fn friend(

@@ -10,3 +10,7 @@ impl Command for HelpCommand {
         )]
     }
 }
+
+#[cfg(test)]
+#[path = "help_command_tests.rs"]
+mod tests;

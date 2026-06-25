@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::VecDeque;
 
-use super::my_sql_catalogue_dao::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlRow, SqlValue};
 
 #[derive(Debug, Default)]

@@ -1,4 +1,4 @@
-use super::splash_position::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

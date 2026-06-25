@@ -1,6 +1,6 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use super::resource_extractor::*;
+use super::*;
 
 fn temp_dir(name: &str) -> PathBuf {
     let nonce = SystemTime::now()

@@ -19,3 +19,7 @@ pub fn calculate_direction(x: i32, y: i32, to_x: i32, to_y: i32) -> i8 {
         0
     }
 }
+
+#[cfg(test)]
+#[path = "rotation_tests.rs"]
+mod tests;

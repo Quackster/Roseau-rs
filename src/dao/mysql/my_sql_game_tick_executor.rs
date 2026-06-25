@@ -41,3 +41,7 @@ impl<E: SqlExecutor> MySqlGameTickExecutor<E> {
             .map(SqlExecutionBatchResult::new)
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_game_tick_executor_tests.rs"]
+mod tests;

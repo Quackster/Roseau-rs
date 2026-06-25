@@ -68,3 +68,7 @@ fn decoration_extra_data(call_id: &str) -> Option<&str> {
 fn has_decoration_payload(call_id: &str) -> bool {
     call_id.contains("L ") || call_id.contains("T ") || call_id.contains("juliste ")
 }
+
+#[cfg(test)]
+#[path = "catalogue_order_info_plan_tests.rs"]
+mod tests;

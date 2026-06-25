@@ -61,3 +61,7 @@ impl Default for GameScheduler {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "game_scheduler_tests.rs"]
+mod tests;

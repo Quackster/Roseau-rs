@@ -23,3 +23,7 @@ impl OutgoingMessage for FlatCreated {
         response.append_argument(&self.room_name);
     }
 }
+
+#[cfg(test)]
+#[path = "flat_created_tests.rs"]
+mod tests;

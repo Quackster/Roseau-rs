@@ -30,3 +30,7 @@ impl MySqlApplicationTickExecutionReport {
         GameTickRuntimeEffect::collect(&self.runtime_effects)
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_application_tick_execution_report_tests.rs"]
+mod tests;

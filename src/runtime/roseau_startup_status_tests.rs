@@ -1,4 +1,4 @@
-use super::roseau_startup_status::*;
+use super::*;
 
 #[test]
 fn preserves_java_setup_status_line() {

@@ -10,3 +10,7 @@ impl OutgoingMessage for SelectType {
         response.append_new_argument("x");
     }
 }
+
+#[cfg(test)]
+#[path = "select_type_tests.rs"]
+mod tests;

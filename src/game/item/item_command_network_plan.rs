@@ -97,3 +97,7 @@ impl ItemCommandNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "item_command_network_plan_tests.rs"]
+mod tests;

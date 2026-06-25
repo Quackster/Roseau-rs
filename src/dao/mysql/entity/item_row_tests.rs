@@ -1,4 +1,4 @@
-use super::item_row::*;
+use super::*;
 use crate::dao::mysql::SqlValue;
 
 #[test]

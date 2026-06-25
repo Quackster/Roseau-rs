@@ -36,3 +36,7 @@ impl RandomSource {
         value as f32 / 16_777_216.0
     }
 }
+
+#[cfg(test)]
+#[path = "random_source_tests.rs"]
+mod tests;

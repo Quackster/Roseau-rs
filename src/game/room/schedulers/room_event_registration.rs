@@ -31,3 +31,7 @@ impl RoomEventRegistration {
         effects.iter().filter_map(Self::from_effect).collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_event_registration_tests.rs"]
+mod tests;

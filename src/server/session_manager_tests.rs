@@ -1,4 +1,4 @@
-use super::session_manager::*;
+use super::*;
 
 #[test]
 fn tracks_session_lifecycle() {

@@ -1,4 +1,4 @@
-use super::room_decoration_network_plan::*;
+use super::*;
 
 #[test]
 fn maps_applied_decoration_to_current_connection_packet() {

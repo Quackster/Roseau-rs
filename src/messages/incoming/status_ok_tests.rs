@@ -1,4 +1,4 @@
-use super::status_ok::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

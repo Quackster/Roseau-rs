@@ -1,4 +1,4 @@
-use super::item_definition::*;
+use super::*;
 
 #[test]
 fn lowers_height_for_non_stackable_non_seating_items() {

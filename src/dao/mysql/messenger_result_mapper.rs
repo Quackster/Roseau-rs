@@ -45,3 +45,7 @@ impl MessengerResultMapper {
         result.require_i32_insert_id("message id")
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_result_mapper_tests.rs"]
+mod tests;

@@ -15,3 +15,7 @@ impl IncomingEvent for IntoDoor {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "into_door_tests.rs"]
+mod tests;

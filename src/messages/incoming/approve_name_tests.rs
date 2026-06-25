@@ -1,4 +1,4 @@
-use super::approve_name::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

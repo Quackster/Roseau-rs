@@ -56,3 +56,7 @@ impl NavigatorSearchOutcome {
 fn users_now(player_count: usize) -> i32 {
     i32::try_from(player_count).unwrap_or(i32::MAX)
 }
+
+#[cfg(test)]
+#[path = "navigator_search_outcome_tests.rs"]
+mod tests;

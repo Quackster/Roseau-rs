@@ -1,4 +1,4 @@
-use super::room_event::*;
+use super::*;
 
 #[test]
 fn tracks_java_room_event_tick_counter() {

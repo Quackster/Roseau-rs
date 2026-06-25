@@ -1,4 +1,4 @@
-use super::messenger_message::*;
+use super::*;
 
 #[test]
 fn stores_messenger_message_fields() {

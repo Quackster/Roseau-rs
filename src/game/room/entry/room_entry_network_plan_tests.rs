@@ -1,4 +1,4 @@
-use super::room_entry_network_plan::*;
+use super::*;
 use crate::game::room::RoomEffect;
 
 #[test]

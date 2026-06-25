@@ -18,3 +18,7 @@ impl OutgoingMessage for WalletBalance {
         response.append_new_argument(self.credits);
     }
 }
+
+#[cfg(test)]
+#[path = "wallet_balance_tests.rs"]
+mod tests;

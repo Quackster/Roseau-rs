@@ -44,3 +44,7 @@ impl IncomingEvent for CreateFlat {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "create_flat_tests.rs"]
+mod tests;

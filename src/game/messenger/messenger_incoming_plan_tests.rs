@@ -1,4 +1,4 @@
-use super::messenger_incoming_plan::*;
+use super::*;
 use crate::dao::in_memory::{InMemoryMessengerDao, InMemoryPlayerDao};
 use crate::dao::{CreatePlayer, MessengerDao, PlayerDao};
 use crate::game::messenger::MessengerFriend;

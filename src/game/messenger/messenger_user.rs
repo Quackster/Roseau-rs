@@ -34,3 +34,7 @@ impl MessengerUser {
         self.online && self.in_room
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_user_tests.rs"]
+mod tests;

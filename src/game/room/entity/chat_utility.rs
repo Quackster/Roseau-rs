@@ -86,3 +86,7 @@ impl ChatUtility {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "chat_utility_tests.rs"]
+mod tests;

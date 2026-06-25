@@ -95,3 +95,7 @@ impl<E: SqlExecutor> MessengerDao for MySqlMessengerDao<E> {
         self.execute_mutation(MessengerQueries::mark_message_read(message_id).execute_plan())
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_messenger_dao_tests.rs"]
+mod tests;

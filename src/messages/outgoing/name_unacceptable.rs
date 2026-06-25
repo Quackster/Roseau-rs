@@ -9,3 +9,7 @@ impl OutgoingMessage for NameUnacceptable {
         response.init("NAME_UNACCEPTABLE");
     }
 }
+
+#[cfg(test)]
+#[path = "name_unacceptable_tests.rs"]
+mod tests;

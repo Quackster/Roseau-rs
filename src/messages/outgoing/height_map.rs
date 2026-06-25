@@ -20,3 +20,7 @@ impl OutgoingMessage for HeightMap {
         response.append_new_argument(&self.height_map);
     }
 }
+
+#[cfg(test)]
+#[path = "height_map_tests.rs"]
+mod tests;

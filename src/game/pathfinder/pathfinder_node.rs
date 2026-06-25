@@ -64,3 +64,7 @@ impl PathfinderNode {
         other.position.is_match(self.position)
     }
 }
+
+#[cfg(test)]
+#[path = "pathfinder_node_tests.rs"]
+mod tests;

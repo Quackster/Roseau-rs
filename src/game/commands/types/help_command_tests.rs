@@ -1,4 +1,4 @@
-use super::help_command::*;
+use super::*;
 
 #[test]
 fn creates_java_help_alert_text() {

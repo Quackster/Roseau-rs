@@ -21,3 +21,7 @@ impl IncomingEvent for SetItemData {
         context.record(IncomingCommand::SetItemData { item_id, data });
     }
 }
+
+#[cfg(test)]
+#[path = "set_item_data_tests.rs"]
+mod tests;

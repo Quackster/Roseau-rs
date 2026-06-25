@@ -1,4 +1,4 @@
-use super::flat_info::*;
+use super::*;
 
 #[test]
 fn composes_flat_info_packet() {

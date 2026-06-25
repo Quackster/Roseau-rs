@@ -31,3 +31,7 @@ impl RoomCommandOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_command_outcome_tests.rs"]
+mod tests;

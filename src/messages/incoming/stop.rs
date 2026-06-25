@@ -18,3 +18,7 @@ impl IncomingEvent for Stop {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "stop_tests.rs"]
+mod tests;

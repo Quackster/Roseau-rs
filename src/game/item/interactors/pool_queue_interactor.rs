@@ -22,3 +22,7 @@ impl Interaction for PoolQueueInteractor {
             .unwrap_or_default()
     }
 }
+
+#[cfg(test)]
+#[path = "pool_queue_interactor_tests.rs"]
+mod tests;

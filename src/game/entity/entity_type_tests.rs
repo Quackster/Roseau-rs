@@ -1,4 +1,4 @@
-use super::entity_type::*;
+use super::*;
 
 #[test]
 fn keeps_java_entity_type_class_mapping_as_names() {

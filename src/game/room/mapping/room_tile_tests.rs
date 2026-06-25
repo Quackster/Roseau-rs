@@ -1,4 +1,4 @@
-use super::room_tile::*;
+use super::*;
 
 #[test]
 fn stores_tile_state_without_room_runtime_reference() {

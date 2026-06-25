@@ -18,3 +18,7 @@ impl IncomingEvent for SplashPosition {
         context.record(IncomingCommand::SplashPosition { position });
     }
 }
+
+#[cfg(test)]
+#[path = "splash_position_tests.rs"]
+mod tests;

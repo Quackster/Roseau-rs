@@ -24,3 +24,7 @@ impl RoomEntryOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_entry_outcome_tests.rs"]
+mod tests;

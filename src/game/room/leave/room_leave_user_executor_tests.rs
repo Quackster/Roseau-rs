@@ -1,4 +1,4 @@
-use super::room_leave_user_executor::*;
+use super::*;
 use crate::game::room::model::Position;
 use crate::game::room::RoomLeaveEffect;
 

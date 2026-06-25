@@ -82,3 +82,7 @@ impl RoomManager {
         &self.loaded_rooms
     }
 }
+
+#[cfg(test)]
+#[path = "room_manager_tests.rs"]
+mod tests;

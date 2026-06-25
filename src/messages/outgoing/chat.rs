@@ -29,3 +29,7 @@ impl OutgoingMessage for Chat {
         response.append_argument(&self.message);
     }
 }
+
+#[cfg(test)]
+#[path = "chat_tests.rs"]
+mod tests;

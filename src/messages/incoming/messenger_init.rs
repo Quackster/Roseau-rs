@@ -11,3 +11,7 @@ impl IncomingEvent for MessengerInit {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_init_tests.rs"]
+mod tests;

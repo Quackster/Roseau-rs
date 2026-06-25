@@ -1,4 +1,4 @@
-use super::users::*;
+use super::*;
 
 #[test]
 fn composes_users_packet() {

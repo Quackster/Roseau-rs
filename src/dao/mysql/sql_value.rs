@@ -89,3 +89,7 @@ impl From<&str> for SqlValue {
         Self::Text(value.to_owned())
     }
 }
+
+#[cfg(test)]
+#[path = "sql_value_tests.rs"]
+mod tests;

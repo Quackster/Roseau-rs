@@ -23,3 +23,7 @@ impl OutgoingMessage for OrderInfo {
         response.append_new_argument(self.credits);
     }
 }
+
+#[cfg(test)]
+#[path = "order_info_tests.rs"]
+mod tests;

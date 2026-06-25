@@ -1,4 +1,4 @@
-use super::position::*;
+use super::*;
 
 #[test]
 fn parses_comma_position_like_java_constructor() {

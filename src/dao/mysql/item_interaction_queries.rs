@@ -36,3 +36,7 @@ impl ItemInteractionQueries {
         PlayerQueries::update_tickets(user_id, tickets).execute_plan()
     }
 }
+
+#[cfg(test)]
+#[path = "item_interaction_queries_tests.rs"]
+mod tests;

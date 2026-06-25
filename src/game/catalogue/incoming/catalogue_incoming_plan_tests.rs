@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use super::catalogue_incoming_plan::*;
+use super::*;
 use crate::dao::in_memory::{
     InMemoryCatalogueDao, InMemoryInventoryDao, InMemoryItemDao, InMemoryPlayerDao,
 };

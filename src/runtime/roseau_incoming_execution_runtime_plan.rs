@@ -14,3 +14,7 @@ impl RoseauIncomingExecutionRuntimePlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_incoming_execution_runtime_plan_tests.rs"]
+mod tests;

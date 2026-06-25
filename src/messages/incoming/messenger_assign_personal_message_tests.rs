@@ -1,4 +1,4 @@
-use super::messenger_assign_personal_message::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

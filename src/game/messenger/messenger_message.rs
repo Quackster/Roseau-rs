@@ -44,3 +44,7 @@ impl MessengerMessage {
         &self.message
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_message_tests.rs"]
+mod tests;

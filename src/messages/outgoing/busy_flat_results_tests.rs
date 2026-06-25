@@ -1,4 +1,4 @@
-use super::busy_flat_results::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct RoomSummary(&'static str);

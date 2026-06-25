@@ -30,3 +30,7 @@ impl TryFrom<&SqlRow> for MessengerFriendshipRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_friendship_row_tests.rs"]
+mod tests;

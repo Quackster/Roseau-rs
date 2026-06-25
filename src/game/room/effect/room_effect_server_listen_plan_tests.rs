@@ -1,4 +1,4 @@
-use super::room_effect_server_listen_plan::*;
+use super::*;
 use crate::server::ServerListenEffect;
 
 #[test]

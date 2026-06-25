@@ -34,3 +34,7 @@ impl PlayerEffectRoomLeavePlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "player_effect_room_leave_plan_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::teleporter_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn teleporter(id: i32, room_id: i32, x: &str, y: i32) -> Item {

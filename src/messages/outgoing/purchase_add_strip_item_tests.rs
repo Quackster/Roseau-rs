@@ -1,4 +1,4 @@
-use super::purchase_add_strip_item::*;
+use super::*;
 
 #[test]
 fn composes_purchase_add_strip_item_packet() {

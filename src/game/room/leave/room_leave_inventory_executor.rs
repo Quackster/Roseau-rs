@@ -22,3 +22,7 @@ impl RoomLeaveInventoryExecutor {
             .count()
     }
 }
+
+#[cfg(test)]
+#[path = "room_leave_inventory_executor_tests.rs"]
+mod tests;

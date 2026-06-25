@@ -38,3 +38,7 @@ impl MessengerFriendRefreshExecutor {
         Ok(messenger.send_friends(offline_user_id))
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_friend_refresh_executor_tests.rs"]
+mod tests;

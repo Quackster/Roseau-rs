@@ -161,3 +161,7 @@ impl RoomWalkScheduler {
         effects
     }
 }
+
+#[cfg(test)]
+#[path = "room_walk_scheduler_tests.rs"]
+mod tests;

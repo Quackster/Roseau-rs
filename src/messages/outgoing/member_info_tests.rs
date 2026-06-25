@@ -1,4 +1,4 @@
-use super::member_info::*;
+use super::*;
 
 #[test]
 fn composes_member_info_packet() {

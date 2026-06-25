@@ -24,3 +24,7 @@ impl NavigatorSearchNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "navigator_search_network_plan_tests.rs"]
+mod tests;

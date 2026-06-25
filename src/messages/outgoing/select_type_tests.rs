@@ -1,4 +1,4 @@
-use super::select_type::*;
+use super::*;
 
 #[test]
 fn composes_select_type_packet() {

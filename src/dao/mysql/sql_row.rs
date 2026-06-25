@@ -99,3 +99,7 @@ fn missing_column(column: &'static str, expected_type: &'static str) -> DaoError
         "Missing or invalid SQL column `{column}` as {expected_type}"
     ))
 }
+
+#[cfg(test)]
+#[path = "sql_row_tests.rs"]
+mod tests;

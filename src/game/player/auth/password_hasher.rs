@@ -34,3 +34,7 @@ impl Default for PasswordHasher {
         Self::java_compatible()
     }
 }
+
+#[cfg(test)]
+#[path = "password_hasher_tests.rs"]
+mod tests;

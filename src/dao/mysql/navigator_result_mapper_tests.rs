@@ -1,4 +1,4 @@
-use super::navigator_result_mapper::*;
+use super::*;
 use crate::dao::mysql::{SqlRow, SqlValue};
 use crate::game::room::settings::RoomType;
 

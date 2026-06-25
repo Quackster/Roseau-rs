@@ -1,4 +1,4 @@
-use super::search_flat_for_user::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

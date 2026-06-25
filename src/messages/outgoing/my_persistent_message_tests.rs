@@ -1,4 +1,4 @@
-use super::my_persistent_message::*;
+use super::*;
 
 #[test]
 fn composes_my_persistent_message_packet() {

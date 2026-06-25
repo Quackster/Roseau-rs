@@ -29,3 +29,7 @@ impl Default for RoomEventScheduler {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "room_event_scheduler_tests.rs"]
+mod tests;

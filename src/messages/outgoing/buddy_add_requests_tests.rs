@@ -1,4 +1,4 @@
-use super::buddy_add_requests::*;
+use super::*;
 
 #[test]
 fn composes_buddy_add_requests_packet() {

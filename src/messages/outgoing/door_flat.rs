@@ -20,3 +20,7 @@ impl OutgoingMessage for DoorFlat {
         response.append_new_argument(self.room_id);
     }
 }
+
+#[cfg(test)]
+#[path = "door_flat_tests.rs"]
+mod tests;

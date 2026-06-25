@@ -1,4 +1,5 @@
-use super::in_memory_messenger_dao::*;
+use super::*;
+use super::*;
 
 #[test]
 fn stores_requests_and_checks_bidirectionally() {

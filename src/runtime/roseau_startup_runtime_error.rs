@@ -14,3 +14,7 @@ impl Display for RoseauStartupRuntimeError {
 }
 
 impl std::error::Error for RoseauStartupRuntimeError {}
+
+#[cfg(test)]
+#[path = "roseau_startup_runtime_error_tests.rs"]
+mod tests;

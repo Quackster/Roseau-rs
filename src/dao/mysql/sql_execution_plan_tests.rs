@@ -1,4 +1,4 @@
-use super::sql_execution_plan::*;
+use super::*;
 
 #[test]
 fn preserves_read_query_sql_and_parameters() {

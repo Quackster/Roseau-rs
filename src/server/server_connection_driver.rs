@@ -108,3 +108,7 @@ impl ServerConnectionDriver {
         self.context = effect_executor.apply_all(server_handler, context, effects);
     }
 }
+
+#[cfg(test)]
+#[path = "server_connection_driver_tests.rs"]
+mod tests;

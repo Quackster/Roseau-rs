@@ -31,3 +31,7 @@ impl NavigatorResultMapper {
         })
     }
 }
+
+#[cfg(test)]
+#[path = "navigator_result_mapper_tests.rs"]
+mod tests;

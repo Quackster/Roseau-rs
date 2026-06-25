@@ -1,4 +1,4 @@
-use super::my_sql_application_tick_execution_report::*;
+use super::*;
 
 #[test]
 fn exposes_database_result_and_runtime_effects() {

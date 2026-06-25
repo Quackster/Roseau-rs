@@ -23,3 +23,7 @@ impl ModerationEffectNetworkPlan {
         effects.iter().map(Self::plan).collect()
     }
 }
+
+#[cfg(test)]
+#[path = "moderation_effect_network_plan_tests.rs"]
+mod tests;

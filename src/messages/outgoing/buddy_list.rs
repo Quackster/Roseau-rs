@@ -71,3 +71,7 @@ impl OutgoingMessage for BuddyList {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "buddy_list_tests.rs"]
+mod tests;

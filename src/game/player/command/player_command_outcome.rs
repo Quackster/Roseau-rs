@@ -30,3 +30,7 @@ impl PlayerCommandOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_command_outcome_tests.rs"]
+mod tests;

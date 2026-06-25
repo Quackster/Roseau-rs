@@ -48,3 +48,7 @@ impl RoomChatExecutor {
 pub enum RoomChatExecution {
     Saved(RoomChatlog),
 }
+
+#[cfg(test)]
+#[path = "room_chat_executor_tests.rs"]
+mod tests;

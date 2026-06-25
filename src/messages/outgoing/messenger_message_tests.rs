@@ -1,4 +1,4 @@
-use super::messenger_message::*;
+use super::*;
 
 #[test]
 fn composes_messenger_message_packet() {

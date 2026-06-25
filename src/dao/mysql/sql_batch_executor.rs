@@ -33,3 +33,7 @@ impl<E: SqlExecutor> SqlBatchExecutor<E> {
         Ok(SqlExecutionBatchResult::new(results))
     }
 }
+
+#[cfg(test)]
+#[path = "sql_batch_executor_tests.rs"]
+mod tests;

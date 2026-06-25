@@ -77,3 +77,7 @@ impl Default for GameLoadRuntimeReport {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "game_load_runtime_report_tests.rs"]
+mod tests;

@@ -34,3 +34,7 @@ impl PlayerNameApprovalNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_name_approval_network_plan_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::height_map::*;
+use super::*;
 
 #[test]
 fn composes_height_map_packet() {

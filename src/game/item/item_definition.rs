@@ -99,3 +99,7 @@ impl ItemDefinition {
         &self.data_class
     }
 }
+
+#[cfg(test)]
+#[path = "item_definition_tests.rs"]
+mod tests;

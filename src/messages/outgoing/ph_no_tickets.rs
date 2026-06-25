@@ -9,3 +9,7 @@ impl OutgoingMessage for PhNoTickets {
         response.init("PH_NOTICKETS");
     }
 }
+
+#[cfg(test)]
+#[path = "ph_no_tickets_tests.rs"]
+mod tests;

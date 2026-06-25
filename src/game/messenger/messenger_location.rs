@@ -24,3 +24,7 @@ impl MessengerLocation {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_location_tests.rs"]
+mod tests;

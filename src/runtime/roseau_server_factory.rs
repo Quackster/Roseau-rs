@@ -61,3 +61,7 @@ impl Default for RoseauServerFactory {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_server_factory_tests.rs"]
+mod tests;

@@ -78,3 +78,7 @@ fn parse_warp_and_goal(custom_data: Option<&str>) -> Option<(Position, Position)
     let (warp, goal) = custom_data?.split_once(' ')?;
     Some((Position::parse(warp).ok()?, Position::parse(goal).ok()?))
 }
+
+#[cfg(test)]
+#[path = "pool_ladder_interactor_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::jumping_place_ok::*;
+use super::*;
 
 #[test]
 fn composes_jumping_place_ok_packet() {

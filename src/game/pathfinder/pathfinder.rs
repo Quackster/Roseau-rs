@@ -181,3 +181,7 @@ fn build_pathfinder_node(position: Position, map: &[Vec<Option<NodeState>>]) -> 
 
     node
 }
+
+#[cfg(test)]
+#[path = "pathfinder_tests.rs"]
+mod tests;

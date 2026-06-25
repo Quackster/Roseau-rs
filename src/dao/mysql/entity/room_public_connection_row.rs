@@ -55,3 +55,7 @@ impl TryFrom<&SqlRow> for RoomPublicConnectionRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "room_public_connection_row_tests.rs"]
+mod tests;

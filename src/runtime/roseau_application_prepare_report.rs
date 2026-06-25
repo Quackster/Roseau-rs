@@ -74,3 +74,7 @@ impl RoseauApplicationPrepareReport {
         self.readiness().ready()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_prepare_report_tests.rs"]
+mod tests;

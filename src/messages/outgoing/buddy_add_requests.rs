@@ -24,3 +24,7 @@ impl OutgoingMessage for BuddyAddRequests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "buddy_add_requests_tests.rs"]
+mod tests;

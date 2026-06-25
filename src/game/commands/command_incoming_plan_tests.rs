@@ -1,4 +1,4 @@
-use super::command_incoming_plan::*;
+use super::*;
 
 #[test]
 fn extracts_command_effects_from_incoming_effects() {

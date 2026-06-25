@@ -106,3 +106,7 @@ impl SchedulerEffectNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "scheduler_effect_network_plan_tests.rs"]
+mod tests;

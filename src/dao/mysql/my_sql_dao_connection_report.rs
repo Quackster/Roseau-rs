@@ -30,3 +30,7 @@ impl MySqlDaoConnectionReport {
         self.outcome.error()
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_dao_connection_report_tests.rs"]
+mod tests;

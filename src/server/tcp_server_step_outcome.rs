@@ -33,3 +33,7 @@ impl TcpServerStepOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "tcp_server_step_outcome_tests.rs"]
+mod tests;

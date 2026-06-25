@@ -1,4 +1,4 @@
-use super::catalogue_order_info_network_plan::*;
+use super::*;
 
 #[test]
 fn maps_order_info_plan_to_current_connection_packet() {

@@ -1,4 +1,5 @@
-use super::in_memory_item_dao::*;
+use super::*;
+use super::*;
 
 pub fn chair_definition() -> ItemDefinition {
     ItemDefinition::new(5, "chair", "red", 1, 1, 1.0, "SFC", "Chair", "", "SWITCHON")

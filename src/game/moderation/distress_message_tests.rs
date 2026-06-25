@@ -1,4 +1,4 @@
-use super::distress_message::*;
+use super::*;
 
 #[test]
 fn extracts_private_room_distress_text_like_java_handler() {

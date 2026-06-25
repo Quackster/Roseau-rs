@@ -30,3 +30,7 @@ impl ItemInteractionRuntimeExecutor {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "item_interaction_runtime_executor_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::all_units::*;
+use super::*;
 
 #[test]
 fn composes_all_units_packet() {

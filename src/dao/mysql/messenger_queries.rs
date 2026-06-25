@@ -109,3 +109,7 @@ impl MessengerQueries {
         MessengerRequestRow::TABLE
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_queries_tests.rs"]
+mod tests;

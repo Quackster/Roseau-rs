@@ -8,8 +8,6 @@ pub mod mysql;
 pub mod navigator_dao;
 pub mod player_dao;
 pub mod room_dao;
-#[cfg(test)]
-mod room_dao_tests;
 
 pub use catalogue_dao::CatalogueDao;
 pub use dao_error::DaoError;

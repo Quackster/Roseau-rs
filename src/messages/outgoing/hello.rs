@@ -9,3 +9,7 @@ impl OutgoingMessage for Hello {
         response.init("HELLO");
     }
 }
+
+#[cfg(test)]
+#[path = "hello_tests.rs"]
+mod tests;

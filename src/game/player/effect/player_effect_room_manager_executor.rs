@@ -36,3 +36,7 @@ impl PlayerEffectRoomManagerExecutor {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "player_effect_room_manager_executor_tests.rs"]
+mod tests;

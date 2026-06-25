@@ -18,3 +18,7 @@ impl OutgoingMessage for PhTickets {
         response.append_argument(self.tickets);
     }
 }
+
+#[cfg(test)]
+#[path = "ph_tickets_tests.rs"]
+mod tests;

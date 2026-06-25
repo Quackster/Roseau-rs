@@ -26,3 +26,7 @@ impl PlayerCommandQueries {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_command_queries_tests.rs"]
+mod tests;

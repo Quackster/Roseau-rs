@@ -32,3 +32,7 @@ impl PlayerPasswordActionNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "player_password_action_network_plan_tests.rs"]
+mod tests;

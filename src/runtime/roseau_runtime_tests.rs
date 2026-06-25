@@ -9,7 +9,7 @@ use crate::runtime::roseau_bootstrap::{DEFAULT_HOTEL_CONFIG, DEFAULT_MAIN_CONFIG
 use crate::runtime::ServerBootstrapPlan;
 use crate::server::{ServerListenEffectExecutor, ServerListenPlan, StdTcpSocketBinder};
 
-use super::roseau_runtime::*;
+use super::*;
 
 fn temp_dir(name: &str) -> PathBuf {
     let nonce = SystemTime::now()

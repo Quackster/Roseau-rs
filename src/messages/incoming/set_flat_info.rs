@@ -44,3 +44,7 @@ fn field_value(fields: &str, index: usize, prefix: &str) -> Option<String> {
         .and_then(|field| field.strip_prefix(prefix))
         .map(ToOwned::to_owned)
 }
+
+#[cfg(test)]
+#[path = "set_flat_info_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::roseau_application_tick_run_report::*;
+use super::*;
 use crate::dao::mysql::{MySqlApplicationTickExecutionReport, SqlExecutionBatchResult};
 use crate::game::GameTickEffect;
 use crate::server::{TcpServerAcceptOutcome, TcpServerTickOutcome};

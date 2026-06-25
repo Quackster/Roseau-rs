@@ -44,3 +44,7 @@ impl RoomUnitNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_unit_network_plan_tests.rs"]
+mod tests;

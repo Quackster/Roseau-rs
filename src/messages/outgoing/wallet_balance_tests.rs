@@ -1,4 +1,4 @@
-use super::wallet_balance::*;
+use super::*;
 
 #[test]
 fn composes_wallet_balance_packet() {

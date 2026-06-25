@@ -1,4 +1,4 @@
-use super::info_retrieve::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

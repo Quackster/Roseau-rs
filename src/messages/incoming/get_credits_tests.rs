@@ -1,4 +1,4 @@
-use super::get_credits::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

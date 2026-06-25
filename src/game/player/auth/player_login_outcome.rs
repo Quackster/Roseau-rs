@@ -71,3 +71,7 @@ impl PlayerLoginOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_login_outcome_tests.rs"]
+mod tests;

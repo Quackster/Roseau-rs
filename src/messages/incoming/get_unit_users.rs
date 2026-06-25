@@ -17,3 +17,7 @@ impl IncomingEvent for GetUnitUsers {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "get_unit_users_tests.rs"]
+mod tests;

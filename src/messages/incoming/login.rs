@@ -20,3 +20,7 @@ impl IncomingEvent for Login {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "login_tests.rs"]
+mod tests;

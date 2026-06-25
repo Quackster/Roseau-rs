@@ -23,3 +23,7 @@ impl OutgoingMessage for JumpData {
         response.append_new_argument(&self.data);
     }
 }
+
+#[cfg(test)]
+#[path = "jump_data_tests.rs"]
+mod tests;

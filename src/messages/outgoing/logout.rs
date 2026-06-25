@@ -20,3 +20,7 @@ impl OutgoingMessage for Logout {
         response.append_new_argument(&self.username);
     }
 }
+
+#[cfg(test)]
+#[path = "logout_tests.rs"]
+mod tests;

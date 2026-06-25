@@ -1,4 +1,4 @@
-use super::roseau_application_entrypoint_usage::*;
+use super::*;
 
 #[test]
 fn reports_help_requests_and_usage_text() {

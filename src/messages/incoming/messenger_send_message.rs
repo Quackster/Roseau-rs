@@ -25,3 +25,7 @@ impl IncomingEvent for MessengerSendMessage {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_send_message_tests.rs"]
+mod tests;

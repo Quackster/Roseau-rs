@@ -1,4 +1,4 @@
-use super::network_frame_decoder::*;
+use super::*;
 use crate::protocol::ClientMessage;
 
 #[test]

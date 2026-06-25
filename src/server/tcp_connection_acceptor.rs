@@ -78,3 +78,7 @@ impl Default for TcpConnectionAcceptor {
         Self::new(1)
     }
 }
+
+#[cfg(test)]
+#[path = "tcp_connection_acceptor_tests.rs"]
+mod tests;

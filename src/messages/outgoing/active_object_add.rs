@@ -21,3 +21,7 @@ where
         response.append_object(&self.item);
     }
 }
+
+#[cfg(test)]
+#[path = "active_object_add_tests.rs"]
+mod tests;

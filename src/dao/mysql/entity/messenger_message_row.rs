@@ -46,3 +46,7 @@ impl TryFrom<&SqlRow> for MessengerMessageRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_message_row_tests.rs"]
+mod tests;

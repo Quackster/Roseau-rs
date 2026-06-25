@@ -1,4 +1,4 @@
-use super::player_password_action_queries::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlParameter};
 use crate::game::player::{
     PlayerDetails, PlayerLoginOutcome, PlayerProfileUpdateOutcome, PlayerRegistrationOutcome,

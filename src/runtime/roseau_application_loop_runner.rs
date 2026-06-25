@@ -55,3 +55,7 @@ impl RoseauApplicationLoopRunner {
         Ok(RoseauApplicationLoopReport::new(tick_reports, stopped))
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_loop_runner_tests.rs"]
+mod tests;

@@ -80,3 +80,7 @@ impl IncomingExecutionEffectNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "incoming_execution_effect_network_plan_tests.rs"]
+mod tests;

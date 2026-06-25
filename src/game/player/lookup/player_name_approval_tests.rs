@@ -1,4 +1,4 @@
-use super::player_name_approval::*;
+use super::*;
 use crate::messages::OutgoingMessage;
 
 const ALLOWED: &str = "abcdefghijklmnopqrstuvwxyz0123456789";

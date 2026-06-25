@@ -116,3 +116,7 @@ fn parse_port(config: &Config, key: &'static str) -> Result<u16, BootstrapError>
     let value = config.parse_value::<i32>("Server", key)?;
     u16::try_from(value).map_err(|_| BootstrapError::PortOutOfRange { key, value })
 }
+
+#[cfg(test)]
+#[path = "roseau_bootstrap_tests.rs"]
+mod tests;

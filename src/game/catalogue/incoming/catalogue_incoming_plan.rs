@@ -88,3 +88,7 @@ impl CatalogueIncomingPlan {
         Ok(outcomes)
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_incoming_plan_tests.rs"]
+mod tests;

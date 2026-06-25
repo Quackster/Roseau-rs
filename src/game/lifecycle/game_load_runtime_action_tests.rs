@@ -1,4 +1,4 @@
-use super::game_load_runtime_action::*;
+use super::*;
 
 #[test]
 fn maps_game_load_effects_to_runtime_actions() {

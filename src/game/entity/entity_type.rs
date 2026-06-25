@@ -14,3 +14,7 @@ impl EntityType {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "entity_type_tests.rs"]
+mod tests;

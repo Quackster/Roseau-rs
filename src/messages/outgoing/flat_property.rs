@@ -23,3 +23,7 @@ impl OutgoingMessage for FlatProperty {
         response.append_part_argument(&self.data);
     }
 }
+
+#[cfg(test)]
+#[path = "flat_property_tests.rs"]
+mod tests;

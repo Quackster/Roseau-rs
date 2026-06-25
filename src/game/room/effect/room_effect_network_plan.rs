@@ -79,3 +79,7 @@ impl RoomEffectNetworkPlan {
             .unwrap_or_default()
     }
 }
+
+#[cfg(test)]
+#[path = "room_effect_network_plan_tests.rs"]
+mod tests;

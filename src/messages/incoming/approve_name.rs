@@ -24,3 +24,7 @@ impl IncomingEvent for ApproveName {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "approve_name_tests.rs"]
+mod tests;

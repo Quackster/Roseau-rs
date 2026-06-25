@@ -1,4 +1,4 @@
-use super::buddy_list::*;
+use super::*;
 
 #[test]
 fn composes_buddy_list_packet() {

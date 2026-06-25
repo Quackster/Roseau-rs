@@ -40,3 +40,7 @@ impl RoomEffectServerListenPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_effect_server_listen_plan_tests.rs"]
+mod tests;

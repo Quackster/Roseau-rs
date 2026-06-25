@@ -41,3 +41,7 @@ impl PlayerResultMapper {
         result.require_i32_insert_id("player id")
     }
 }
+
+#[cfg(test)]
+#[path = "player_result_mapper_tests.rs"]
+mod tests;

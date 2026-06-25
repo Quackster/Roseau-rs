@@ -90,3 +90,7 @@ impl CataloguePurchaseQueries {
         ]
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_purchase_queries_tests.rs"]
+mod tests;

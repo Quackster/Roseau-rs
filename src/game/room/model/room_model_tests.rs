@@ -1,4 +1,4 @@
-use super::room_model::*;
+use super::*;
 
 #[test]
 fn parses_height_map_and_door_square() {

@@ -1,4 +1,5 @@
-use super::in_memory_navigator_dao::*;
+use super::*;
+use super::*;
 
 fn room(id: i32, room_type: RoomType, name: &str) -> RoomData {
     RoomData::new(

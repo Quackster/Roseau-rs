@@ -1,4 +1,4 @@
-use super::get_unit_users::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

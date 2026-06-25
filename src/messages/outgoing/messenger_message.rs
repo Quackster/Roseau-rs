@@ -40,3 +40,7 @@ impl OutgoingMessage for MessengerMessage {
         response.append_new_argument("");
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_message_tests.rs"]
+mod tests;

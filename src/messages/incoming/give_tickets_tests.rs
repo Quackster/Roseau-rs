@@ -1,4 +1,4 @@
-use super::give_tickets::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

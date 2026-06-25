@@ -45,3 +45,7 @@ impl FindUserOutcome {
         matches!(self, Self::Missing).then_some(NoSuchUser)
     }
 }
+
+#[cfg(test)]
+#[path = "find_user_outcome_tests.rs"]
+mod tests;

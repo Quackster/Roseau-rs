@@ -9,3 +9,7 @@ impl OutgoingMessage for JumpingPlaceOk {
         response.init("JUMPINGPLACE_OK");
     }
 }
+
+#[cfg(test)]
+#[path = "jumping_place_ok_tests.rs"]
+mod tests;

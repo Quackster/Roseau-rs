@@ -93,3 +93,7 @@ impl Default for BotMoveRoomEvent {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "bot_move_room_event_tests.rs"]
+mod tests;

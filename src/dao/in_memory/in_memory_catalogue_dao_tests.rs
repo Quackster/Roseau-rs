@@ -1,4 +1,5 @@
-use super::in_memory_catalogue_dao::*;
+use super::*;
+use super::*;
 
 #[test]
 fn stores_catalogue_items_and_deals_by_call_id() {

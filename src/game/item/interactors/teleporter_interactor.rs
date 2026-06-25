@@ -81,3 +81,7 @@ impl Interaction for TeleporterInteractor {
         Vec::new()
     }
 }
+
+#[cfg(test)]
+#[path = "teleporter_interactor_tests.rs"]
+mod tests;

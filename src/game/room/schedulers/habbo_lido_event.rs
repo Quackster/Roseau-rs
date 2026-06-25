@@ -123,3 +123,7 @@ impl Default for HabboLidoEvent {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "habbo_lido_event_tests.rs"]
+mod tests;

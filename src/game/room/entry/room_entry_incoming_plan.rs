@@ -33,3 +33,7 @@ impl RoomEntryIncomingPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_entry_incoming_plan_tests.rs"]
+mod tests;

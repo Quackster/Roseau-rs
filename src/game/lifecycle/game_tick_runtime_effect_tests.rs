@@ -1,4 +1,4 @@
-use super::game_tick_runtime_effect::*;
+use super::*;
 
 #[test]
 fn maps_runtime_only_tick_effects() {

@@ -1,3 +1,4 @@
+use super::*;
 use crate::dao::in_memory::InMemoryRoomDao;
 use crate::dao::{CreateRoom, RoomChatlog, RoomDao};
 use crate::game::player::{Bot, PlayerDetails};

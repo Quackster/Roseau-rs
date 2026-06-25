@@ -59,3 +59,7 @@ impl GameLoadReadiness {
         self.game_tick_scheduled
     }
 }
+
+#[cfg(test)]
+#[path = "game_load_readiness_tests.rs"]
+mod tests;

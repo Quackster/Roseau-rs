@@ -17,3 +17,7 @@ impl CommandIncomingPlan {
         effects.iter().flat_map(Self::plan).collect()
     }
 }
+
+#[cfg(test)]
+#[path = "command_incoming_plan_tests.rs"]
+mod tests;

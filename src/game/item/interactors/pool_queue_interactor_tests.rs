@@ -1,4 +1,4 @@
-use super::pool_queue_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 #[test]

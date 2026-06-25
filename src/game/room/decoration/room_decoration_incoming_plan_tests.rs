@@ -1,4 +1,4 @@
-use super::room_decoration_incoming_plan::*;
+use super::*;
 use crate::dao::in_memory::{InMemoryItemDao, InMemoryRoomDao};
 use crate::dao::{ItemDao, RoomDao};
 use crate::game::item::{Item, ItemDefinition};

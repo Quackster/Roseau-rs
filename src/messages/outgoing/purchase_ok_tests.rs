@@ -1,4 +1,4 @@
-use super::purchase_ok::*;
+use super::*;
 
 #[test]
 fn composes_purchase_ok_packet() {

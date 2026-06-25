@@ -1,4 +1,4 @@
-use super::game_load_runtime_report::*;
+use super::*;
 use crate::game::{GameRuntimeSchedulerEffect, GameRuntimeTask};
 
 #[test]

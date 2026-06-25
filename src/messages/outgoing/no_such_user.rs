@@ -9,3 +9,7 @@ impl OutgoingMessage for NoSuchUser {
         response.init("NOSUCHUSER");
     }
 }
+
+#[cfg(test)]
+#[path = "no_such_user_tests.rs"]
+mod tests;

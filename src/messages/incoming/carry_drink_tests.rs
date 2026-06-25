@@ -1,4 +1,4 @@
-use super::carry_drink::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

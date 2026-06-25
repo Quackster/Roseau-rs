@@ -1,4 +1,4 @@
-use super::user_status_event::*;
+use super::*;
 use crate::game::room::entity::RoomUserStatus;
 
 #[test]

@@ -71,3 +71,7 @@ fn prefixed_field_value(request: &dyn ClientMessage, index: usize, prefix: &str)
         .and_then(|field| field.strip_prefix(prefix))
         .map(ToOwned::to_owned)
 }
+
+#[cfg(test)]
+#[path = "update_tests.rs"]
+mod tests;

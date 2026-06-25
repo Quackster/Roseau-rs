@@ -39,3 +39,7 @@ impl PlayerPasswordActionReport {
         &self.player_effects
     }
 }
+
+#[cfg(test)]
+#[path = "player_password_action_report_tests.rs"]
+mod tests;

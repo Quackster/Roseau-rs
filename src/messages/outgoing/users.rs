@@ -67,3 +67,7 @@ impl OutgoingMessage for Users {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "users_tests.rs"]
+mod tests;

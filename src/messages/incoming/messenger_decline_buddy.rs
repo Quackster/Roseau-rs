@@ -12,3 +12,7 @@ impl IncomingEvent for MessengerDeclineBuddy {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_decline_buddy_tests.rs"]
+mod tests;

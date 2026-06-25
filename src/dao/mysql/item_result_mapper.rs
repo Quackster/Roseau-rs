@@ -77,3 +77,7 @@ impl ItemResultMapper {
 fn missing_definition(definition_id: i32) -> DaoError {
     DaoError::new(format!("Missing item definition {definition_id}"))
 }
+
+#[cfg(test)]
+#[path = "item_result_mapper_tests.rs"]
+mod tests;

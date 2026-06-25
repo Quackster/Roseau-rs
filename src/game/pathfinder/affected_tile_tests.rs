@@ -1,4 +1,4 @@
-use super::affected_tile::*;
+use super::*;
 
 #[test]
 fn returns_tiles_for_square_item() {

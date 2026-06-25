@@ -1,4 +1,4 @@
-use super::catalogue_purchase_network_plan::*;
+use super::*;
 
 #[test]
 fn maps_successful_purchase_to_add_strip_item_packet() {

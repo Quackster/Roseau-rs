@@ -1,4 +1,4 @@
-use super::room_state::*;
+use super::*;
 
 #[test]
 fn maps_java_room_state_codes() {

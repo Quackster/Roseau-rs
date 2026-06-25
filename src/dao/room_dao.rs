@@ -83,3 +83,7 @@ pub trait RoomDao {
         multiplier: i32,
     ) -> Result<Vec<RoomData>, DaoError>;
 }
+
+#[cfg(test)]
+#[path = "room_dao_tests.rs"]
+mod tests;

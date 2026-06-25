@@ -144,3 +144,7 @@ fn unsigned_sql_value(value: u64) -> SqlValue {
 fn driver_error(error: mysql::Error) -> DaoError {
     DaoError::new(format!("MySQL driver error: {error}"))
 }
+
+#[cfg(test)]
+#[path = "my_sql_driver_tests.rs"]
+mod tests;

@@ -9,3 +9,7 @@ impl OutgoingMessage for FlatLetIn {
         response.init("FLAT_LETIN");
     }
 }
+
+#[cfg(test)]
+#[path = "flat_let_in_tests.rs"]
+mod tests;

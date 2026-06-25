@@ -21,3 +21,7 @@ pub fn get_affected_tiles_at(
 
     tiles
 }
+
+#[cfg(test)]
+#[path = "affected_tile_tests.rs"]
+mod tests;

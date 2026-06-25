@@ -97,3 +97,7 @@ impl RoseauRuntime {
         )
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_runtime_tests.rs"]
+mod tests;

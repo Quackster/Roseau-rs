@@ -22,3 +22,7 @@ impl RoomLeaveUserExecutor {
             .count()
     }
 }
+
+#[cfg(test)]
+#[path = "room_leave_user_executor_tests.rs"]
+mod tests;

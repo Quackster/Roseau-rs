@@ -60,3 +60,7 @@ impl Default for CommandManager {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "command_manager_tests.rs"]
+mod tests;

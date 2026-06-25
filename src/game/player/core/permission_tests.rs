@@ -1,4 +1,4 @@
-use super::permission::*;
+use super::*;
 
 #[test]
 fn stores_permission_metadata() {

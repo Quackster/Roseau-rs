@@ -1,4 +1,4 @@
-use super::roseau_application_entrypoint_report::*;
+use super::*;
 use crate::dao::mysql::{MySqlDaoConnectionReport, MySqlDaoEffect, StorageConnectionOutcome};
 
 #[test]

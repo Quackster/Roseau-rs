@@ -85,3 +85,7 @@ fn prefixed_field_value(request: &dyn ClientMessage, index: usize, prefix: &str)
 fn truncate_chars(value: &str, max_chars: usize) -> String {
     value.chars().take(max_chars).collect()
 }
+
+#[cfg(test)]
+#[path = "register_tests.rs"]
+mod tests;

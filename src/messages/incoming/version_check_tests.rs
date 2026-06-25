@@ -1,4 +1,4 @@
-use super::version_check::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

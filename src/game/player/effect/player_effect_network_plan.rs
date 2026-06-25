@@ -66,3 +66,7 @@ impl MessengerEffectUserHint for crate::game::messenger::MessengerEffect {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_effect_network_plan_tests.rs"]
+mod tests;

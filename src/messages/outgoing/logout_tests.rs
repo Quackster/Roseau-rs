@@ -1,4 +1,4 @@
-use super::logout::*;
+use super::*;
 
 #[test]
 fn composes_logout_packet() {

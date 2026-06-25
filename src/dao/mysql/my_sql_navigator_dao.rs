@@ -44,3 +44,7 @@ impl<E: SqlExecutor> NavigatorDao for MySqlNavigatorDao<E> {
         NavigatorResultMapper::rooms_by_like_name(result, &self.owner_name)
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_navigator_dao_tests.rs"]
+mod tests;

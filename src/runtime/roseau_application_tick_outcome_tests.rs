@@ -1,4 +1,4 @@
-use super::roseau_application_tick_outcome::*;
+use super::*;
 use crate::runtime::RoseauStartupRuntimeError;
 
 #[test]

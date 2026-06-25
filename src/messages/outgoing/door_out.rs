@@ -26,3 +26,7 @@ impl OutgoingMessage for DoorOut {
         response.append_part_argument(&self.player);
     }
 }
+
+#[cfg(test)]
+#[path = "door_out_tests.rs"]
+mod tests;

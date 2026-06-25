@@ -1,4 +1,4 @@
-use super::active_object_update::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct Item;

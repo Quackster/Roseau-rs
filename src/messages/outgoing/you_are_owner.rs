@@ -9,3 +9,7 @@ impl OutgoingMessage for YouAreOwner {
         response.init("YOUAREOWNER");
     }
 }
+
+#[cfg(test)]
+#[path = "you_are_owner_tests.rs"]
+mod tests;

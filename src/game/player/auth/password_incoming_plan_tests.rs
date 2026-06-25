@@ -1,4 +1,4 @@
-use super::password_incoming_plan::*;
+use super::*;
 
 #[test]
 fn extracts_password_actions_from_incoming_effects() {

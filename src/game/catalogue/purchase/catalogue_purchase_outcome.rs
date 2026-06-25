@@ -27,3 +27,7 @@ impl CataloguePurchaseOutcome {
             .then(|| SystemBroadcast::new(Self::NOT_ENOUGH_CREDITS_MESSAGE))
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_purchase_outcome_tests.rs"]
+mod tests;

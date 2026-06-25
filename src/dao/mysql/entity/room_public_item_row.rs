@@ -59,3 +59,7 @@ impl TryFrom<&SqlRow> for RoomPublicItemRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "room_public_item_row_tests.rs"]
+mod tests;

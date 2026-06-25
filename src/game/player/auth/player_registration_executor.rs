@@ -69,3 +69,7 @@ pub enum PlayerRegistrationOutcome {
     Created,
     NameTaken,
 }
+
+#[cfg(test)]
+#[path = "player_registration_executor_tests.rs"]
+mod tests;

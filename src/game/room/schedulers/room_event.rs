@@ -26,3 +26,7 @@ impl Default for RoomEvent {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "room_event_tests.rs"]
+mod tests;

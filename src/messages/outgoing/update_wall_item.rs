@@ -22,3 +22,7 @@ where
         response.append_object(&self.item);
     }
 }
+
+#[cfg(test)]
+#[path = "update_wall_item_tests.rs"]
+mod tests;

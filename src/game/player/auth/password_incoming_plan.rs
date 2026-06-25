@@ -17,3 +17,7 @@ impl PasswordIncomingPlan {
         effects.iter().flat_map(Self::plan).collect()
     }
 }
+
+#[cfg(test)]
+#[path = "password_incoming_plan_tests.rs"]
+mod tests;

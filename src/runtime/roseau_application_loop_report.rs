@@ -33,3 +33,7 @@ impl RoseauApplicationLoopReport {
         !self.stopped
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_loop_report_tests.rs"]
+mod tests;

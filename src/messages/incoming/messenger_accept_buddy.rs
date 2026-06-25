@@ -12,3 +12,7 @@ impl IncomingEvent for MessengerAcceptBuddy {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_accept_buddy_tests.rs"]
+mod tests;

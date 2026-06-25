@@ -9,3 +9,7 @@ impl OutgoingMessage for MessengerReady {
         response.init("MESSENGERREADY");
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_ready_tests.rs"]
+mod tests;

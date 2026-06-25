@@ -74,3 +74,7 @@ impl RoseauApplicationEntrypointReport {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_entrypoint_report_tests.rs"]
+mod tests;

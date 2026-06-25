@@ -1,4 +1,4 @@
-use super::inventory_incoming_plan::*;
+use super::*;
 use crate::dao::in_memory::{InMemoryInventoryDao, InMemoryItemDao};
 use crate::game::item::{Item, ItemDefinition};
 use crate::messages::OutgoingMessage;

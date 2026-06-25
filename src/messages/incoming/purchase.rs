@@ -14,3 +14,7 @@ impl IncomingEvent for Purchase {
         context.record(IncomingCommand::Purchase { call_id });
     }
 }
+
+#[cfg(test)]
+#[path = "purchase_tests.rs"]
+mod tests;

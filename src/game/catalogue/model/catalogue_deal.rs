@@ -79,3 +79,7 @@ impl Display for ResolveDealItemError {
 }
 
 impl std::error::Error for ResolveDealItemError {}
+
+#[cfg(test)]
+#[path = "catalogue_deal_tests.rs"]
+mod tests;

@@ -10,3 +10,7 @@ impl OutgoingMessage for ItemMessage {
         response.append_new_argument("SELECTTYPE x");
     }
 }
+
+#[cfg(test)]
+#[path = "item_message_tests.rs"]
+mod tests;

@@ -21,3 +21,7 @@ impl RoomDecorationOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_decoration_outcome_tests.rs"]
+mod tests;

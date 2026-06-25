@@ -1,4 +1,4 @@
-use super::game_runtime_scheduler_execution_report::*;
+use super::*;
 
 #[test]
 fn records_scheduler_effects_and_cancels_room_tasks() {

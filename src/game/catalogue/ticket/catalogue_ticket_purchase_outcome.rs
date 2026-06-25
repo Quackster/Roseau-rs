@@ -41,3 +41,7 @@ impl CatalogueTicketPurchaseOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_ticket_purchase_outcome_tests.rs"]
+mod tests;

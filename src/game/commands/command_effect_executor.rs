@@ -30,3 +30,7 @@ impl CommandEffectExecutor {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "command_effect_executor_tests.rs"]
+mod tests;

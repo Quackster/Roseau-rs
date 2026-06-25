@@ -15,3 +15,7 @@ impl RoseauApplicationEntrypointUsage {
             .any(|argument| argument == "--help" || argument == "-h")
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_entrypoint_usage_tests.rs"]
+mod tests;

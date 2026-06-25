@@ -1,4 +1,4 @@
-use super::player_command_network_plan::*;
+use super::*;
 use crate::game::player::PlayerDetails;
 
 fn details() -> PlayerDetails {

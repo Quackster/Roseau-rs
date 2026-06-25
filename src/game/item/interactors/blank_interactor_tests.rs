@@ -1,4 +1,4 @@
-use super::blank_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn item() -> Item {

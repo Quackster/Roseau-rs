@@ -106,3 +106,7 @@ impl CurrentRoomItem {
         matches!(self.sprite.as_str(), "poolLift" | "poolBooth")
     }
 }
+
+#[cfg(test)]
+#[path = "room_leave_plan_tests.rs"]
+mod tests;

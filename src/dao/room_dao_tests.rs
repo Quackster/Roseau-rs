@@ -1,4 +1,4 @@
-use super::room_dao::*;
+use super::*;
 
 #[test]
 fn create_room_uses_owner_details() {

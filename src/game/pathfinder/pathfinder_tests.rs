@@ -1,4 +1,4 @@
-use super::pathfinder::*;
+use super::*;
 
 #[test]
 fn finds_straight_path_excluding_start_and_including_end() {

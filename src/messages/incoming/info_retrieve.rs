@@ -11,3 +11,7 @@ impl IncomingEvent for InfoRetrieve {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "info_retrieve_tests.rs"]
+mod tests;

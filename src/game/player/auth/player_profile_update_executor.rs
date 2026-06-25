@@ -44,3 +44,7 @@ impl PlayerProfileUpdateOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_profile_update_executor_tests.rs"]
+mod tests;

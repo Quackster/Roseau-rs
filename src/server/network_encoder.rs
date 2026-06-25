@@ -32,3 +32,7 @@ impl NetworkEncoder {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "network_encoder_tests.rs"]
+mod tests;

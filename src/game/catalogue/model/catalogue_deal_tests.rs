@@ -1,4 +1,4 @@
-use super::catalogue_deal::*;
+use super::*;
 
 #[test]
 fn resolves_deal_items_and_applies_extra_data() {

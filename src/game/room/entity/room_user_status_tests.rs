@@ -1,4 +1,4 @@
-use super::room_user_status::*;
+use super::*;
 
 #[test]
 fn finite_status_keeps_duration_and_ticks() {

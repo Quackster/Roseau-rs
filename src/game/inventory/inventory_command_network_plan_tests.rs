@@ -1,4 +1,4 @@
-use super::inventory_command_network_plan::*;
+use super::*;
 use crate::messages::outgoing::{StripInfo, StripItem, StripItemKind};
 
 #[test]

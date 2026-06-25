@@ -1,4 +1,4 @@
-use super::hello::*;
+use super::*;
 
 #[test]
 fn composes_hello_packet() {

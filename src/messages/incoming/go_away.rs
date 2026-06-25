@@ -11,3 +11,7 @@ impl IncomingEvent for GoAway {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "go_away_tests.rs"]
+mod tests;

@@ -36,3 +36,7 @@ impl Display for RoomState {
         f.write_str(value)
     }
 }
+
+#[cfg(test)]
+#[path = "room_state_tests.rs"]
+mod tests;

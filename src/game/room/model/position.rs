@@ -186,3 +186,7 @@ impl Display for ParsePositionError {
 }
 
 impl std::error::Error for ParsePositionError {}
+
+#[cfg(test)]
+#[path = "position_tests.rs"]
+mod tests;

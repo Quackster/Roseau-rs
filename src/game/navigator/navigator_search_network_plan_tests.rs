@@ -1,4 +1,4 @@
-use super::navigator_search_network_plan::*;
+use super::*;
 use crate::game::navigator::NavigatorRequest;
 use crate::game::room::settings::RoomType;
 use crate::game::room::{RoomData, RoomSummary};

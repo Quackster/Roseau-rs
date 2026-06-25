@@ -58,3 +58,7 @@ impl RoomPoolNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_pool_network_plan_tests.rs"]
+mod tests;

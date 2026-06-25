@@ -153,3 +153,7 @@ impl MessengerDao for InMemoryMessengerDao {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "in_memory_messenger_dao_tests.rs"]
+mod tests;

@@ -23,3 +23,7 @@ impl OutgoingMessage for UnitMembers {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "unit_members_tests.rs"]
+mod tests;

@@ -66,3 +66,7 @@ impl<'a> PlayerLoginRequest<'a> {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_login_executor_tests.rs"]
+mod tests;

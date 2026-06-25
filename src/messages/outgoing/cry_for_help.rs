@@ -21,3 +21,7 @@ where
         response.append_object(&self.call);
     }
 }
+
+#[cfg(test)]
+#[path = "cry_for_help_tests.rs"]
+mod tests;

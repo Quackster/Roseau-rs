@@ -1,4 +1,4 @@
-use super::item_behaviour::*;
+use super::*;
 
 #[test]
 fn parses_java_item_behaviour_flags() {

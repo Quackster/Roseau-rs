@@ -30,3 +30,7 @@ impl GameTickRuntimeEffect {
         effects.iter().filter_map(Self::from_tick_effect).collect()
     }
 }
+
+#[cfg(test)]
+#[path = "game_tick_runtime_effect_tests.rs"]
+mod tests;

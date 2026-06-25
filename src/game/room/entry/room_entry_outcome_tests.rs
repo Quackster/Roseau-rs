@@ -1,4 +1,4 @@
-use super::room_entry_outcome::*;
+use super::*;
 use crate::messages::OutgoingMessage;
 
 #[test]

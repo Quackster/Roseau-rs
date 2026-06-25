@@ -31,3 +31,7 @@ where
         }
     }
 }
+
+#[cfg(test)]
+#[path = "items_tests.rs"]
+mod tests;

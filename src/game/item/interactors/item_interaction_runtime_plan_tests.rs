@@ -1,4 +1,4 @@
-use super::item_interaction_runtime_plan::*;
+use super::*;
 use crate::game::room::model::Position;
 
 #[test]

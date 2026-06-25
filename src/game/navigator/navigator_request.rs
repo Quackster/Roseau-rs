@@ -4,3 +4,7 @@ pub enum NavigatorRequest {
     PopularRooms,
     SearchRooms,
 }
+
+#[cfg(test)]
+#[path = "navigator_request_tests.rs"]
+mod tests;

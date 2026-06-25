@@ -1,4 +1,4 @@
-use super::player_registration_executor::*;
+use super::*;
 use crate::dao::in_memory::InMemoryPlayerDao;
 use crate::dao::PlayerDao;
 

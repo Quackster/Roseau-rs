@@ -32,3 +32,7 @@ impl MessengerEffectNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_effect_network_plan_tests.rs"]
+mod tests;

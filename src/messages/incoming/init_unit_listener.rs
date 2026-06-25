@@ -9,3 +9,7 @@ impl IncomingEvent for InitUnitListener {
         context.record(IncomingCommand::InitUnitListener);
     }
 }
+
+#[cfg(test)]
+#[path = "init_unit_listener_tests.rs"]
+mod tests;

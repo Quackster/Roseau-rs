@@ -12,3 +12,7 @@ impl IncomingEvent for AssignRights {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "assign_rights_tests.rs"]
+mod tests;

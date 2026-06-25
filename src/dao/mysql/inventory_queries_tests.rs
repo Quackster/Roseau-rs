@@ -1,4 +1,4 @@
-use super::inventory_queries::*;
+use super::*;
 
 #[test]
 fn builds_inventory_filter_for_unplaced_user_items() {

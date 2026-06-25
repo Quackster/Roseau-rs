@@ -40,3 +40,7 @@ impl TcpServerTickOutcome {
         &self.removed_connection_ids
     }
 }
+
+#[cfg(test)]
+#[path = "tcp_server_tick_outcome_tests.rs"]
+mod tests;

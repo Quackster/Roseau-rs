@@ -1,4 +1,4 @@
-use super::room_ready::*;
+use super::*;
 
 #[test]
 fn composes_room_ready_packet() {

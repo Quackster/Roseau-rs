@@ -31,3 +31,7 @@ impl PlayerPasswordActionOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_password_action_outcome_tests.rs"]
+mod tests;

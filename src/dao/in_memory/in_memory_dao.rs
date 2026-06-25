@@ -81,3 +81,7 @@ impl InMemoryDao {
         &self.room
     }
 }
+
+#[cfg(test)]
+#[path = "in_memory_dao_tests.rs"]
+mod tests;

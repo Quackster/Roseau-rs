@@ -1,4 +1,4 @@
-use super::encryption_off::*;
+use super::*;
 
 #[test]
 fn composes_encryption_off_packet() {

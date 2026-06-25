@@ -1,4 +1,4 @@
-use super::player_command_outcome::*;
+use super::*;
 use crate::messages::OutgoingMessage;
 
 fn details() -> PlayerDetails {

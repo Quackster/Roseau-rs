@@ -1,4 +1,4 @@
-use super::talk::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

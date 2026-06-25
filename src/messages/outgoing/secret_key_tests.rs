@@ -1,4 +1,4 @@
-use super::secret_key::*;
+use super::*;
 
 #[test]
 fn composes_secret_key_packet() {

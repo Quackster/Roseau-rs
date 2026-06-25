@@ -24,3 +24,7 @@ impl RoseauApplicationEntrypointArguments {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_entrypoint_arguments_tests.rs"]
+mod tests;

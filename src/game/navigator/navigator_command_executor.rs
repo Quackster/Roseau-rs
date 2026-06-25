@@ -97,3 +97,7 @@ impl NavigatorCommandExecutor {
         Ok(rooms.into_iter().skip(skip).collect())
     }
 }
+
+#[cfg(test)]
+#[path = "navigator_command_executor_tests.rs"]
+mod tests;

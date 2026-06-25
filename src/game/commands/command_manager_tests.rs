@@ -1,4 +1,4 @@
-use super::command_manager::*;
+use super::*;
 use crate::game::commands::types::ReloadDefinitionsCommand;
 
 #[test]

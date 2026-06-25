@@ -14,3 +14,7 @@ impl InventoryCommandQueries {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "inventory_command_queries_tests.rs"]
+mod tests;

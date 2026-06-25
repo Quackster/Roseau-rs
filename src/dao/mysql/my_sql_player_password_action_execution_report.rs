@@ -25,3 +25,7 @@ impl MySqlPlayerPasswordActionExecutionReport {
         &self.database_result
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_player_password_action_execution_report_tests.rs"]
+mod tests;

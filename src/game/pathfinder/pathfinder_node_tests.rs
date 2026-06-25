@@ -1,4 +1,4 @@
-use super::pathfinder_node::*;
+use super::*;
 
 #[test]
 fn node_defaults_match_java_node_state() {

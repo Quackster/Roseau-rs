@@ -36,3 +36,7 @@ impl ModerationCommandExecutor {
         )
     }
 }
+
+#[cfg(test)]
+#[path = "moderation_command_executor_tests.rs"]
+mod tests;

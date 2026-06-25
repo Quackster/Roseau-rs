@@ -79,3 +79,7 @@ impl Default for ClubMassivaDiscoEvent {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "club_massiva_disco_event_tests.rs"]
+mod tests;

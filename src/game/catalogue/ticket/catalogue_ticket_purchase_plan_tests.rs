@@ -1,4 +1,4 @@
-use super::catalogue_ticket_purchase_plan::*;
+use super::*;
 
 #[test]
 fn rejects_non_ticket_purchase_calls() {

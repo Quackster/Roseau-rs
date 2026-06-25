@@ -29,3 +29,7 @@ impl ModerationManager {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "moderation_manager_tests.rs"]
+mod tests;

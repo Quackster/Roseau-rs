@@ -10,3 +10,7 @@ impl IncomingEvent for StatusOk {
         context.send(Ok.compose());
     }
 }
+
+#[cfg(test)]
+#[path = "status_ok_tests.rs"]
+mod tests;

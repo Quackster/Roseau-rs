@@ -1,4 +1,5 @@
-use super::database_engine::*;
+use super::*;
+use super::*;
 
 #[test]
 fn parses_java_database_engine_aliases() {

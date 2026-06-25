@@ -1,6 +1,4 @@
 pub mod chat_utility;
-#[cfg(test)]
-mod chat_utility_tests;
 pub mod room_user;
 pub mod room_user_chat;
 pub mod room_user_chat_network_plan;
@@ -12,15 +10,9 @@ pub mod room_user_effect_network_plan;
 #[cfg(test)]
 mod room_user_effect_network_plan_tests;
 pub mod room_user_incoming_plan;
-#[cfg(test)]
-mod room_user_incoming_plan_tests;
 pub mod room_user_movement;
 pub mod room_user_room_effect_executor;
-#[cfg(test)]
-mod room_user_room_effect_executor_tests;
 pub mod room_user_status;
-#[cfg(test)]
-mod room_user_status_tests;
 #[cfg(test)]
 mod room_user_tests;
 

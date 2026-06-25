@@ -1,4 +1,4 @@
-use super::room_data::*;
+use super::*;
 
 fn room_data() -> RoomData {
     RoomData::new(

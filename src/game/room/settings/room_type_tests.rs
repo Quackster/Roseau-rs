@@ -1,4 +1,4 @@
-use super::room_type::*;
+use super::*;
 
 #[test]
 fn maps_java_room_type_codes() {

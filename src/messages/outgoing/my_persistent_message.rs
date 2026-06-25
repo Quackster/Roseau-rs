@@ -20,3 +20,7 @@ impl OutgoingMessage for MyPersistentMessage {
         response.append_new_argument(&self.message);
     }
 }
+
+#[cfg(test)]
+#[path = "my_persistent_message_tests.rs"]
+mod tests;

@@ -90,3 +90,7 @@ impl ItemInteractionEffectExecutor {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "item_interaction_effect_executor_tests.rs"]
+mod tests;

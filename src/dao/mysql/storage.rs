@@ -125,3 +125,7 @@ fn database_setting(config: &Config, prefix: Option<&str>, key: &str, default: &
 
     default.to_owned()
 }
+
+#[cfg(test)]
+#[path = "storage_tests.rs"]
+mod tests;

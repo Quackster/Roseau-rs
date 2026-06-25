@@ -24,3 +24,7 @@ impl IncomingEvent for SearchBusyFlats {
         context.record(IncomingCommand::SearchBusyFlats { multiplier });
     }
 }
+
+#[cfg(test)]
+#[path = "search_busy_flats_tests.rs"]
+mod tests;

@@ -31,3 +31,7 @@ impl FindUserNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "find_user_network_plan_tests.rs"]
+mod tests;

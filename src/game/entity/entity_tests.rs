@@ -1,4 +1,4 @@
-use super::entity::*;
+use super::*;
 use crate::game::player::{Bot, Player};
 use crate::game::room::model::Position;
 

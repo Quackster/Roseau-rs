@@ -8,3 +8,7 @@ impl NetworkDecoder {
         NettyRequest::decode_frame(frame)
     }
 }
+
+#[cfg(test)]
+#[path = "network_decoder_tests.rs"]
+mod tests;

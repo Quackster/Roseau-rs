@@ -68,3 +68,7 @@ impl RoomEffectItemExecutor {
         Ok(loaded)
     }
 }
+
+#[cfg(test)]
+#[path = "room_effect_item_executor_tests.rs"]
+mod tests;

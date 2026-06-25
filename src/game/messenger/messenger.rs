@@ -139,3 +139,7 @@ impl Messenger {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_tests.rs"]
+mod tests;

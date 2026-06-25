@@ -31,3 +31,7 @@ impl Command for SitCommand {
         ]
     }
 }
+
+#[cfg(test)]
+#[path = "sit_command_tests.rs"]
+mod tests;

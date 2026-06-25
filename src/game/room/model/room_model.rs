@@ -190,3 +190,7 @@ impl Display for ParseRoomModelError {
 }
 
 impl std::error::Error for ParseRoomModelError {}
+
+#[cfg(test)]
+#[path = "room_model_tests.rs"]
+mod tests;

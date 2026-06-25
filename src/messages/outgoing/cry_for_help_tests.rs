@@ -1,4 +1,4 @@
-use super::cry_for_help::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct HelpCall;

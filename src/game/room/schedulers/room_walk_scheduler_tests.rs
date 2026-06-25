@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use super::room_walk_scheduler::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 use crate::game::room::model::RoomModel;
 

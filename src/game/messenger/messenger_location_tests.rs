@@ -1,4 +1,4 @@
-use super::messenger_location::*;
+use super::*;
 
 #[test]
 fn formats_java_messenger_locations() {

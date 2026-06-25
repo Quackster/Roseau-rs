@@ -94,3 +94,7 @@ impl ItemInteractionRuntimePlan {
         plans
     }
 }
+
+#[cfg(test)]
+#[path = "item_interaction_runtime_plan_tests.rs"]
+mod tests;

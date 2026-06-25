@@ -1,4 +1,4 @@
-use super::server_listen_plan::*;
+use super::*;
 
 #[test]
 fn builds_listen_plan_from_handler_state() {

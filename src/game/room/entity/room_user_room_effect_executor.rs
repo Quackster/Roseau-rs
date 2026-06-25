@@ -41,3 +41,7 @@ impl RoomUserRoomEffectExecutor {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_user_room_effect_executor_tests.rs"]
+mod tests;

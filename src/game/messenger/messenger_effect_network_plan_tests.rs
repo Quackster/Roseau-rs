@@ -1,4 +1,4 @@
-use super::messenger_effect_network_plan::*;
+use super::*;
 use crate::messages::outgoing::{BuddyAddRequests, BuddyList, BuddyListFriend};
 
 #[test]

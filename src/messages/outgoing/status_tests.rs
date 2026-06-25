@@ -1,4 +1,4 @@
-use super::status::*;
+use super::*;
 
 #[test]
 fn composes_status_packet() {

@@ -38,3 +38,7 @@ impl RoseauApplicationTickRunReport {
         &self.unapplied_runtime_plans
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_tick_run_report_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::name_unacceptable::*;
+use super::*;
 
 #[test]
 fn composes_name_unacceptable_packet() {

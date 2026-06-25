@@ -100,3 +100,7 @@ impl Display for PropertiesConfigError {
 }
 
 impl std::error::Error for PropertiesConfigError {}
+
+#[cfg(test)]
+#[path = "properties_config_tests.rs"]
+mod tests;

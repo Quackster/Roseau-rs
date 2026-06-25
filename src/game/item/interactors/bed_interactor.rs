@@ -71,3 +71,7 @@ impl Interaction for BedInteractor {
         ]
     }
 }
+
+#[cfg(test)]
+#[path = "bed_interactor_tests.rs"]
+mod tests;

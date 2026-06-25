@@ -20,3 +20,7 @@ impl OutgoingMessage for FlatInfo {
         response.append("/");
     }
 }
+
+#[cfg(test)]
+#[path = "flat_info_tests.rs"]
+mod tests;

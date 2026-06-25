@@ -21,3 +21,7 @@ where
         response.append_object(&self.details);
     }
 }
+
+#[cfg(test)]
+#[path = "user_object_tests.rs"]
+mod tests;

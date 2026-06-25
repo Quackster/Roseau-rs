@@ -1,4 +1,4 @@
-use super::player_registration_network_plan::*;
+use super::*;
 
 #[test]
 fn maps_created_registration_to_ok_packet() {

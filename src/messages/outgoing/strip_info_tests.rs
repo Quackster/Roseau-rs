@@ -1,4 +1,4 @@
-use super::strip_info::*;
+use super::*;
 
 #[test]
 fn composes_strip_info_packet() {

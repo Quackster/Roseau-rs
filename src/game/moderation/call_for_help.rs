@@ -50,3 +50,7 @@ impl SerializableObject for CallForHelp {
         ));
     }
 }
+
+#[cfg(test)]
+#[path = "call_for_help_tests.rs"]
+mod tests;

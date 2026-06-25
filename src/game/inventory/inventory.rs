@@ -125,3 +125,7 @@ pub enum InventoryRefresh<'a> {
     Page { cursor: usize, items: &'a [Item] },
     Empty,
 }
+
+#[cfg(test)]
+#[path = "inventory_tests.rs"]
+mod tests;

@@ -35,3 +35,7 @@ impl RoseauServerLoopOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_server_loop_outcome_tests.rs"]
+mod tests;

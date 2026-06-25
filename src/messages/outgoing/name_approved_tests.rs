@@ -1,4 +1,4 @@
-use super::name_approved::*;
+use super::*;
 
 #[test]
 fn composes_name_approved_packet() {

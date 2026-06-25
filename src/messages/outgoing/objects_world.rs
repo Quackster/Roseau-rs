@@ -29,3 +29,7 @@ where
         }
     }
 }
+
+#[cfg(test)]
+#[path = "objects_world_tests.rs"]
+mod tests;

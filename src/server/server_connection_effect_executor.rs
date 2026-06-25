@@ -107,3 +107,7 @@ impl Default for ServerConnectionEffectExecutor {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "server_connection_effect_executor_tests.rs"]
+mod tests;

@@ -39,3 +39,7 @@ impl<E: SqlExecutor> CatalogueDao for MySqlCatalogueDao<E> {
         CatalogueResultMapper::item_deals(result)
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_catalogue_dao_tests.rs"]
+mod tests;

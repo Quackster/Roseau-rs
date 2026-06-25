@@ -1,4 +1,4 @@
-use super::messenger_mark_read::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

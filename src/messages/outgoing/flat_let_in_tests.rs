@@ -1,4 +1,4 @@
-use super::flat_let_in::*;
+use super::*;
 
 #[test]
 fn composes_flat_let_in_packet() {

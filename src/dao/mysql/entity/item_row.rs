@@ -59,3 +59,7 @@ impl TryFrom<&SqlRow> for ItemRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "item_row_tests.rs"]
+mod tests;

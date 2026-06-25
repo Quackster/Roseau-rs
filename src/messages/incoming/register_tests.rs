@@ -1,4 +1,4 @@
-use super::register::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 fn registration_body(name: &str) -> String {

@@ -43,3 +43,7 @@ impl OutgoingMessage for OpenGameBoard {
         response.append_argument(self.y);
     }
 }
+
+#[cfg(test)]
+#[path = "open_game_board_tests.rs"]
+mod tests;

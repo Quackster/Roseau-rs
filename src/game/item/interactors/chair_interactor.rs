@@ -61,3 +61,7 @@ impl Interaction for ChairInteractor {
         ]
     }
 }
+
+#[cfg(test)]
+#[path = "chair_interactor_tests.rs"]
+mod tests;

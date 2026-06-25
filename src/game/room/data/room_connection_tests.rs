@@ -1,4 +1,4 @@
-use super::room_connection::*;
+use super::*;
 
 #[test]
 fn stores_room_connection_fields() {

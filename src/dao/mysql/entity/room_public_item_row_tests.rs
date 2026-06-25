@@ -1,4 +1,4 @@
-use super::room_public_item_row::*;
+use super::*;
 use crate::dao::mysql::SqlValue;
 
 #[test]

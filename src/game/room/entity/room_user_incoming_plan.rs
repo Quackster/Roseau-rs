@@ -16,3 +16,7 @@ impl RoomUserIncomingPlan {
         RoomUserCommandExecutor::apply_all(user, effects)
     }
 }
+
+#[cfg(test)]
+#[path = "room_user_incoming_plan_tests.rs"]
+mod tests;

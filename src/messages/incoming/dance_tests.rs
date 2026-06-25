@@ -1,4 +1,4 @@
-use super::dance::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

@@ -1,4 +1,4 @@
-use super::item_message::*;
+use super::*;
 
 #[test]
 fn composes_item_message_packet() {

@@ -14,3 +14,7 @@ impl IncomingEvent for KillUser {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "kill_user_tests.rs"]
+mod tests;

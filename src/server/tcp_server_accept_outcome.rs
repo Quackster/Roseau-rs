@@ -21,3 +21,7 @@ impl TcpServerAcceptOutcome {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "tcp_server_accept_outcome_tests.rs"]
+mod tests;

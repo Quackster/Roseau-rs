@@ -29,3 +29,7 @@ impl PlayerLoginNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "player_login_network_plan_tests.rs"]
+mod tests;

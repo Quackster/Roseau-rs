@@ -85,3 +85,7 @@ impl RoomIncomingPlan {
         Ok(executions)
     }
 }
+
+#[cfg(test)]
+#[path = "room_incoming_plan_tests.rs"]
+mod tests;

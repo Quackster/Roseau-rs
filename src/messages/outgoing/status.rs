@@ -83,3 +83,7 @@ impl OutgoingMessage for Status {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "status_tests.rs"]
+mod tests;

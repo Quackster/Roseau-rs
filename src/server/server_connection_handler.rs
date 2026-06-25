@@ -109,3 +109,7 @@ fn host(address: &str) -> &str {
     let without_slash = address.strip_prefix('/').unwrap_or(address);
     without_slash.split(':').next().unwrap_or(without_slash)
 }
+
+#[cfg(test)]
+#[path = "server_connection_handler_tests.rs"]
+mod tests;

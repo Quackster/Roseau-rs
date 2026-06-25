@@ -1,4 +1,4 @@
-use super::pool_ladder_interactor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn ladder() -> Item {

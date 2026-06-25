@@ -125,3 +125,7 @@ impl SchedulerEffectExecutor {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "scheduler_effect_executor_tests.rs"]
+mod tests;

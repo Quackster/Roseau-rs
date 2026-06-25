@@ -23,3 +23,7 @@ impl IncomingEvent for AddItem {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "add_item_tests.rs"]
+mod tests;

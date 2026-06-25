@@ -12,3 +12,7 @@ impl IncomingEvent for RemoveRights {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "remove_rights_tests.rs"]
+mod tests;

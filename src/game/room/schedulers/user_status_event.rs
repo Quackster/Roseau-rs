@@ -125,3 +125,7 @@ impl Default for UserStatusEvent {
         Self::new()
     }
 }
+
+#[cfg(test)]
+#[path = "user_status_event_tests.rs"]
+mod tests;

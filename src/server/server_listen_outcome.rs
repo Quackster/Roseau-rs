@@ -37,3 +37,7 @@ impl ServerListenOutcome {
         self.failed_address.is_none()
     }
 }
+
+#[cfg(test)]
+#[path = "server_listen_outcome_tests.rs"]
+mod tests;

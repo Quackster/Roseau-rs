@@ -1,4 +1,5 @@
-use super::in_memory_inventory_dao::*;
+use super::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn chair_definition() -> ItemDefinition {

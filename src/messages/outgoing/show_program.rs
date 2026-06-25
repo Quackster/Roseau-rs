@@ -27,3 +27,7 @@ impl OutgoingMessage for ShowProgram {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "show_program_tests.rs"]
+mod tests;

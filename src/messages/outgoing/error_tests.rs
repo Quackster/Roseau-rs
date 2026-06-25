@@ -1,4 +1,4 @@
-use super::error::*;
+use super::*;
 
 #[test]
 fn composes_error_packet() {

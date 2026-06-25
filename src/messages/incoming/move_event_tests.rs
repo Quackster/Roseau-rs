@@ -1,4 +1,4 @@
-use super::move_event::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

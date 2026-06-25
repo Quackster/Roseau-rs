@@ -114,3 +114,7 @@ impl RoseauStartupRuntime {
         runtime.apply_network_effects(effects)
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_startup_runtime_tests.rs"]
+mod tests;

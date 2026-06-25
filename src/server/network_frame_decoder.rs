@@ -63,3 +63,7 @@ fn parse_frame_len(prefix: &[u8]) -> Result<usize, DecodeError> {
         .parse::<usize>()
         .map_err(|_| DecodeError::InvalidLength)
 }
+
+#[cfg(test)]
+#[path = "network_frame_decoder_tests.rs"]
+mod tests;

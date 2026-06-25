@@ -70,3 +70,7 @@ impl PlayerIncomingPlan {
         Ok(outcomes)
     }
 }
+
+#[cfg(test)]
+#[path = "player_incoming_plan_tests.rs"]
+mod tests;

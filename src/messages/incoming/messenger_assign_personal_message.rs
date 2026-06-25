@@ -16,3 +16,7 @@ impl IncomingEvent for MessengerAssignPersonalMessage {
         context.record(IncomingCommand::AssignPersonalMessage { message });
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_assign_personal_message_tests.rs"]
+mod tests;

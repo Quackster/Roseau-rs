@@ -1,4 +1,4 @@
-use super::update::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 fn update_body() -> String {

@@ -23,3 +23,7 @@ impl RoomLeaveMessengerExecutor {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "room_leave_messenger_executor_tests.rs"]
+mod tests;

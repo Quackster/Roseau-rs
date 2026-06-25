@@ -1,4 +1,5 @@
-use super::catalogue_queries::*;
+use super::*;
+use super::*;
 
 #[test]
 fn matches_java_catalogue_table_reads() {

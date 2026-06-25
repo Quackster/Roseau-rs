@@ -31,3 +31,7 @@ impl MySqlPlayerPasswordActionReport {
         &self.persistence_plans
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_player_password_action_report_tests.rs"]
+mod tests;

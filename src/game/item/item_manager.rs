@@ -40,3 +40,7 @@ impl ItemManager {
         &self.definitions
     }
 }
+
+#[cfg(test)]
+#[path = "item_manager_tests.rs"]
+mod tests;

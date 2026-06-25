@@ -29,3 +29,7 @@ impl CommandEffectNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "command_effect_network_plan_tests.rs"]
+mod tests;

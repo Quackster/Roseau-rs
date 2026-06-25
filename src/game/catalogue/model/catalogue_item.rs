@@ -41,3 +41,7 @@ impl CatalogueItem {
         self.extra_data = Some(extra_data.into());
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_item_tests.rs"]
+mod tests;

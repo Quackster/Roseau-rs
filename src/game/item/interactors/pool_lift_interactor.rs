@@ -54,3 +54,7 @@ impl Interaction for PoolLiftInteractor {
         effects
     }
 }
+
+#[cfg(test)]
+#[path = "pool_lift_interactor_tests.rs"]
+mod tests;

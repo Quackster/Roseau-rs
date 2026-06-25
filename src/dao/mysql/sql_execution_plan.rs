@@ -109,3 +109,7 @@ fn count_parameter_placeholders(sql: &str) -> usize {
 
     count
 }
+
+#[cfg(test)]
+#[path = "sql_execution_plan_tests.rs"]
+mod tests;

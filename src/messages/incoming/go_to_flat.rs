@@ -9,3 +9,7 @@ impl IncomingEvent for GoToFlat {
         context.record(IncomingCommand::GoToFlat);
     }
 }
+
+#[cfg(test)]
+#[path = "go_to_flat_tests.rs"]
+mod tests;

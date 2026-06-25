@@ -1,4 +1,4 @@
-use super::scheduler_effect_network_plan::*;
+use super::*;
 use crate::game::player::PlayerDetails;
 
 fn details(id: i32, username: &str) -> PlayerDetails {

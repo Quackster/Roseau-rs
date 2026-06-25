@@ -1,4 +1,4 @@
-use super::game_runtime_scheduler_plan::*;
+use super::*;
 
 #[test]
 fn plans_java_game_scheduler_worker_pool_and_tick() {

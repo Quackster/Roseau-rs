@@ -76,3 +76,7 @@ impl<E> MySqlDaoFacades<E> {
         &self.messenger
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_dao_facades_tests.rs"]
+mod tests;

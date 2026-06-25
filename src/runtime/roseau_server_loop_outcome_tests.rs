@@ -1,4 +1,4 @@
-use super::roseau_server_loop_outcome::*;
+use super::*;
 use crate::server::{TcpServerAcceptOutcome, TcpServerTickOutcome};
 
 #[test]

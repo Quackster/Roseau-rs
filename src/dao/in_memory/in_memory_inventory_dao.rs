@@ -76,3 +76,7 @@ impl InventoryDao for InMemoryInventoryDao {
         Ok(item)
     }
 }
+
+#[cfg(test)]
+#[path = "in_memory_inventory_dao_tests.rs"]
+mod tests;

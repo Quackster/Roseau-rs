@@ -1,4 +1,4 @@
-use super::game_scheduler::*;
+use super::*;
 use crate::Config;
 
 fn variables() -> GameVariables {

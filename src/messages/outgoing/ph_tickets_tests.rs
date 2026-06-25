@@ -1,4 +1,4 @@
-use super::ph_tickets::*;
+use super::*;
 
 #[test]
 fn composes_ph_tickets_packet() {

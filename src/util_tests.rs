@@ -1,4 +1,4 @@
-use super::util::*;
+use super::*;
 
 #[test]
 fn filter_input_replaces_control_delimiters_with_spaces() {

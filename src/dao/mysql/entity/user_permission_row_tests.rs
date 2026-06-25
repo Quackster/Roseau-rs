@@ -1,4 +1,4 @@
-use super::user_permission_row::*;
+use super::*;
 use crate::dao::mysql::SqlValue;
 
 #[test]

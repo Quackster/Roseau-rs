@@ -1,4 +1,4 @@
-use super::messenger_remove_buddy::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

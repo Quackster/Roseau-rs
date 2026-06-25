@@ -18,3 +18,7 @@ impl SqlDriver for UnconfiguredSqlDriver {
         )))
     }
 }
+
+#[cfg(test)]
+#[path = "unconfigured_sql_driver_tests.rs"]
+mod tests;

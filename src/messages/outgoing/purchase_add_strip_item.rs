@@ -9,3 +9,7 @@ impl OutgoingMessage for PurchaseAddStripItem {
         response.init("ADDSTRIPITEM");
     }
 }
+
+#[cfg(test)]
+#[path = "purchase_add_strip_item_tests.rs"]
+mod tests;

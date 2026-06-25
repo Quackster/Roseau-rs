@@ -1,4 +1,5 @@
-use super::catalogue_purchase_result_mapper::*;
+use super::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlExecutionResult};
 use crate::game::catalogue::{CataloguePurchaseItemPlan, CataloguePurchasePlan};
 

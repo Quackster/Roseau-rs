@@ -9,3 +9,7 @@ impl OutgoingMessage for NameApproved {
         response.init("NAME_APPROVED");
     }
 }
+
+#[cfg(test)]
+#[path = "name_approved_tests.rs"]
+mod tests;

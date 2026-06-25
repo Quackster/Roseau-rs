@@ -28,3 +28,7 @@ impl MessengerCommandQueries {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_command_queries_tests.rs"]
+mod tests;

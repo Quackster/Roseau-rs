@@ -7,3 +7,7 @@ pub trait Entity {
     fn room_user(&self) -> Option<&RoomUser>;
     fn entity_type(&self) -> EntityType;
 }
+
+#[cfg(test)]
+#[path = "entity_tests.rs"]
+mod tests;

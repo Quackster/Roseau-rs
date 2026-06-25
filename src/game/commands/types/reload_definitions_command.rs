@@ -8,3 +8,7 @@ impl Command for ReloadDefinitionsCommand {
         vec![CommandEffect::ReloadItemDefinitions]
     }
 }
+
+#[cfg(test)]
+#[path = "reload_definitions_command_tests.rs"]
+mod tests;

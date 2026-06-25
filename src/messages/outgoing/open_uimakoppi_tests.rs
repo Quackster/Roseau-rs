@@ -1,4 +1,4 @@
-use super::open_uimakoppi::*;
+use super::*;
 
 #[test]
 fn composes_open_uimakoppi_packet() {

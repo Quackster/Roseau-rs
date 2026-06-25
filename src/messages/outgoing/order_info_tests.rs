@@ -1,4 +1,4 @@
-use super::order_info::*;
+use super::*;
 
 #[test]
 fn composes_order_info_packet() {

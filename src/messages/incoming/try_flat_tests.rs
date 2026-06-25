@@ -1,4 +1,4 @@
-use super::try_flat::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

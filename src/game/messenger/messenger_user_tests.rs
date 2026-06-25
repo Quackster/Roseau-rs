@@ -1,4 +1,4 @@
-use super::messenger_user::*;
+use super::*;
 
 #[test]
 fn offline_users_are_never_in_room() {

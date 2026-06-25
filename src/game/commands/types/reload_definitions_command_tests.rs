@@ -1,4 +1,4 @@
-use super::reload_definitions_command::*;
+use super::*;
 
 #[test]
 fn records_item_definition_reload_effect() {

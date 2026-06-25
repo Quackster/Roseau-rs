@@ -1,4 +1,4 @@
-use super::messenger_result_mapper::*;
+use super::*;
 use crate::dao::mysql::{SqlRow, SqlValue};
 
 fn friendship_row(sender: i32, receiver: i32) -> SqlRow {

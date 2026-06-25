@@ -1,4 +1,4 @@
-use super::server_listen_outcome::*;
+use super::*;
 
 #[test]
 fn records_successful_bind_attempts_for_all_ports() {

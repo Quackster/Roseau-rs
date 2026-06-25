@@ -20,3 +20,7 @@ impl IncomingEvent for CarryDrink {
         context.record(IncomingCommand::MarkRoomNeedsUpdate);
     }
 }
+
+#[cfg(test)]
+#[path = "carry_drink_tests.rs"]
+mod tests;

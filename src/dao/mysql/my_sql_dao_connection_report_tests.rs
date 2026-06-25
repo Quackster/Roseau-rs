@@ -1,4 +1,4 @@
-use super::my_sql_dao_connection_report::*;
+use super::*;
 
 #[test]
 fn exposes_connection_outcome_and_effects() {

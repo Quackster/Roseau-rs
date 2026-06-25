@@ -49,3 +49,7 @@ impl CatalogueManager {
             .map(|deal| deal.resolve_items(&self.items))
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_manager_tests.rs"]
+mod tests;

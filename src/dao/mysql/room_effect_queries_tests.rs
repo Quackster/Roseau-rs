@@ -1,4 +1,4 @@
-use super::room_effect_queries::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionKind, SqlParameter};
 
 #[test]

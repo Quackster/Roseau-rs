@@ -1,4 +1,4 @@
-use super::navigator_queries::*;
+use super::*;
 
 #[test]
 fn builds_private_room_name_search() {

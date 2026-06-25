@@ -162,3 +162,7 @@ impl Default for RoseauApplicationEntrypointSettings {
         Self::new("roseau.properties", "habbohotel.properties")
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_entrypoint_settings_tests.rs"]
+mod tests;

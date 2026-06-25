@@ -29,3 +29,7 @@ impl IncomingEvent for PlaceStuffFromStrip {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "place_stuff_from_strip_tests.rs"]
+mod tests;

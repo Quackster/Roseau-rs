@@ -1,4 +1,4 @@
-use super::room_leave_plan::*;
+use super::*;
 
 #[test]
 fn plans_standard_room_leave_effects() {

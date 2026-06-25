@@ -26,3 +26,7 @@ impl OutgoingMessage for DoorIn {
         response.append_part_argument(&self.player);
     }
 }
+
+#[cfg(test)]
+#[path = "door_in_tests.rs"]
+mod tests;

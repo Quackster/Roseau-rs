@@ -1,4 +1,4 @@
-use super::storage::*;
+use super::*;
 
 #[test]
 fn builds_storage_from_generic_database_config() {

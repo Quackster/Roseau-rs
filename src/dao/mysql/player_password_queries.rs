@@ -78,3 +78,7 @@ impl Default for PlayerPasswordQueries {
         Self::java_compatible()
     }
 }
+
+#[cfg(test)]
+#[path = "player_password_queries_tests.rs"]
+mod tests;

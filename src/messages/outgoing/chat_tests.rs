@@ -1,4 +1,4 @@
-use super::chat::*;
+use super::*;
 
 #[test]
 fn composes_chat_packet_with_dynamic_header() {

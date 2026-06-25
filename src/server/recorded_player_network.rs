@@ -60,3 +60,7 @@ impl PlayerNetwork for RecordedPlayerNetwork {
         self.closed
     }
 }
+
+#[cfg(test)]
+#[path = "recorded_player_network_tests.rs"]
+mod tests;

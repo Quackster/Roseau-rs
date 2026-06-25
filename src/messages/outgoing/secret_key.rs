@@ -18,3 +18,7 @@ impl OutgoingMessage for SecretKey {
         response.append_new_argument(&self.key);
     }
 }
+
+#[cfg(test)]
+#[path = "secret_key_tests.rs"]
+mod tests;

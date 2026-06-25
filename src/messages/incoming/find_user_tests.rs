@@ -1,4 +1,4 @@
-use super::find_user::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

@@ -46,3 +46,7 @@ impl InventoryQueries {
         ItemRow::TABLE
     }
 }
+
+#[cfg(test)]
+#[path = "inventory_queries_tests.rs"]
+mod tests;

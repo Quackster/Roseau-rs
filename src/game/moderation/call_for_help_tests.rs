@@ -1,4 +1,4 @@
-use super::call_for_help::*;
+use super::*;
 
 #[test]
 fn serialises_call_for_help_like_java_object() {

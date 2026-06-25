@@ -1,4 +1,4 @@
-use super::user_object::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct PlayerDetails;

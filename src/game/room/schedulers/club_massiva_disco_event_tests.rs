@@ -1,4 +1,4 @@
-use super::club_massiva_disco_event::*;
+use super::*;
 
 #[test]
 fn emits_lamp_and_floor_programs_on_tick_interval() {

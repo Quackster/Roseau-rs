@@ -1,4 +1,4 @@
-use super::open_game_board::*;
+use super::*;
 
 #[test]
 fn composes_open_game_board_packet() {

@@ -113,3 +113,7 @@ impl PlayerNetwork for TcpPlayerNetwork {
         self.closed
     }
 }
+
+#[cfg(test)]
+#[path = "tcp_player_network_tests.rs"]
+mod tests;

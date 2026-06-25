@@ -93,3 +93,7 @@ impl Entity for Bot {
         self.entity_type()
     }
 }
+
+#[cfg(test)]
+#[path = "bot_tests.rs"]
+mod tests;

@@ -9,3 +9,7 @@ impl OutgoingMessage for EncryptionOff {
         response.init("ENCRYPTION_OFF");
     }
 }
+
+#[cfg(test)]
+#[path = "encryption_off_tests.rs"]
+mod tests;

@@ -93,3 +93,7 @@ impl CatalogueTicketPurchaseExecution {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_ticket_purchase_executor_tests.rs"]
+mod tests;

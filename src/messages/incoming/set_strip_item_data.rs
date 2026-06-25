@@ -17,3 +17,7 @@ impl IncomingEvent for SetStripItemData {
         context.record(IncomingCommand::UseStripItem { item_id });
     }
 }
+
+#[cfg(test)]
+#[path = "set_strip_item_data_tests.rs"]
+mod tests;

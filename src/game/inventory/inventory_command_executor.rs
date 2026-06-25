@@ -54,3 +54,7 @@ fn strip_item_from_item(item: &Item) -> StripItem {
         kind,
     )
 }
+
+#[cfg(test)]
+#[path = "inventory_command_executor_tests.rs"]
+mod tests;

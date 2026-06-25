@@ -36,3 +36,7 @@ impl InventoryIncomingPlan {
         Ok(executions)
     }
 }
+
+#[cfg(test)]
+#[path = "inventory_incoming_plan_tests.rs"]
+mod tests;

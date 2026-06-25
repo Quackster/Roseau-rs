@@ -1,4 +1,4 @@
-use super::password_action::*;
+use super::*;
 
 #[test]
 fn records_login_password_operation() {

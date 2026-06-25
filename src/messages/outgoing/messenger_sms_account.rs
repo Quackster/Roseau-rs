@@ -10,3 +10,7 @@ impl OutgoingMessage for MessengerSmsAccount {
         response.append_new_argument("noaccount");
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_sms_account_tests.rs"]
+mod tests;

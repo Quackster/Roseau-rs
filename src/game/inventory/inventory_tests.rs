@@ -1,4 +1,4 @@
-use super::inventory::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn item(id: i32) -> Item {

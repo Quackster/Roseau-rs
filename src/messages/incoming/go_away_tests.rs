@@ -1,4 +1,4 @@
-use super::go_away::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

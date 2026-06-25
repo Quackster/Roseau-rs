@@ -26,3 +26,7 @@ where
         }
     }
 }
+
+#[cfg(test)]
+#[path = "busy_flat_results_tests.rs"]
+mod tests;

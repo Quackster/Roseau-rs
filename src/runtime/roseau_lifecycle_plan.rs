@@ -49,3 +49,7 @@ impl RoseauLifecyclePlan {
         self.steps
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_lifecycle_plan_tests.rs"]
+mod tests;

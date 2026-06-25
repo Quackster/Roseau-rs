@@ -1,4 +1,4 @@
-use super::catalogue_purchase_plan::*;
+use super::*;
 
 fn item() -> CatalogueItem {
     CatalogueItem::new("chair", 7, 5)

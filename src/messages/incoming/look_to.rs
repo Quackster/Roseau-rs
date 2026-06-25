@@ -18,3 +18,7 @@ impl IncomingEvent for LookTo {
         context.record(IncomingCommand::LookTo { x, y });
     }
 }
+
+#[cfg(test)]
+#[path = "look_to_tests.rs"]
+mod tests;

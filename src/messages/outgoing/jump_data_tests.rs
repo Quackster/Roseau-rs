@@ -1,4 +1,4 @@
-use super::jump_data::*;
+use super::*;
 
 #[test]
 fn composes_jump_data_packet() {

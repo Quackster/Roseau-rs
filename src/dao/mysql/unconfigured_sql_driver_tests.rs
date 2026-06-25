@@ -1,4 +1,4 @@
-use super::unconfigured_sql_driver::*;
+use super::*;
 use crate::dao::mysql::{SqlExecutionPlan, SqlParameter, SqlQuery};
 
 #[test]

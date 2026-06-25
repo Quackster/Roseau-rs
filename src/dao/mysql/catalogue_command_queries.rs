@@ -16,3 +16,7 @@ impl CatalogueCommandQueries {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_command_queries_tests.rs"]
+mod tests;

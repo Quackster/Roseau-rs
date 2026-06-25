@@ -1,4 +1,4 @@
-use super::show_program::*;
+use super::*;
 
 #[test]
 fn composes_show_program_packet() {

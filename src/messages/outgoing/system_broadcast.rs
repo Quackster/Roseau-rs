@@ -20,3 +20,7 @@ impl OutgoingMessage for SystemBroadcast {
         response.append_new_argument(&self.message);
     }
 }
+
+#[cfg(test)]
+#[path = "system_broadcast_tests.rs"]
+mod tests;

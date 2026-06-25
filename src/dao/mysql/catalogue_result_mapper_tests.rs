@@ -1,4 +1,5 @@
-use super::catalogue_result_mapper::*;
+use super::*;
+use super::*;
 use crate::dao::mysql::{SqlRow, SqlValue};
 
 #[test]

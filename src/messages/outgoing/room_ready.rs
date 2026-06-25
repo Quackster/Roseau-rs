@@ -20,3 +20,7 @@ impl OutgoingMessage for RoomReady {
         response.append_new_argument(&self.description);
     }
 }
+
+#[cfg(test)]
+#[path = "room_ready_tests.rs"]
+mod tests;

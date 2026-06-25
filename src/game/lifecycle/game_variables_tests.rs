@@ -1,4 +1,4 @@
-use super::game_variables::*;
+use super::*;
 
 fn config() -> Config {
     Config::parse(

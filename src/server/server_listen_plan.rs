@@ -61,3 +61,7 @@ impl ServerListenPlan {
         !self.bind_ip.trim().is_empty() && !self.ports.is_empty()
     }
 }
+
+#[cfg(test)]
+#[path = "server_listen_plan_tests.rs"]
+mod tests;

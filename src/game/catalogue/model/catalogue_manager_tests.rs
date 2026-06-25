@@ -1,4 +1,4 @@
-use super::catalogue_manager::*;
+use super::*;
 
 #[test]
 fn finds_catalogue_items_and_deals_by_call_id() {

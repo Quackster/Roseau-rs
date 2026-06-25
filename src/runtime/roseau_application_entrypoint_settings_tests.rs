@@ -1,4 +1,4 @@
-use super::roseau_application_entrypoint_settings::*;
+use super::*;
 
 #[test]
 fn defaults_match_rust_entrypoint_startup_parameters() {

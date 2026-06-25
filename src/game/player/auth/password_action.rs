@@ -117,3 +117,7 @@ impl PasswordAction {
         Some(details)
     }
 }
+
+#[cfg(test)]
+#[path = "password_action_tests.rs"]
+mod tests;

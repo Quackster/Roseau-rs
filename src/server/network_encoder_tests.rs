@@ -1,4 +1,4 @@
-use super::network_encoder::*;
+use super::*;
 use crate::messages::outgoing::Hello;
 
 #[test]

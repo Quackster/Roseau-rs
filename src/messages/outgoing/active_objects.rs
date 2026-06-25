@@ -26,3 +26,7 @@ where
         }
     }
 }
+
+#[cfg(test)]
+#[path = "active_objects_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::sql_row::*;
+use super::*;
 
 #[test]
 fn reads_required_typed_columns() {

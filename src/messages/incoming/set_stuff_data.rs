@@ -25,3 +25,7 @@ impl IncomingEvent for SetStuffData {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "set_stuff_data_tests.rs"]
+mod tests;

@@ -34,3 +34,7 @@ impl PlayerCommandNetworkPlan {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "player_command_network_plan_tests.rs"]
+mod tests;

@@ -19,3 +19,7 @@ impl IncomingEvent for AddStripItem {
         context.record(IncomingCommand::ReturnItemToInventory { item_id });
     }
 }
+
+#[cfg(test)]
+#[path = "add_strip_item_tests.rs"]
+mod tests;

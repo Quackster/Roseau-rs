@@ -43,3 +43,7 @@ impl IncomingEvent for UpdateFlat {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "update_flat_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::navigator_incoming_plan::*;
+use super::*;
 use crate::dao::in_memory::{InMemoryNavigatorDao, InMemoryRoomDao};
 use crate::game::navigator::NavigatorRequest;
 use crate::game::player::{PlayerDetails, PlayerSession};

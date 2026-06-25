@@ -19,3 +19,7 @@ impl RoomType {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "room_type_tests.rs"]
+mod tests;

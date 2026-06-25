@@ -1,4 +1,4 @@
-use super::flat_property::*;
+use super::*;
 
 #[test]
 fn composes_flat_property_packet() {

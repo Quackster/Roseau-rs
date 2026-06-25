@@ -1,4 +1,4 @@
-use super::flat_created::*;
+use super::*;
 
 #[test]
 fn composes_flat_created_packet() {

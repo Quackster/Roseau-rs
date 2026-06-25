@@ -12,3 +12,7 @@ impl IncomingEvent for GetCredits {
         context.send(MessengersReady.compose());
     }
 }
+
+#[cfg(test)]
+#[path = "get_credits_tests.rs"]
+mod tests;

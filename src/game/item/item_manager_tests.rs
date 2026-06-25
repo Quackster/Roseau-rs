@@ -1,4 +1,4 @@
-use super::item_manager::*;
+use super::*;
 
 fn definition(id: i32) -> ItemDefinition {
     ItemDefinition::new(id, "chair", "red", 1, 1, 1.0, "SFC", "Chair", "", "")

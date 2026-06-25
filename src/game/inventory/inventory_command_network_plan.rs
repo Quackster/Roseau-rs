@@ -32,3 +32,7 @@ impl InventoryCommandNetworkPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "inventory_command_network_plan_tests.rs"]
+mod tests;

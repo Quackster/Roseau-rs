@@ -1,4 +1,4 @@
-use super::item_interaction_effect_item_executor::*;
+use super::*;
 use crate::game::item::ItemDefinition;
 
 fn item(id: i32, custom_data: Option<String>) -> Item {

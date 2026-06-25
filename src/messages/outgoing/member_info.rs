@@ -39,3 +39,7 @@ impl OutgoingMessage for MemberInfo {
         response.append_new_argument(&self.figure);
     }
 }
+
+#[cfg(test)]
+#[path = "member_info_tests.rs"]
+mod tests;

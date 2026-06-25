@@ -18,3 +18,7 @@ impl IncomingEvent for CryForHelp {
         context.record(IncomingCommand::CryForHelp { message });
     }
 }
+
+#[cfg(test)]
+#[path = "cry_for_help_tests.rs"]
+mod tests;

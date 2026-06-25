@@ -1,4 +1,4 @@
-use super::bad_name::*;
+use super::*;
 
 #[test]
 fn composes_bad_name_packet() {

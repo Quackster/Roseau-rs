@@ -11,3 +11,7 @@ impl IncomingEvent for GetStrip {
         });
     }
 }
+
+#[cfg(test)]
+#[path = "get_strip_tests.rs"]
+mod tests;

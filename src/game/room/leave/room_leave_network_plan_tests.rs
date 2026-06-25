@@ -1,4 +1,4 @@
-use super::room_leave_network_plan::*;
+use super::*;
 use crate::game::player::{PlayerDetails, PlayerSession};
 
 fn details(id: i32, username: &str) -> PlayerDetails {

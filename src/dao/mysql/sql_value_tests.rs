@@ -1,4 +1,4 @@
-use super::sql_value::*;
+use super::*;
 
 #[test]
 fn exposes_typed_sql_values() {

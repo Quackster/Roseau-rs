@@ -30,3 +30,7 @@ impl RoseauApplicationTickOutcome {
         self.server_outcome.should_continue()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_tick_outcome_tests.rs"]
+mod tests;

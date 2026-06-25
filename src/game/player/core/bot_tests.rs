@@ -1,4 +1,4 @@
-use super::bot::*;
+use super::*;
 
 #[test]
 fn finds_trigger_case_insensitively() {

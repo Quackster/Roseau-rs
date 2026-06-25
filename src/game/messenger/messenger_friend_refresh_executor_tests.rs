@@ -1,4 +1,4 @@
-use super::messenger_friend_refresh_executor::*;
+use super::*;
 use crate::dao::in_memory::{InMemoryMessengerDao, InMemoryPlayerDao};
 use crate::dao::{CreatePlayer, MessengerDao, PlayerDao};
 use crate::game::player::{PlayerDetails, PlayerSession};

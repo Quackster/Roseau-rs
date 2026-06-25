@@ -48,3 +48,7 @@ fn validate_mysql_storage(storage: &Storage) -> Result<(), DaoError> {
         )))
     }
 }
+
+#[cfg(test)]
+#[path = "my_sql_storage_connector_tests.rs"]
+mod tests;

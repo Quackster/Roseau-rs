@@ -136,3 +136,7 @@ impl Display for ConfigError {
 }
 
 impl std::error::Error for ConfigError {}
+
+#[cfg(test)]
+#[path = "config_tests.rs"]
+mod tests;

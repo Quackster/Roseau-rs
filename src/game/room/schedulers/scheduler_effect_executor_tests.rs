@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use super::scheduler_effect_executor::*;
+use super::*;
 
 fn room_user() -> RoomUser {
     let mut user = RoomUser::new(7, "alice", "hd-100", "hello", None::<String>);

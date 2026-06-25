@@ -58,3 +58,7 @@ impl RoseauStartupPlan {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_startup_plan_tests.rs"]
+mod tests;

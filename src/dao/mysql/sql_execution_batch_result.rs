@@ -76,3 +76,7 @@ impl SqlExecutionBatchResult {
             .collect()
     }
 }
+
+#[cfg(test)]
+#[path = "sql_execution_batch_result_tests.rs"]
+mod tests;

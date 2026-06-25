@@ -1,4 +1,4 @@
-use super::room_user_room_effect_executor::*;
+use super::*;
 
 fn room_user() -> RoomUser {
     RoomUser::new(7, "alice", "hd-100", "hello", None::<String>)

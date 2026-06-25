@@ -30,3 +30,7 @@ impl TryFrom<&SqlRow> for RoomRightRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "room_right_row_tests.rs"]
+mod tests;

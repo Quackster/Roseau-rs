@@ -1,4 +1,4 @@
-use super::update_wall_item::*;
+use super::*;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct WallItem;

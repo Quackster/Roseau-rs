@@ -20,3 +20,7 @@ impl NavigatorQueries {
         RoomRow::TABLE
     }
 }
+
+#[cfg(test)]
+#[path = "navigator_queries_tests.rs"]
+mod tests;

@@ -1,4 +1,4 @@
-use super::catalogue_order_info_plan::*;
+use super::*;
 use crate::game::catalogue::{CatalogueDeal, CatalogueItem};
 
 fn manager() -> CatalogueManager {

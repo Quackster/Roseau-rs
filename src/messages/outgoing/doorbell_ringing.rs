@@ -18,3 +18,7 @@ impl OutgoingMessage for DoorbellRinging {
         response.append_new_argument(&self.name);
     }
 }
+
+#[cfg(test)]
+#[path = "doorbell_ringing_tests.rs"]
+mod tests;

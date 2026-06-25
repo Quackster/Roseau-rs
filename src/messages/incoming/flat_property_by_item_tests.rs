@@ -1,4 +1,4 @@
-use super::flat_property_by_item::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

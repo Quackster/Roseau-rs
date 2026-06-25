@@ -1,4 +1,4 @@
-use super::room_navigator_entry::*;
+use super::*;
 use crate::game::room::settings::RoomType;
 
 fn room_data(show_owner_name: bool) -> RoomData {

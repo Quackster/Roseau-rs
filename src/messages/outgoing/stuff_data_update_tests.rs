@@ -1,4 +1,4 @@
-use super::stuff_data_update::*;
+use super::*;
 
 #[test]
 fn composes_stuff_data_update_packet() {

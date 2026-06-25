@@ -44,3 +44,7 @@ fn is_name_approved(name: &str, allowed_chars: &str) -> bool {
     name.chars()
         .all(|character| allowed_chars.contains(character.to_ascii_lowercase()))
 }
+
+#[cfg(test)]
+#[path = "player_name_approval_tests.rs"]
+mod tests;

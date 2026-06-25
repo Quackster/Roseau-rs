@@ -23,3 +23,7 @@ impl RoseauStartupStatus {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_startup_status_tests.rs"]
+mod tests;

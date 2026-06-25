@@ -45,3 +45,7 @@ impl RoseauApplicationPrepareReadiness {
         self.startup_status.as_ref()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_application_prepare_readiness_tests.rs"]
+mod tests;

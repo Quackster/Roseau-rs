@@ -82,3 +82,7 @@ impl MessengerIncomingPlan {
         Ok(outcomes)
     }
 }
+
+#[cfg(test)]
+#[path = "messenger_incoming_plan_tests.rs"]
+mod tests;

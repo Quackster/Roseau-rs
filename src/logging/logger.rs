@@ -127,3 +127,7 @@ impl Logger {
         writeln!(file, "{line}")
     }
 }
+
+#[cfg(test)]
+#[path = "logger_tests.rs"]
+mod tests;

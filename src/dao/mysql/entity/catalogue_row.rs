@@ -33,3 +33,7 @@ impl TryFrom<&SqlRow> for CatalogueRow {
         ))
     }
 }
+
+#[cfg(test)]
+#[path = "catalogue_row_tests.rs"]
+mod tests;

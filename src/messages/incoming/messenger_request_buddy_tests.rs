@@ -1,4 +1,4 @@
-use super::messenger_request_buddy::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

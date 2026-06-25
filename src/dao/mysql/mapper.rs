@@ -145,3 +145,7 @@ pub fn room_connection_from_row(row: &RoomPublicConnectionRow) -> RoomConnection
         Position::with_rotation(row.door_x, row.door_y, row.door_z as f64, row.door_rotation);
     RoomConnection::new(row.room_id, row.to_id, door_position)
 }
+
+#[cfg(test)]
+#[path = "mapper_tests.rs"]
+mod tests;

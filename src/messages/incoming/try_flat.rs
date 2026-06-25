@@ -22,3 +22,7 @@ impl IncomingEvent for TryFlat {
         context.record(IncomingCommand::TryFlat { room_id, password });
     }
 }
+
+#[cfg(test)]
+#[path = "try_flat_tests.rs"]
+mod tests;

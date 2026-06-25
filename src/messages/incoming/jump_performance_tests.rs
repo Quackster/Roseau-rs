@@ -1,4 +1,4 @@
-use super::jump_performance::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]

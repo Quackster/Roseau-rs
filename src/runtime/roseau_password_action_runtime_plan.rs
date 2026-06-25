@@ -22,3 +22,7 @@ impl RoseauPasswordActionRuntimePlan {
         network_effects.into_iter().map(Self::Network).collect()
     }
 }
+
+#[cfg(test)]
+#[path = "roseau_password_action_runtime_plan_tests.rs"]
+mod tests;

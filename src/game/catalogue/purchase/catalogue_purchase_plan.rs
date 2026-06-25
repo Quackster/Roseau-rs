@@ -88,3 +88,7 @@ fn purchase_extra_data(definition: &ItemDefinition, call_id: &str) -> String {
 
     String::new()
 }
+
+#[cfg(test)]
+#[path = "catalogue_purchase_plan_tests.rs"]
+mod tests;

@@ -17,3 +17,7 @@ impl IncomingEvent for GetOrderInfo {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "get_order_info_tests.rs"]
+mod tests;

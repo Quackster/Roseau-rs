@@ -1,4 +1,4 @@
-use super::messenger_request_row::*;
+use super::*;
 use crate::dao::mysql::SqlValue;
 
 #[test]

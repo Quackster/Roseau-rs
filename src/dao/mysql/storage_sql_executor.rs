@@ -27,3 +27,7 @@ impl<D: SqlDriver> SqlExecutor for StorageSqlExecutor<D> {
         plan.validate_result(result)
     }
 }
+
+#[cfg(test)]
+#[path = "storage_sql_executor_tests.rs"]
+mod tests;

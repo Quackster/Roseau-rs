@@ -17,3 +17,7 @@ impl IncomingEvent for GetFlatInfo {
         context.record(IncomingCommand::GetFlatInfo { room_id });
     }
 }
+
+#[cfg(test)]
+#[path = "get_flat_info_tests.rs"]
+mod tests;

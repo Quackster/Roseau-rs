@@ -19,3 +19,7 @@ impl IncomingEvent for Dance {
         context.record(IncomingCommand::MarkRoomNeedsUpdate);
     }
 }
+
+#[cfg(test)]
+#[path = "dance_tests.rs"]
+mod tests;

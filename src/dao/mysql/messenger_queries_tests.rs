@@ -1,4 +1,4 @@
-use super::messenger_queries::*;
+use super::*;
 
 #[test]
 fn builds_friend_and_request_reads() {

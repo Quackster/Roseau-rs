@@ -9,3 +9,7 @@ impl OutgoingMessage for BadName {
         response.init("BADNAME");
     }
 }
+
+#[cfg(test)]
+#[path = "bad_name_tests.rs"]
+mod tests;

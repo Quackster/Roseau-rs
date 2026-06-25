@@ -1,4 +1,4 @@
-use super::server_bootstrap_plan::*;
+use super::*;
 
 fn plan(bind_ip: &str, raw_config_ip: &str) -> ServerBootstrapPlan {
     ServerBootstrapPlan::new(

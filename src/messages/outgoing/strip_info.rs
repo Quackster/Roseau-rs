@@ -103,3 +103,7 @@ impl OutgoingMessage for StripInfo {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "strip_info_tests.rs"]
+mod tests;

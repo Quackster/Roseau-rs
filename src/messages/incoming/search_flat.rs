@@ -18,3 +18,7 @@ impl IncomingEvent for SearchFlat {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "search_flat_tests.rs"]
+mod tests;

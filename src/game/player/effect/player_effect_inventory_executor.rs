@@ -21,3 +21,7 @@ impl PlayerEffectInventoryExecutor {
             .count()
     }
 }
+
+#[cfg(test)]
+#[path = "player_effect_inventory_executor_tests.rs"]
+mod tests;

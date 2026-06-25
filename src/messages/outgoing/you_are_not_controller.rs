@@ -9,3 +9,7 @@ impl OutgoingMessage for YouAreNotController {
         response.init("YOUARENOTCONTROLLER");
     }
 }
+
+#[cfg(test)]
+#[path = "you_are_not_controller_tests.rs"]
+mod tests;

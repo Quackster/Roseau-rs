@@ -17,3 +17,7 @@ impl IncomingEvent for DeleteFlat {
         context.record(IncomingCommand::DeleteFlat { room_id });
     }
 }
+
+#[cfg(test)]
+#[path = "delete_flat_tests.rs"]
+mod tests;

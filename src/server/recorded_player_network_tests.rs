@@ -1,4 +1,4 @@
-use super::recorded_player_network::*;
+use super::*;
 
 #[test]
 fn records_sent_responses_packets_and_close_state() {

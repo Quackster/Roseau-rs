@@ -1,4 +1,4 @@
-use super::remove_rights::*;
+use super::*;
 use crate::protocol::NettyRequest;
 
 #[test]
