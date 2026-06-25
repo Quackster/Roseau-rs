@@ -69,7 +69,7 @@ fn main() {
         &binder,
         &connector,
         public_room_ids,
-        settings.first_connection_id(),
+        1,
         None,
     ) {
         Ok(report) => report,
@@ -120,9 +120,6 @@ fn main() {
         &tick_executor,
         &resolver,
         &binder,
-        settings.listener_index(),
-        settings.accept_connection(),
-        settings.max_bytes(),
         &main_server_players,
         &mut room_afk_states,
     ) {

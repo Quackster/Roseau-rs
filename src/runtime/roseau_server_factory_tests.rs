@@ -10,6 +10,7 @@ fn plan(class_path: &str) -> ServerBootstrapPlan {
         class_path,
         DatabaseEngine::MySql,
         vec![37120, 37119, 37125],
+        vec![],
     )
 }
 

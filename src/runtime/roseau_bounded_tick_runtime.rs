@@ -6,9 +6,6 @@ impl RoseauApplicationRuntime {
     pub fn run_tick<B: ServerSocketBinder>(
         &mut self,
         binder: &B,
-        listener_index: usize,
-        accept_connection: bool,
-        max_bytes: usize,
         main_server_players: impl IntoIterator<Item = (i32, i32)>,
         room_afk_states: &mut [RoomAfkState],
     ) -> RoseauApplicationTickOutcome {
@@ -28,12 +25,7 @@ impl RoseauApplicationRuntime {
         } else {
             Vec::<GameTickEffect>::new()
         };
-        let server_outcome = self.startup_runtime_mut().run_loop_step(
-            binder,
-            listener_index,
-            accept_connection,
-            max_bytes,
-        );
+        let server_outcome = self.startup_runtime_mut().run_loop_step(binder);
 
         RoseauApplicationTickOutcome::new(game_effects, server_outcome)
     }

@@ -28,6 +28,7 @@ fn startup_plan(port: u16) -> RoseauStartupPlan {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![port],
+        vec![],
     ))
     .unwrap()
 }
@@ -109,7 +110,7 @@ fn exposes_loop_outcome_for_bounded_tick() {
     let mut startup =
         RoseauStartupRuntime::prepare(&runtime, startup_plan(0), &binder, 100).unwrap();
 
-    let outcome = startup.run_loop_step(&binder, 0, true, 64);
+    let outcome = startup.run_loop_step(&binder);
 
     assert!(outcome.should_continue());
     assert!(outcome.tick().is_some());
@@ -164,7 +165,7 @@ fn records_bind_failure_without_constructing_tcp_runtime() {
         RoseauStartupRuntimeError::NotListening
     );
     assert_eq!(
-        startup.run_loop_step(&binder, 0, true, 64),
+        startup.run_loop_step(&binder),
         RoseauServerLoopOutcome::Stop {
             error: RoseauStartupRuntimeError::NotListening,
         }

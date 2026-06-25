@@ -30,9 +30,6 @@ impl RoseauApplicationLoopRunner {
         tick_executor: &MySqlApplicationTickExecutor<E>,
         resolver: &R,
         binder: &B,
-        listener_index: usize,
-        accept_connection: bool,
-        max_bytes: usize,
         main_server_players: &[(i32, i32)],
         room_afk_states: &mut [RoomAfkState],
     ) -> Result<RoseauApplicationLoopReport, DaoError> {
@@ -51,9 +48,6 @@ impl RoseauApplicationLoopRunner {
                 tick_executor,
                 resolver,
                 binder,
-                listener_index,
-                accept_connection,
-                max_bytes,
                 main_server_players.iter().copied(),
                 room_afk_states,
             )?;

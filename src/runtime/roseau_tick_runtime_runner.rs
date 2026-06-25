@@ -12,20 +12,10 @@ impl RoseauApplicationRuntime {
         &mut self,
         tick_executor: &MySqlApplicationTickExecutor<E>,
         binder: &B,
-        listener_index: usize,
-        accept_connection: bool,
-        max_bytes: usize,
         main_server_players: impl IntoIterator<Item = (i32, i32)>,
         room_afk_states: &mut [RoomAfkState],
     ) -> Result<RoseauApplicationTickExecutionReport, DaoError> {
-        let outcome = self.run_tick(
-            binder,
-            listener_index,
-            accept_connection,
-            max_bytes,
-            main_server_players,
-            room_afk_states,
-        );
+        let outcome = self.run_tick(binder, main_server_players, room_afk_states);
         let database_report = tick_executor.execute_tick_report(&outcome)?;
         let raw_config_ip = self
             .startup_runtime()
@@ -49,20 +39,10 @@ impl RoseauApplicationRuntime {
         tick_executor: &MySqlApplicationTickExecutor<E>,
         resolver: &R,
         binder: &B,
-        listener_index: usize,
-        accept_connection: bool,
-        max_bytes: usize,
         main_server_players: impl IntoIterator<Item = (i32, i32)>,
         room_afk_states: &mut [RoomAfkState],
     ) -> Result<RoseauApplicationTickRunReport, DaoError> {
-        let outcome = self.run_tick(
-            binder,
-            listener_index,
-            accept_connection,
-            max_bytes,
-            main_server_players,
-            room_afk_states,
-        );
+        let outcome = self.run_tick(binder, main_server_players, room_afk_states);
         let server_outcome = outcome.server_outcome().clone();
         let database_report = tick_executor.execute_tick_report(&outcome)?;
         let raw_config_ip = self

@@ -12,6 +12,7 @@ pub struct ServerBootstrapPlan {
     server_class_path: String,
     database_engine: DatabaseEngine,
     ports: Vec<u16>,
+    public_room_ports: Vec<(i32, u16)>,
 }
 
 impl ServerBootstrapPlan {
@@ -23,6 +24,7 @@ impl ServerBootstrapPlan {
         server_class_path: impl Into<String>,
         database_engine: DatabaseEngine,
         ports: impl Into<Vec<u16>>,
+        public_room_ports: impl Into<Vec<(i32, u16)>>,
     ) -> Self {
         Self {
             bind_ip: bind_ip.into(),
@@ -32,6 +34,7 @@ impl ServerBootstrapPlan {
             server_class_path: server_class_path.into(),
             database_engine,
             ports: ports.into(),
+            public_room_ports: public_room_ports.into(),
         }
     }
 
@@ -61,6 +64,10 @@ impl ServerBootstrapPlan {
 
     pub fn ports(&self) -> &[u16] {
         &self.ports
+    }
+
+    pub fn public_room_ports(&self) -> &[(i32, u16)] {
+        &self.public_room_ports
     }
 
     pub fn advertised_ip(&self, resolved_config_ip: Option<&str>) -> String {
@@ -94,6 +101,17 @@ impl ServerBootstrapPlan {
         resolved_config_ip: Option<&str>,
     ) -> RoseauStartupStatus {
         self.listen_status(outcome.listened(), resolved_config_ip)
+    }
+
+    pub fn public_room_listening_lines(&self, resolved_config_ip: Option<&str>) -> Vec<String> {
+        let server_ip = self.advertised_ip(resolved_config_ip);
+
+        self.public_room_ports
+            .iter()
+            .map(|(room_id, port)| {
+                format!("Public room {room_id} is listening on {server_ip}:{port}")
+            })
+            .collect()
     }
 }
 

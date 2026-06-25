@@ -8,10 +8,6 @@ use crate::runtime::{
 pub struct RoseauApplicationEntrypointSettings {
     main_config_path: PathBuf,
     hotel_config_path: PathBuf,
-    first_connection_id: i32,
-    listener_index: usize,
-    accept_connection: bool,
-    max_bytes: usize,
 }
 
 impl RoseauApplicationEntrypointSettings {
@@ -22,10 +18,6 @@ impl RoseauApplicationEntrypointSettings {
         Self {
             main_config_path: main_config_path.into(),
             hotel_config_path: hotel_config_path.into(),
-            first_connection_id: 1,
-            listener_index: 0,
-            accept_connection: true,
-            max_bytes: 4096,
         }
     }
 
@@ -35,42 +27,6 @@ impl RoseauApplicationEntrypointSettings {
 
     pub fn hotel_config_path(&self) -> &Path {
         &self.hotel_config_path
-    }
-
-    pub fn first_connection_id(&self) -> i32 {
-        self.first_connection_id
-    }
-
-    pub fn listener_index(&self) -> usize {
-        self.listener_index
-    }
-
-    pub fn accept_connection(&self) -> bool {
-        self.accept_connection
-    }
-
-    pub fn max_bytes(&self) -> usize {
-        self.max_bytes
-    }
-
-    pub fn with_first_connection_id(mut self, first_connection_id: i32) -> Self {
-        self.first_connection_id = first_connection_id;
-        self
-    }
-
-    pub fn with_listener_index(mut self, listener_index: usize) -> Self {
-        self.listener_index = listener_index;
-        self
-    }
-
-    pub fn with_accept_connection(mut self, accept_connection: bool) -> Self {
-        self.accept_connection = accept_connection;
-        self
-    }
-
-    pub fn with_max_bytes(mut self, max_bytes: usize) -> Self {
-        self.max_bytes = max_bytes;
-        self
     }
 
     pub fn from_args(
@@ -86,21 +42,6 @@ impl RoseauApplicationEntrypointSettings {
                 }
                 "--hotel-config" => {
                     settings.hotel_config_path = required_arg(&mut args, "--hotel-config")?.into();
-                }
-                "--first-connection-id" => {
-                    settings.first_connection_id = parse_arg(&mut args, "--first-connection-id")?;
-                }
-                "--listener-index" => {
-                    settings.listener_index = parse_arg(&mut args, "--listener-index")?;
-                }
-                "--max-bytes" => {
-                    settings.max_bytes = parse_arg(&mut args, "--max-bytes")?;
-                }
-                "--accept-connection" => {
-                    settings.accept_connection = true;
-                }
-                "--no-accept-connection" => {
-                    settings.accept_connection = false;
                 }
                 _ => {
                     return Err(RoseauApplicationEntrypointSettingsError::new(format!(
@@ -131,15 +72,6 @@ fn required_arg(
 ) -> Result<String, RoseauApplicationEntrypointSettingsError> {
     args.next().ok_or_else(|| {
         RoseauApplicationEntrypointSettingsError::new(format!("missing value for {name}"))
-    })
-}
-
-fn parse_arg<T: std::str::FromStr>(
-    args: &mut impl Iterator<Item = String>,
-    name: &str,
-) -> Result<T, RoseauApplicationEntrypointSettingsError> {
-    required_arg(args, name)?.parse::<T>().map_err(|_| {
-        RoseauApplicationEntrypointSettingsError::new(format!("invalid value for {name}"))
     })
 }
 

@@ -182,4 +182,41 @@ impl TcpServerRuntime {
 
         TcpServerTickOutcome::new(accept_outcome, read_outcomes, removed_connection_ids)
     }
+
+    pub fn step_all_listeners<B: ServerSocketBinder>(
+        &mut self,
+        binder: &B,
+        max_bytes: usize,
+    ) -> TcpServerTickOutcome {
+        let read_outcomes = self.read_active_connections(max_bytes);
+        let removed_connection_ids = self.remove_closed_connections(&read_outcomes);
+        let mut accept_outcome = TcpServerAcceptOutcome::Idle;
+
+        for listener_index in 0..self.server_handler.ports().len() {
+            match self.acceptor.accept_one_nonblocking(binder, listener_index) {
+                Ok(Some(mut runtime)) => {
+                    let connection_id = runtime.connection_id();
+                    if let Err(error) = runtime.set_nonblocking(true) {
+                        if matches!(accept_outcome, TcpServerAcceptOutcome::Idle) {
+                            accept_outcome = TcpServerAcceptOutcome::Error { message: error };
+                        }
+                    } else {
+                        runtime.open(&mut self.server_handler, &self.connection_handler);
+                        self.connections.push(runtime);
+                        if matches!(accept_outcome, TcpServerAcceptOutcome::Idle) {
+                            accept_outcome = TcpServerAcceptOutcome::Accepted { connection_id };
+                        }
+                    }
+                }
+                Ok(None) => {}
+                Err(error) => {
+                    if matches!(accept_outcome, TcpServerAcceptOutcome::Idle) {
+                        accept_outcome = TcpServerAcceptOutcome::Error { message: error };
+                    }
+                }
+            }
+        }
+
+        TcpServerTickOutcome::new(accept_outcome, read_outcomes, removed_connection_ids)
+    }
 }

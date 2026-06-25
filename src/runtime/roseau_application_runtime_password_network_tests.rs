@@ -68,9 +68,7 @@ fn applies_password_action_packets_to_active_connections() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     let report = MySqlPlayerPasswordActionExecutionReport::new(
@@ -106,9 +104,7 @@ fn applies_password_action_duplicate_connection_closes() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     application
@@ -158,9 +154,7 @@ fn applies_direct_incoming_execution_network_plans_to_active_connections() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
 

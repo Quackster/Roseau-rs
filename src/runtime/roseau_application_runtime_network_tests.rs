@@ -105,9 +105,7 @@ fn applies_room_effect_network_closes_to_active_connections() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     application
@@ -185,9 +183,7 @@ fn applies_room_user_effect_network_closes_to_active_connections() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     application
@@ -256,9 +252,7 @@ fn applies_scheduler_effect_network_packets_to_active_connections() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     application
@@ -321,9 +315,7 @@ fn applies_room_leave_logout_broadcast_to_active_connections() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     application

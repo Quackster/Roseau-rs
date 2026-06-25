@@ -111,9 +111,6 @@ fn skips_loop_when_database_connection_fails() {
             [],
             1,
             None,
-            0,
-            false,
-            64,
             &[],
             &mut afk_states,
         )
@@ -146,9 +143,6 @@ fn prepares_and_runs_loop_after_database_connection() {
             [],
             1,
             None,
-            0,
-            false,
-            64,
             &[(4, 25)],
             &mut afk_states,
         )

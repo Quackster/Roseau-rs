@@ -84,9 +84,6 @@ fn runs_bounded_ticks_until_limit_when_server_continues() {
             &tick_executor,
             &StaticResolver,
             &binder,
-            0,
-            false,
-            64,
             &[(4, 25)],
             &mut afk_states,
         )

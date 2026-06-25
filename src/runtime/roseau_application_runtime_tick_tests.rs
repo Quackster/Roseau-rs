@@ -114,7 +114,7 @@ fn runs_bounded_application_tick_for_game_and_server() {
         RoseauApplicationRuntime::prepare(&bootstrap, &binder, [], 700, None).unwrap();
     let mut afk_states = vec![RoomAfkState::new(9, 0)];
 
-    let outcome = application.run_tick(&binder, 0, true, 64, [(4, 25)], &mut afk_states);
+    let outcome = application.run_tick(&binder, [(4, 25)], &mut afk_states);
 
     assert_eq!(
         outcome.game_effects(),
@@ -154,15 +154,7 @@ fn runs_tick_persistence_and_runtime_action_planning() {
     let tick_executor = MySqlApplicationTickExecutor::new(executor);
 
     let report = application
-        .run_tick_execution_report(
-            &tick_executor,
-            &binder,
-            0,
-            true,
-            64,
-            [(4, 25)],
-            &mut afk_states,
-        )
+        .run_tick_execution_report(&tick_executor, &binder, [(4, 25)], &mut afk_states)
         .unwrap();
     let executor = tick_executor.into_executor();
 
@@ -201,9 +193,7 @@ fn applies_tick_runtime_network_plans_to_active_connections() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     application
@@ -216,15 +206,7 @@ fn applies_tick_runtime_network_plans_to_active_connections() {
     let tick_executor = MySqlApplicationTickExecutor::new(executor);
 
     let report = application
-        .run_tick_execution_report(
-            &tick_executor,
-            &binder,
-            0,
-            false,
-            64,
-            [(4, 25)],
-            &mut afk_states,
-        )
+        .run_tick_execution_report(&tick_executor, &binder, [(4, 25)], &mut afk_states)
         .unwrap();
     let unapplied = application.apply_tick_runtime_plans(&report);
 
@@ -263,9 +245,7 @@ fn runs_tick_persists_and_applies_runtime_plans_in_one_step() {
     client
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
-    application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    application.startup_runtime_mut().run_loop_step(&binder);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
     application
@@ -285,9 +265,6 @@ fn runs_tick_persists_and_applies_runtime_plans_in_one_step() {
             &tick_executor,
             &resolver,
             &binder,
-            0,
-            false,
-            64,
             [(4, 25)],
             &mut afk_states,
         )

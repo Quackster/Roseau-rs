@@ -9,6 +9,7 @@ fn plan(bind_ip: &str, raw_config_ip: &str) -> ServerBootstrapPlan {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![37120, 37119],
+        vec![],
     )
 }
 

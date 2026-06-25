@@ -75,6 +75,7 @@ fn builds_tcp_server_runtime_with_configured_logging_flags() {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![address.port()],
+        vec![],
     );
     let mut tcp_runtime = runtime.tcp_server_runtime(&plan, 90).unwrap();
     client

@@ -59,9 +59,7 @@ fn prepares_application_runtime_and_startup_logs() {
         .set_read_timeout(Some(Duration::from_secs(1)))
         .unwrap();
 
-    let outcome = application
-        .startup_runtime_mut()
-        .run_loop_step(&binder, 0, true, 64);
+    let outcome = application.startup_runtime_mut().run_loop_step(&binder);
     let mut bytes = [0; 8];
     client.read_exact(&mut bytes).unwrap();
 

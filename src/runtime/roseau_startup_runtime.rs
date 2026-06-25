@@ -7,6 +7,8 @@ use crate::server::{
     TcpServerRuntime, TcpServerTickOutcome,
 };
 
+pub const DEFAULT_MAX_NETWORK_READ_BYTES: usize = 4096;
+
 pub struct RoseauStartupRuntime {
     startup_plan: RoseauStartupPlan,
     listen_outcome: ServerListenOutcome,
@@ -88,19 +90,14 @@ impl RoseauStartupRuntime {
         Ok(runtime.step(binder, listener_index, accept_connection, max_bytes))
     }
 
-    pub fn run_loop_step<B: ServerSocketBinder>(
-        &mut self,
-        binder: &B,
-        listener_index: usize,
-        accept_connection: bool,
-        max_bytes: usize,
-    ) -> RoseauServerLoopOutcome {
-        RoseauServerLoopOutcome::from_tick_result(self.step(
-            binder,
-            listener_index,
-            accept_connection,
-            max_bytes,
-        ))
+    pub fn run_loop_step<B: ServerSocketBinder>(&mut self, binder: &B) -> RoseauServerLoopOutcome {
+        let result = self
+            .tcp_runtime
+            .as_mut()
+            .ok_or(RoseauStartupRuntimeError::NotListening)
+            .map(|runtime| runtime.step_all_listeners(binder, DEFAULT_MAX_NETWORK_READ_BYTES));
+
+        RoseauServerLoopOutcome::from_tick_result(result)
     }
 
     pub fn apply_network_effects(

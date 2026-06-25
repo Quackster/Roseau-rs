@@ -52,10 +52,20 @@ impl RoseauStartupPlan {
         outcome: &ServerListenOutcome,
         resolved_config_ip: Option<&str>,
     ) -> Vec<String> {
-        self.startup_statuses(outcome, resolved_config_ip)
+        let mut lines = self
+            .startup_statuses(outcome, resolved_config_ip)
             .into_iter()
             .map(|status| status.log_line())
-            .collect()
+            .collect::<Vec<_>>();
+
+        if outcome.listened() {
+            lines.extend(
+                self.server_plan
+                    .public_room_listening_lines(resolved_config_ip),
+            );
+        }
+
+        lines
     }
 }
 

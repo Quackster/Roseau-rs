@@ -71,6 +71,7 @@ impl RoseauBootstrap {
         let database_engine = main_config.parse_value::<DatabaseEngine>("Database", "type")?;
 
         let mut ports = vec![server_port, private_server_port];
+        let mut public_room_ports = Vec::new();
         for room_id in public_room_ids {
             let room_offset =
                 u16::try_from(room_id).map_err(|_| BootstrapError::RoomPortOutOfRange {
@@ -85,6 +86,7 @@ impl RoseauBootstrap {
                         room_id,
                     })?;
             ports.push(port);
+            public_room_ports.push((room_id, port));
         }
 
         Ok(ServerBootstrapPlan::new(
@@ -95,6 +97,7 @@ impl RoseauBootstrap {
             server_class_path,
             database_engine,
             ports,
+            public_room_ports,
         ))
     }
 }

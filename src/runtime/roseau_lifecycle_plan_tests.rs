@@ -12,6 +12,7 @@ fn builds_startup_steps_for_numeric_bind_address() {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![37120, 37119, 37125],
+        vec![],
     );
 
     let lifecycle = RoseauLifecyclePlan::from_server_plan(&plan);
@@ -53,6 +54,7 @@ fn hostname_bind_adds_resolution_step_before_listen() {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![37120, 37119],
+        vec![],
     );
 
     let lifecycle = RoseauLifecyclePlan::from_server_plan(&plan);

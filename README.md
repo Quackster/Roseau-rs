@@ -14,6 +14,7 @@ The Rust server can:
 - connect to MariaDB/MySQL through the `mysql` crate;
 - load the seeded Roseau schema from `tools/roseau.sql`;
 - bind the main hotel port, private room port, and every visible public room port;
+- accept connections on every bound listener each server tick;
 - run indefinitely from `cargo run`.
 
 The public room ports follow the original Java Roseau behavior: the server listens on `server.port + room_id` for each enabled, non-hidden public room returned by the database.
@@ -87,11 +88,18 @@ cargo run
 
 On startup, the server validates database connectivity, queries public room IDs, binds all configured listener ports, prints startup logs, then continues running until the process is stopped.
 
-Useful options:
+Example startup listener lines:
+
+```text
+Server is listening on 127.0.0.1:37120
+Public room 5 is listening on 127.0.0.1:37125
+Public room 7 is listening on 127.0.0.1:37127
+```
+
+The only runtime options select config file locations:
 
 ```sh
 cargo run -- --main-config roseau.properties --hotel-config habbohotel.properties
-cargo run -- --no-accept-connection
 ```
 
 A basic TCP smoke test against a bound listener should receive:
@@ -105,4 +113,5 @@ A basic TCP smoke test against a bound listener should receive:
 - Main hotel listener: `server.port`.
 - Private room listener: `server.private.port`.
 - Public room listeners: `server.port + room_id` for every enabled, visible public room.
+- Connections are always accepted; there is no max-tick, listener-index, or accept/skip mode in the CLI.
 - Broader live-flow testing is still needed for login, room entry, inventory, catalogue, messenger, moderation, and disconnect behavior.
