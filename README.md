@@ -1,249 +1,104 @@
-**Roseau**
+# Roseau-rs
 
-*Habbo Hotel v1 server, 2001 client revision*
+Rust port of Roseau, a Habbo Hotel v1 server for the 2001 client revision.
 
-Roseau has been a small project I worked on for a few months now and I've finally come to the point where this is pretty damn complete, far surpassing the original v1 servers that have already been released. 
+The repository contains the Rust server implementation, runtime, protocol handling, MySQL persistence layer, and seed database dump. The legacy Java/Gradle server tree and bundled JVM artifacts have been removed so this repo can be managed as a Rust project.
 
-If you're wondering where the development thread of this went, I got sick and tired of constantly creating development threads and never finishing the project so I decided to delete it, and complete it and then release it as a surprise to the community.
+## Status
 
-This server is written in Java, uses Netty 3.x, and persists data through Entity4j entity mappings.
+The Rust server can:
 
-**Key features**
+- decode and encode the v1 wire protocol;
+- compose outgoing packets for the original client;
+- dispatch incoming commands through typed Rust handlers;
+- run bounded TCP listener ticks using the standard library;
+- connect to MariaDB/MySQL through the `mysql` crate;
+- load the seeded Roseau schema from `tools/roseau.sql`;
+- start locally, bind `127.0.0.1:37120`, accept a TCP client, and send `#HELLO##`.
 
-- Diving works with ticket purchase and voting
-- Teleporters work (in same room and different rooms)
-- Ranked display works (rank 1 to 5)
-- More public rooms working than any other v1 server released (which either had none or one working).
-- Wall items working (no other v1 server had this!)
-- Instant console messaging (no other v1 server had this either).
+The port is still being hardened. See [PORT_PROGRESS.md](PORT_PROGRESS.md) for the detailed migration log, verification notes, and remaining work.
 
-**Features**
+## Requirements
 
-### Register
-- Check for existing names
-- Check for bad names
-- Create new user
+- Rust stable toolchain
+- MariaDB or MySQL reachable over TCP
+- A Shockwave-capable Habbo v1 client if you want to connect an actual client
 
-### User
-- Login
-- Edit user details (figure, email, etc)
+## Repository Layout
 
-### Navigator
+- `src/` - Rust server, game domain, protocol, runtime, DAO, and TCP code
+- `tools/roseau.sql` - schema and seed data for the Roseau database
+- `tools/dcr0910.zip` - client asset archive retained for local testing
+- `PORT_PROGRESS.md` - porting status and remaining validation work
+- `Cargo.toml` / `Cargo.lock` - Rust package metadata and locked dependencies
 
-- Lists all public rooms
-- Clicking on a public room shows the users in each room
-- Shows all recently created private rooms with users in a room at the top, the list is scrollable too
-- Search rooms
-- List own rooms
-- Hides room owner names if the option had been ticked
+## Database Setup
 
-### Messenger
-- Search users on console
-- Send user a friend request
-- Accept friend request
-- Reject friend request
-- Send friend message (and can offline message)
+Create and import the seed database:
 
-### Private room
-
-- Create private room through public room room-o-matics
-- Edit room details
-- Lock user room
-- Ring doorbell of locked room
-- Password protect room
-- Delete room
-
-### Public Room
-
-- 12 public rooms added
-- Main Lobby
-- Median Lobby
-- Skylight Lobby
-- Basement Lobby
-- Club Slinky Helsinki (with walkway to second club room)
-- Habbo Lido
-- Habbo Lido II
-- Club Massiva (with walkway to downstairs disco floor)
-- Theatredome
-- Habburger's
-- The Dirty Duck Pub
-- Cunning Fox Gamehall (with walkways to all game rooms)
-- Cafe Ole
-- Hotel Kitchen
-
-All public rooms are fully furnished to what official Habbo had
-
-Walkways between rooms work (Habbo Lido to the diving deck, Club Massiva downstairs disco floor, etc)
-
-Room-o-Matic works
-
-Sitting on furniture in public rooms
-
-Bots in public rooms (Habburger's, Cafe Ole, The Dirty Duck Pub)
-
-Disco lights in Club Massiva working
-
-### Lido and Diving Deck
-- Change clothes working (with curtain closing)
-- Pool lift door closes and opens depending if a user is inside or not.
-- Buying tickets work for self and other players.
-- Diving.
-- Swimming.
-- Queue works (line up on first tile and the user automatically walks when there is a free spot).
-
-### Item
-
-- Place room items
-- Move and rotate room items
-- Pickup room item
-- Place wall items
-- Pickup wall items
-- Place stickies
-- Update stickies
-- Stack items
-- Teleporters work
-- Fridges work (grabbing a drink from a fridge)
-- Turning items on/off (with rights)
-- Randomisation of the rotation of the bottle when it's spun
-
-### Catalogue
-
-- All items are purchasable
-- Purchase posters
-- Place floor and wall items to decorate wall and floors of private rooms
-
-
-### Ranked features
-
-- Call for help
-- Alert call for help to Hobba staff (picked up call for help not coded).
-
-
-### Commands
-
-- :about
-- :sit
-
-**Ranks**
-
-(These badges will appear on your user inside rooms).
-
-
-- Rank 1: Normal rank
-- Rank 2: Bronze Hobba
-- Rank 3: Silver Hobba
-- Rank 4: Gold Hobba
-- Rank 5: Staff administrator (Habbo staff badge)
-
-**Permissions**
-
-- Minimum rank 5:
-
-- room_all_rights
-
-
-- Minimum rank 2: 
-
-- room_kick_any_user
-- answer_call_for_help
-
-**Screenshots**
-
-![image](https://github.com/user-attachments/assets/105442d0-5f61-4a91-b126-e343bc31e433)
-
-![image](https://github.com/user-attachments/assets/70c7154b-64ba-4e43-af04-66ea88adaae1)
-
-![image](https://github.com/user-attachments/assets/3887c8ce-5078-4004-acf9-00d2d51ae435)
-
-![image](https://github.com/user-attachments/assets/5a7a1cae-e330-4ee7-ad0e-fb095b41cd27)
-
-![image](https://github.com/user-attachments/assets/68ec2961-5d54-458c-a553-fa603fad558f)
-
-![image](https://github.com/user-attachments/assets/c70059a7-f96a-4f1f-ae4a-5c8cc5c59102)
-
-**Source repository**
-
-Download: https://github.com/Quackster/Roseau/archive/master.zip
-
-The repository includes the client files, the loader and the MySQL database for the server.
-
-Compiled version can be found in /Roseau-bin/ and the client can be found in /client/ folder with a loader (should be called index.html).
-
-**Shockwave Tips**
-
-I personally use Pale Moon portable 32 bit version (it has to be 32 bit otherwise it won't work). Shockwave works flawless in this browser. The download is only 31 MB.
-
-Pale Moon 32bit: https://www.palemoon.org/palemoon-portable.shtml
-
-Alternatively you can use an older version of Mozilla Firefox as 52 has most NAPI functions disabled but 36-38 will work, or Internet Explorer (not recommended to use IE due to the fact it freezes all the time).
-
-**Code Snippets**
-
-*PoolLiftInteractor*
-
-```
-package org.alexdev.roseau.game.item.interactors.pool;
-
-import org.alexdev.roseau.game.item.Item;
-import org.alexdev.roseau.game.item.interactors.Interaction;
-import org.alexdev.roseau.game.player.Player;
-import org.alexdev.roseau.messages.outgoing.JUMPINGPLACE_OK;
-
-public class PoolLiftInteractor extends Interaction {
-
-	public PoolLiftInteractor(Item item) {
-		super(item);
-	}
-
-	@Override
-	public void onTrigger(Player player) {	}
-
-	@Override
-	public void onStoppedWalking(Player player) {
-		
-		this.close();
-
-		player.send(new JUMPINGPLACE_OK());
-		player.getRoomUser().setCanWalk(false);
-
-		player.getDetails().setTickets(player.getDetails().getTickets() - 1);
-		player.getDetails().sendTickets();
-		player.getDetails().save();
-	}
-	
-	public void open() {
-		this.item.showProgram("open");
-		this.item.unlockTiles();
-	}
-	
-	public void close() {
-		this.item.showProgram("close");
-		this.item.lockTiles();	
-	}
-
-}
+```sh
+mysql -h127.0.0.1 -P3306 -uroot -p -e \
+  'CREATE DATABASE IF NOT EXISTS roseau CHARACTER SET latin1 COLLATE latin1_swedish_ci;'
+mysql -h127.0.0.1 -P3306 -uroot -p roseau < tools/roseau.sql
 ```
 
-**Credits**
+Create a local `roseau.properties` if one does not already exist. The binary can generate defaults, but for the Rust server handler the important values are:
 
-With Ascii from Puomi Hotel, these things were possible:
+```ini
+[Server]
+server.ip=127.0.0.1
+server.port=37120
+server.private.port=37119
+server.class.path=roseau::server::ServerHandler
 
-- wall items loading
-- the correct ITEMS structure
-- figuring out the correct structure for ACTIVE OBJECTS
-- SHOWPROGRAM for the Club Massiva disco lights
-- correct structure for teleporters flashing
-- teaching me how to edit the DCR to enable Club Slinky Helsinki to work
-  
-And lab-hotel from RaGEZONE helped me out with:
+[Database]
+type=mysql
+hostname=127.0.0.1
+port=3306
+username=root
+password=verysecret
+database=roseau
+options=
 
-- Instant console messaging.
-- Enabling the debug window for the version 1 client.
+[Logging]
+log.errors=true
+log.output=true
+log.connections=true
+log.packets=true
+```
 
-And lastly, office.boy and Nillus who made my life easier with their Blunk v5 server, it helped me
-with some protocol that was simillar to v1, and their item definition database which was very helpful for
-the v1 catalogue.
+`roseau.properties`, `habbohotel.properties`, and runtime logs are local files and are ignored by git.
 
-Thanks guys, this is the most completed v1 server to date (if you ignore gamehall rooms)!
+## Build And Test
 
-- Alex
+```sh
+cargo fmt --check
+cargo check --bin roseau-rs
+cargo test
+```
+
+## Run
+
+Run one bounded server tick without accepting a client:
+
+```sh
+cargo run -- --max-ticks 1 --no-accept-connection
+```
+
+Run a longer bounded loop that can accept a local client:
+
+```sh
+cargo run -- --max-ticks 1000000 --accept-connection
+```
+
+A basic TCP smoke test should receive:
+
+```text
+#HELLO##
+```
+
+## Notes
+
+- The binary validates database connectivity before listener startup.
+- The runtime loop is bounded through CLI options while the port is being validated.
+- Broader live-flow testing is still needed for login, room entry, inventory, catalogue, messenger, moderation, and disconnect behavior.

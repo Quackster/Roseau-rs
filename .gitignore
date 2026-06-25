@@ -1,22 +1,24 @@
-.gradle/
-.idea/
-/out/
-**.iml
-/gradle/
-/build/
-bin/
-tmp/
-session-cookies/
-log/
+# Rust build output
+/target/
 
-gradlew
-gradlew.bat
-run.bat
+# Local runtime configuration
+/roseau.properties
+/habbohotel.properties
 
-habbohotel.properties
-roseau.properties
-log/output.log
-log/output.log
+# Runtime logs and scratch state
+/log/
 *.log
-/log
-/target
+/tmp/
+/session-cookies/
+
+# Editor and OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Legacy build/cache leftovers from pre-Rust checkouts
+/.gradle/
+/build/
+/out/
+/bin/

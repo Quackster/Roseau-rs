@@ -6,6 +6,7 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
 
 - Keep formatting, naming, module structure, imports, indentation, and spacing consistent with the Rust style used by the port. Do not leave mixed styles, unnecessary whitespace, inconsistent blank lines, or uneven spacing.
 - Keep one primary implementation, type, service, or struct per Rust source file; split supporting implementations into focused sibling modules when a file starts accumulating unrelated responsibilities.
+- Mandatory: sort Rust source files into folders for their own category or domain area. Move related `.rs` files under clear module directories instead of leaving mixed responsibilities in broad folders.
 - Use idiomatic Rust naming throughout the port: modules and variables in `snake_case`, types and traits in `PascalCase`, constants in `SCREAMING_SNAKE_CASE`, and APIs shaped around Rust ownership, borrowing, errors, and iterators.
 - Replace references to Java libraries, Java framework concepts, and Java package naming with Rust-native crates, modules, and terminology that fit the Rust implementation.
 
@@ -84,6 +85,7 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - Added Rust messenger-effect network planning for Java-compatible direct buddy-request and buddy-list packet delivery while leaving friend-list refreshes explicit for runtime messenger lookup.
   - Added Rust messenger friend-list refresh execution that rebuilds buddy-list packets from messenger DAO friendships, player DAO details, and current player-manager online sessions.
   - Ported catalogue item, deal, and manager lookup models, including Java-compatible deal item extra-data expansion.
+  - Moved catalogue models, incoming routing, order-info planning, purchase execution/planning, and ticket-purchase handling into `src/game/catalogue/model/`, `incoming/`, `order/`, `purchase/`, and `ticket/` so catalogue responsibilities are grouped by domain category.
   - Added Rust catalogue order-info planning for Java-compatible `GETORDERINFO` call ID normalisation, deal/item lookup ordering, and decoration extra-data echoing.
   - Added Rust catalogue order-info network planning so resolved `GETORDERINFO` requests write Java-compatible `ORDERINFO` packets to the requesting connection.
   - Added Rust catalogue purchase planning for item and deal credit checks, inventory item creation requests, decoration/post-it/deal extra data, and teleporter pair creation markers.
@@ -98,20 +100,27 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - Added Rust catalogue incoming planning so `GETORDERINFO` and `PURCHASE` effects route through order-info, normal purchase, and ticket purchase executors while keeping packet planning separate.
   - Added Rust navigator search network planning so `SEARCHBUSYFLATS`, `SEARCHFLAT`, and `SEARCHFLATFORUSER` outcomes emit Java-compatible `BUSY_FLAT_RESULTS` packets, including the empty Java fallback.
   - Ported room data, room connection, room tile state, and room model height-map parsing with Java-compatible blocked-tile, door, public-room patch, and coordinate behavior.
+  - Moved room data, public-room connections, navigator entries, and room summaries into `src/game/room/data/` so room metadata and navigator serialisation state is grouped under its own room category.
   - Started the Rust room aggregate with rights handling, doorbell recipient selection, first-entry scheduler/event effects, privilege refresh effects, player/bot tracking, and disposal decisions.
   - Split room aggregate tests into a focused Rust test module so the room source stays limited to room lifecycle, runtime state, and aggregate accessors.
   - Split room access-control behavior into a focused Rust module so rights checks, doorbells, flat entry, kicks, and privilege refreshes stay separate from room lifecycle state.
+  - Moved the room aggregate, access-control extension, and aggregate tests into `src/game/room/core/` so the room module root only orchestrates category modules and re-exports.
   - Added Rust room command outcome planning for Java-compatible `CREATEFLAT` `FLATCREATED` packets and `GETFLATINFO` `SETFLATINFO` packets from loaded or newly-created room data.
   - Added Rust room command execution bridging for Java-compatible create, read-flat-info, delete, update-flat, and set-flat-info persistence over the room DAO with explicit owner-rights gating and Java short-name/description preservation.
   - Split room command executor tests into a focused Rust test module so create, lookup, delete, update, and flat-info command coverage stays separate from production room command execution.
+  - Moved room command execution, outcomes, and command tests into `src/game/room/command/` so room command behavior is grouped under its own room category.
   - Added Rust room incoming planning so room command effects route through the room DAO executor with explicit owner-rights context before network outcome planning.
+  - Moved room command incoming planning into `src/game/room/incoming/` so room command routing is grouped under its own room category instead of the broad room module root.
   - Added Rust room-entry outcome planning for Java-compatible `TRYFLAT` password checks, doorbell recipient routing, `FLAT_LETIN`/error packet mapping, and `LETUSERIN` rights gating.
   - Added Rust room-entry incoming planning so `TRYFLAT` effects flow through the room aggregate's rights, password, and doorbell checks before network or room-effect planning.
   - Added Rust room-entry network planning so `TRYFLAT` let-in and rejected-password outcomes write Java-compatible `FLAT_LETIN` or `ERROR` packets while doorbell routing stays with room effects.
+  - Moved room-entry incoming, outcome, and network planning into `src/game/room/entry/` so entry behavior is grouped under its own room category.
   - Added Rust `LETUSERIN` room effects so approved waiting users carry explicit room assignment and `FLAT_LETIN` runtime work instead of a boolean-only gate.
   - Added Rust room-pool network planning so direct `JUMPPERF` and `SPLASH_POSITION` effects broadcast Java-compatible `JUMPDATA` and `SHOWPROGRAM` packets to room players while close-booth remains a runtime-only action.
+  - Moved room-pool network planning into `src/game/room/pool/` so public-pool packet routing is grouped under its own room category.
   - Added Rust room-unit incoming planning so `INITUNITLISTENER` and `GETUNITUSERS` effects resolve loaded public rooms and current room-member names before unit packet planning.
   - Added Rust room-unit network planning so public-room listener and unit-member outcomes emit Java-compatible `ALLUNITS` and `UNITMEMBERS` packets to the requesting connection.
+  - Moved room-unit incoming, outcome, and network planning into `src/game/room/unit/` so public-room unit behavior is grouped under its own room category.
   - Added Rust room kick planning for Java-compatible `KILLUSER` rights checks and protected-target permission gating.
   - Added Rust room rights assignment/revocation planning for Java-compatible `ASSIGNRIGHTS` and `REMOVERIGHTS` owner/all-rights sender gating.
   - Added Rust room-effect server-listen planning so public-room startup effects map into concrete server listen plans.
@@ -125,6 +134,7 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - Split room-manager runtime application into a focused Rust runtime module so loaded-room removal stays isolated from the main runtime coordinator.
   - Added Rust room-effect runtime scheduler planning so room walk/event tick scheduling and room disposal cancellation reach the scheduler boundary.
   - Added Rust room-effect runtime-state execution for clearing loaded room items and bots from explicit room cleanup effects.
+  - Moved room-effect enum, executors, runtime plans, network planning, and server-listen planning into `src/game/room/effect/` so effect handling is grouped under its own room category.
   - Added Rust room-user room-effect execution for privilege/status updates and `LETUSERIN` room assignment so runtime room effects can mutate loaded room-user state explicitly.
   - Added Rust public-room unit outcome planning for Java-compatible `INITUNITLISTENER` `ALLUNITS` packets and `GETUNITUSERS` `ALLUNITS` plus `UNITMEMBERS` packets.
   - Added Rust MySQL room-effect planning for Java room-right saves, mapping rights replacement into delete-then-insert SQL execution plans.
@@ -135,22 +145,29 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - Added Rust room-leave inventory execution for clearing the matching player's runtime inventory from explicit room-leave effects.
   - Added Rust room-leave messenger execution for main-server friend-list status refresh effects from a loaded messenger.
   - Added Rust room-leave network planning for private-room connection closes and logout broadcasts to remaining room sessions.
+  - Moved room-leave effects, planning, executors, and network planning into `src/game/room/leave/` so leave lifecycle code is grouped under its own room category.
   - Added Rust application-runtime planning and application for room-leave network effects so private-room closes and logout broadcasts can reach active startup connections.
   - Split room-leave network application-runtime packet bridging into a focused Rust runtime module so private-room close and logout packet delivery stays isolated from the main runtime coordinator.
   - Ported Java room navigator serialisation into a focused Rust room navigator entry type with owner-name visibility rules and Java-compatible field ordering.
   - Added Rust room chat execution bridging for Java-compatible chatlog persistence across `CHAT`, `SHOUT`, and delivered `WHISPER` messages.
+  - Moved room chat persistence execution into `src/game/room/chat/` so chatlog behavior is grouped under its own room category.
+  - Moved loaded-room manager state into `src/game/room/manager/` so room lookup and loaded-room indexing stay grouped under their own room category.
   - Ported room mapping collision-map regeneration, tile height/highest-item tracking, tile walkability checks, occupant/goal blocking, nearby occupant lookup, and room walkway ID storage.
   - Split room mapping occupant lookup into a focused Rust module so nearby/current/goal occupant queries stay separate from collision-map regeneration.
   - Split room mapping tests into a focused Rust test module so collision-map, tile-validity, override-lock, occupant, walkway, and rotation-only adjustment coverage stays separate from production mapping logic.
+  - Moved room mapping, occupants, tiles, occupant helpers, and mapping tests into `src/game/room/mapping/` so collision and occupancy state is grouped under its own room category.
   - Ported pathfinder node state and path search with Java-compatible move ordering, path reconstruction, and final-step validation hook.
   - Ported room chat emote/word/garble helpers and room-user status ticking semantics.
   - Ported player details serialisation, credit/ticket packet helpers, bot trigger/response behavior, and player manager session/permission lookup behavior.
   - Split player details serialisation into a focused Rust module so the player details model stays separate from `USEROBJECT` wire-format rendering.
+  - Moved player details, detail serialisation, and detail tests into `src/game/player/details/` so profile/wallet identity state is grouped under its own player category.
   - Aligned Rust player credit and ticket total setters with the original Java assignment behavior.
   - Ported Java player name approval into a Rust domain outcome shared by `APPROVENAME` and `REGISTER`, preserving reserved-prefix, length, wildcard, allowed-character, and approval/unacceptable packet behavior.
   - Added Rust `FINDUSER` outcome planning for Java-compatible found-user `MEMBERINFO` packets and missing-user `NOSUCHUSER` packets.
+  - Moved find-user and player name-approval outcomes/network planning into `src/game/player/lookup/` so user lookup and name validation behavior is grouped under its own player category.
   - Added Rust player command outcome planning for Java-compatible `INFORETRIEVE` `USEROBJECT` packets and `GIVE_TICKETS` ticket packets.
   - Added Rust player incoming planning so `INFORETRIEVE`, `GIVE_TICKETS`, and `FINDUSER` effects produce command/find-user outcomes through current player state and DAO-backed user lookup.
+  - Moved player command outcomes, command network planning, and player incoming planning into `src/game/player/command/` so player command routing is grouped under its own player category.
   - Added Rust login outcome planning for Java-compatible successful authentication state, raw-password retention, duplicate connection close effects, last-login effects, public-room login lookup IDs, and failed-login `ERROR` packets.
   - Added Rust login execution bridging for Java-compatible `LOGIN` behavior over the player DAO and player manager, including missing-user/wrong-password errors, raw password retention, same-port duplicate connection closure, last-login effects, and public-room lookup IDs.
   - Added Rust registration execution bridging for Java-compatible `REGISTER` persistence behavior over the player DAO, including name-taken no-op handling and configured default-credit creation.
@@ -159,13 +176,16 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - Added Rust profile-update detail application for Java-compatible password, email, figure, mission, and sex updates, including clearing the pool figure when sex changes.
   - Added Rust profile-update execution bridging for Java-compatible `UPDATE` persistence behavior over the player DAO, including profile detail saves, sex-change pool-figure clearing, mismatched-user no-op handling, and direct pool-figure saves.
   - Added Rust-native bcrypt password hashing and verification with Java-compatible `jBCrypt` cost and hash-version output for registration, login, and profile-update execution layers.
+  - Moved login, registration, profile-update, password hashing, password actions, and password-action network/effect/report planning into `src/game/player/auth/` so authentication code is grouped under its own player domain category.
   - Ported Java player state into a Rust player model with explicit effects for alerts, kicks, owned-room disposal, room leave, inventory cleanup, messenger cleanup, and cross-connection lookup.
   - Split player detail tests into a focused Rust test module so serialisation, wallet/ticket packet, total setter, and fuse fallback coverage stays separate from the player detail model.
   - Split player manager tests into a focused Rust test module so session lookup, credit/ticket synchronisation, duplicate detection, and permission coverage stays separate from manager state.
   - Split player model tests into a focused Rust test module so state mutation, session lookup, login, alert, kick, and disposal coverage stays separate from the player model.
+  - Moved player state, bot behavior, permission records, player manager/session state, and core tests into `src/game/player/core/` so runtime player state is grouped under its own player category.
   - Added Rust player-effect network planning for Java-compatible hotel alerts and connection-close effects while leaving persistence, room cleanup, and inventory disposal to their focused runtime layers.
   - Added Rust player-effect inventory execution for clearing the matching player's runtime inventory from explicit player disposal effects.
   - Added Rust player-effect room-manager execution for removing loaded owned room summaries from runtime state during main-server player disposal.
+  - Moved player effects and inventory, network, room-leave, and room-manager effect planning/execution into `src/game/player/effect/` so player side effects are grouped under their own player domain category.
   - Added Rust application-runtime application for player room-manager effects so main-server disposal can remove visible owned rooms from the loaded game room manager.
   - Split player room-manager runtime application into a focused Rust runtime module so owned-room disposal updates stay isolated from the main runtime coordinator.
   - Added Rust player-effect room-leave planning for room-connection disposal, mapping current-room leave effects into room leave work for the matching session.
@@ -231,6 +251,7 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - Added a Rust game-load runtime executor that applies load runtime actions into the startup report boundary.
   - Exposed Rust application startup load reporting so prepared runtimes surface manager-load completion flags and scheduler setup work together.
   - Added Rust runtime scheduler planning for the Java game scheduler worker pool, fixed-rate game/room ticks, delayed bot/teleporter tasks, and room task cancellation.
+  - Moved game lifecycle, load-runtime, scheduler, tick, and variable source files into `src/game/lifecycle/` so the broad game module root no longer mixes lifecycle categories with domain submodules.
   - Added Rust runtime scheduler execution reporting for worker-pool creation, fixed-rate tasks, delayed tasks, and room-task cancellation.
   - Ported the top-level game scheduler tick into explicit Rust effects for credit awards, player saves, configured host resolution, and AFK room kicks.
   - Added Rust MySQL game-tick planning for scheduler credit awards, mapping awarded balances into timestamp-free player credit update SQL plans while leaving network-only tick effects outside DAO execution.
@@ -483,6 +504,7 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
   - Added Rust MySQL decoration-command result mapping for Java-compatible `FLATPROPERTYBYITEM`, validating loaded decoration items, deleting the consumed inventory item, and updating room wallpaper or floor data.
   - Added Rust room decoration incoming planning so `FLATPROPERTYBYITEM` effects validate and consume decoration items, update room wallpaper or floor state through DAOs, and return decoration outcomes for packet planning.
   - Added Rust room decoration outcome and network planning that map applied wallpaper and floor updates into Java-compatible `FLATPROPERTY` packets while preserving ignored no-packet cases.
+  - Moved room decoration incoming, outcome, and network planning into `src/game/room/decoration/` so decoration behavior is grouped under its own room category.
   - Added Rust inventory-command network planning so refreshed inventory executions map into Java-compatible `STRIPINFO` packets for the requesting connection while empty refreshes stay silent.
   - Added Rust inventory incoming planning so `RefreshInventory` effects execute through the inventory DAO and produce focused `STRIPINFO` command outcomes before network packet planning.
   - Added a Rust startup runtime status outcome for ready and bind-failed startup states, including bound address reporting and active connection counts for bounded runtime execution.
@@ -498,11 +520,13 @@ Goal: port the whole Roseau project to Rust using only safe Rust.
 - `cargo fmt --check` passes.
 - `cargo test` passes: 1132 unit tests and 0 doctests.
 - Source scan for the forbidden Rust keyword passes across `Cargo.toml`, `src/`, and this progress file.
+- Live local startup smoke passes with MariaDB on `127.0.0.1:3306`, the imported `tools/roseau.sql` schema, and the Rust server handler: the binary connects to MySQL, binds `127.0.0.1:37120`, accepts a local TCP client, and sends the Java-compatible `#HELLO##` packet.
+- Repository cleanup complete: removed the legacy Java/Gradle server tree, bundled JVM artifacts, Gradle settings/cache leftovers, and the Rust JAR-resource compatibility helper; rewrote the README and `.gitignore` around the Rust server layout.
 
 ## Remaining Porting Work
 
-- Continue splitting large Rust modules into focused sibling files where production logic, tests, or multiple responsibilities still share one source file.
-- Expand end-to-end runtime coverage around live TCP startup, database-backed DAO facades, and full incoming-command flows across game, persistence, scheduler, and network boundaries.
+- Extend live runtime smoke coverage beyond the initial database-backed listener check: exercise login, room entry, catalogue/inventory flows, room chat, and disconnect cleanup over real TCP with the seeded Roseau schema.
+- Validate private/public room listener behavior with seeded public rooms and room transfer flows, including multi-listener startup and one local connection per listener.
+- Continue the mandatory Rust source folder/category reorganization for remaining broad source areas, especially `src/dao/mysql/`, `src/messages/incoming/`, `src/messages/outgoing/`, `src/runtime/`, `src/server/`, `src/game/item/`, and focused subtrees such as room entity/scheduler code.
+- Expand end-to-end runtime coverage around full incoming-command flows across game, persistence, scheduler, and network boundaries, using live TCP startup coverage plus database-backed DAO facades.
 - Audit Java parity for edge cases that are currently covered by focused unit tests but not yet by broad scenario tests.
-- Remove or archive Java/Gradle build once equivalent Rust coverage exists and the Rust runtime has been validated as the replacement.
-- Sort Rust source files into folders for their own category or domain area. Keep related `.rs` files grouped under clear module directories instead of leaving mixed responsibilities in broad folders.

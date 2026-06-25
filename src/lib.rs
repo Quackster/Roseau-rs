@@ -1,7 +1,6 @@
 pub mod config;
 pub mod dao;
 pub mod game;
-pub mod jar_resource;
 pub mod logging;
 pub mod messages;
 pub mod properties_config;
@@ -42,7 +41,6 @@ pub use game::{
     RoomLeaveNetworkPlan, RoomLeavePlan, RoomLeaveRoomExecutor, RoomLeaveUserExecutor,
     RoomNavigatorEntry, RoomUnitIncomingPlan, RoomUserIncomingPlan,
 };
-pub use jar_resource::JarResource;
 pub use logging::{DateTime, Logger};
 pub use messages::{
     IncomingCommand, IncomingCommandExecutor, IncomingContext, IncomingEvent,
