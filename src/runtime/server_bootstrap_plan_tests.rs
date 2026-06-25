@@ -1,4 +1,5 @@
 use super::*;
+use crate::dao::PublicRoomDescriptor;
 
 fn plan(bind_ip: &str, raw_config_ip: &str) -> ServerBootstrapPlan {
     ServerBootstrapPlan::new(
@@ -9,7 +10,7 @@ fn plan(bind_ip: &str, raw_config_ip: &str) -> ServerBootstrapPlan {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![37120, 37119],
-        vec![],
+        Vec::<(PublicRoomDescriptor, u16)>::new(),
     )
 }
 

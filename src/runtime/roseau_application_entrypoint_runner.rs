@@ -1,4 +1,5 @@
 use crate::dao::mysql::{MySqlApplicationTickExecutor, SqlExecutor, StorageConnector};
+use crate::dao::PublicRoomDescriptor;
 use crate::game::RoomAfkState;
 use crate::runtime::{
     HostResolver, RoseauApplicationEntrypointError, RoseauApplicationEntrypointReport,
@@ -27,7 +28,7 @@ impl RoseauApplicationEntrypointRunner {
         connector: &C,
         tick_executor: &MySqlApplicationTickExecutor<E>,
         resolver: &R,
-        public_room_ids: impl IntoIterator<Item = i32>,
+        public_rooms: impl IntoIterator<Item = PublicRoomDescriptor>,
         first_connection_id: i32,
         resolved_config_ip: Option<&str>,
         main_server_players: &[(i32, i32)],
@@ -37,7 +38,7 @@ impl RoseauApplicationEntrypointRunner {
             bootstrap,
             binder,
             connector,
-            public_room_ids,
+            public_rooms,
             first_connection_id,
             resolved_config_ip,
         )?;

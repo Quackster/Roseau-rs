@@ -1,3 +1,4 @@
+use crate::dao::PublicRoomDescriptor;
 use crate::game::Game;
 use crate::runtime::RoseauStartupRuntime;
 use crate::runtime::{BootstrapError, RoseauBootstrap, RoseauRuntime, RoseauStartupPlan};
@@ -15,14 +16,14 @@ impl RoseauApplicationRuntime {
     pub fn prepare<B: ServerSocketBinder>(
         bootstrap: &RoseauBootstrap,
         binder: &B,
-        public_room_ids: impl IntoIterator<Item = i32>,
+        public_rooms: impl IntoIterator<Item = PublicRoomDescriptor>,
         first_connection_id: i32,
         resolved_config_ip: Option<&str>,
     ) -> Result<Self, BootstrapError> {
         let runtime = RoseauRuntime::load(bootstrap)?;
         let mut game = Game::new();
         game.load(runtime.hotel_config())?;
-        let server_plan = bootstrap.server_plan(runtime.main_config(), public_room_ids)?;
+        let server_plan = bootstrap.server_plan(runtime.main_config(), public_rooms)?;
         let startup_plan = RoseauStartupPlan::from_server_plan(server_plan)?;
         let startup_runtime =
             RoseauStartupRuntime::prepare(&runtime, startup_plan, binder, first_connection_id)?;

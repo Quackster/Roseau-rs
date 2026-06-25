@@ -1,5 +1,6 @@
 use super::*;
 use crate::dao::mysql::DatabaseEngine;
+use crate::dao::PublicRoomDescriptor;
 use crate::runtime::ServerBootstrapPlan;
 
 #[test]
@@ -12,7 +13,7 @@ fn builds_startup_steps_for_numeric_bind_address() {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![37120, 37119, 37125],
-        vec![],
+        Vec::<(PublicRoomDescriptor, u16)>::new(),
     );
 
     let lifecycle = RoseauLifecyclePlan::from_server_plan(&plan);
@@ -54,7 +55,7 @@ fn hostname_bind_adds_resolution_step_before_listen() {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![37120, 37119],
-        vec![],
+        Vec::<(PublicRoomDescriptor, u16)>::new(),
     );
 
     let lifecycle = RoseauLifecyclePlan::from_server_plan(&plan);

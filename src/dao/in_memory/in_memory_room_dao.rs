@@ -1,7 +1,7 @@
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, HashSet};
 
-use crate::dao::{CreateRoom, DaoError, RoomChatlog, RoomDao};
+use crate::dao::{CreateRoom, DaoError, PublicRoomDescriptor, RoomChatlog, RoomDao};
 use crate::game::player::{Bot, PlayerDetails};
 use crate::game::room::model::RoomModel;
 use crate::game::room::settings::RoomType;
@@ -190,16 +190,16 @@ impl RoomDao for InMemoryRoomDao {
         Ok(())
     }
 
-    fn public_room_ids(&self) -> Result<Vec<i32>, DaoError> {
-        let mut ids = self
+    fn public_room_descriptors(&self) -> Result<Vec<PublicRoomDescriptor>, DaoError> {
+        let mut rooms = self
             .rooms
             .borrow()
             .values()
             .filter(|room| room.room_type() == RoomType::Public && !room.is_hidden())
-            .map(RoomData::id)
+            .map(|room| PublicRoomDescriptor::new(room.id(), room.name()))
             .collect::<Vec<_>>();
-        ids.sort_unstable();
-        Ok(ids)
+        rooms.sort_unstable_by_key(PublicRoomDescriptor::id);
+        Ok(rooms)
     }
 
     fn latest_player_rooms(

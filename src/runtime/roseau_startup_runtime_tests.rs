@@ -6,6 +6,7 @@ use std::time::Duration;
 
 use crate::config::Config;
 use crate::dao::mysql::DatabaseEngine;
+use crate::dao::PublicRoomDescriptor;
 use crate::runtime::roseau_bootstrap::{DEFAULT_HOTEL_CONFIG, DEFAULT_MAIN_CONFIG};
 use crate::runtime::ServerBootstrapPlan;
 use crate::server::{ServerSocketBinder, StdTcpSocketBinder};
@@ -28,7 +29,7 @@ fn startup_plan(port: u16) -> RoseauStartupPlan {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![port],
-        vec![],
+        Vec::<(PublicRoomDescriptor, u16)>::new(),
     ))
     .unwrap()
 }

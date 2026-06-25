@@ -16,4 +16,4 @@ pub use item_dao::ItemDao;
 pub use messenger_dao::MessengerDao;
 pub use navigator_dao::NavigatorDao;
 pub use player_dao::{CreatePlayer, LoginResult, PlayerDao};
-pub use room_dao::{CreateRoom, RoomChatlog, RoomDao};
+pub use room_dao::{CreateRoom, PublicRoomDescriptor, RoomChatlog, RoomDao};

@@ -7,7 +7,7 @@ use crate::dao::mysql::mapper::{
     room_connection_from_row, room_data_from_row, room_model_from_row,
 };
 use crate::dao::mysql::SqlExecutionResult;
-use crate::dao::DaoError;
+use crate::dao::{DaoError, PublicRoomDescriptor};
 use crate::game::player::Bot;
 use crate::game::room::model::{Position, RoomModel};
 use crate::game::room::RoomSummary;
@@ -48,8 +48,15 @@ impl RoomResultMapper {
             .transpose()
     }
 
-    pub fn public_room_ids(result: SqlExecutionResult) -> Result<Vec<i32>, DaoError> {
-        result.map_rows(|row| row.required_i32("id"))
+    pub fn public_room_descriptors(
+        result: SqlExecutionResult,
+    ) -> Result<Vec<PublicRoomDescriptor>, DaoError> {
+        result.map_rows(|row| {
+            Ok(PublicRoomDescriptor::new(
+                row.required_i32("id")?,
+                row.required_string("name")?,
+            ))
+        })
     }
 
     pub fn room_rights(result: SqlExecutionResult) -> Result<Vec<i32>, DaoError> {

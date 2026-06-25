@@ -1,4 +1,5 @@
 use crate::dao::mysql::DatabaseEngine;
+use crate::dao::PublicRoomDescriptor;
 use crate::runtime::RoseauStartupStatus;
 use crate::server::ServerListenOutcome;
 use crate::util::has_valid_ip_address;
@@ -12,7 +13,7 @@ pub struct ServerBootstrapPlan {
     server_class_path: String,
     database_engine: DatabaseEngine,
     ports: Vec<u16>,
-    public_room_ports: Vec<(i32, u16)>,
+    public_room_ports: Vec<(PublicRoomDescriptor, u16)>,
 }
 
 impl ServerBootstrapPlan {
@@ -24,7 +25,7 @@ impl ServerBootstrapPlan {
         server_class_path: impl Into<String>,
         database_engine: DatabaseEngine,
         ports: impl Into<Vec<u16>>,
-        public_room_ports: impl Into<Vec<(i32, u16)>>,
+        public_room_ports: impl Into<Vec<(PublicRoomDescriptor, u16)>>,
     ) -> Self {
         Self {
             bind_ip: bind_ip.into(),
@@ -66,7 +67,7 @@ impl ServerBootstrapPlan {
         &self.ports
     }
 
-    pub fn public_room_ports(&self) -> &[(i32, u16)] {
+    pub fn public_room_ports(&self) -> &[(PublicRoomDescriptor, u16)] {
         &self.public_room_ports
     }
 
@@ -108,8 +109,12 @@ impl ServerBootstrapPlan {
 
         self.public_room_ports
             .iter()
-            .map(|(room_id, port)| {
-                format!("Public room {room_id} is listening on {server_ip}:{port}")
+            .map(|(room, port)| {
+                format!(
+                    "Public room {} ({}) is listening on {server_ip}:{port}",
+                    room.name(),
+                    room.id()
+                )
             })
             .collect()
     }

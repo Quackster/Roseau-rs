@@ -1,4 +1,5 @@
 use crate::dao::mysql::{MySqlDao, StorageConnector};
+use crate::dao::PublicRoomDescriptor;
 use crate::game::Game;
 use crate::runtime::{
     BootstrapError, RoseauApplicationPrepareReport, RoseauApplicationRuntime, RoseauBootstrap,
@@ -11,7 +12,7 @@ impl RoseauApplicationRuntime {
         bootstrap: &RoseauBootstrap,
         binder: &B,
         connector: &C,
-        public_room_ids: impl IntoIterator<Item = i32>,
+        public_rooms: impl IntoIterator<Item = PublicRoomDescriptor>,
         first_connection_id: i32,
         resolved_config_ip: Option<&str>,
     ) -> Result<RoseauApplicationPrepareReport, BootstrapError> {
@@ -30,7 +31,7 @@ impl RoseauApplicationRuntime {
 
         let mut game = Game::new();
         game.load(runtime.hotel_config())?;
-        let server_plan = bootstrap.server_plan(runtime.main_config(), public_room_ids)?;
+        let server_plan = bootstrap.server_plan(runtime.main_config(), public_rooms)?;
         let startup_plan = RoseauStartupPlan::from_server_plan(server_plan)?;
         let startup_runtime =
             RoseauStartupRuntime::prepare(&runtime, startup_plan, binder, first_connection_id)?;

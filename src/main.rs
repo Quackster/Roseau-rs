@@ -53,8 +53,8 @@ fn main() {
         HashMap::new(),
         0,
     );
-    let public_room_ids = match room_dao.public_room_ids() {
-        Ok(public_room_ids) => public_room_ids,
+    let public_rooms = match room_dao.public_room_descriptors() {
+        Ok(public_rooms) => public_rooms,
         Err(error) => {
             eprintln!("{error:?}");
             return;
@@ -68,7 +68,7 @@ fn main() {
         &bootstrap,
         &binder,
         &connector,
-        public_room_ids,
+        public_rooms,
         1,
         None,
     ) {

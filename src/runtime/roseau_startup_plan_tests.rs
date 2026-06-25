@@ -1,5 +1,6 @@
 use super::*;
 use crate::dao::mysql::DatabaseEngine;
+use crate::dao::PublicRoomDescriptor;
 use crate::runtime::RoseauLifecycleStep;
 
 fn server_plan(bind_ip: &str, raw_config_ip: &str) -> ServerBootstrapPlan {
@@ -11,7 +12,7 @@ fn server_plan(bind_ip: &str, raw_config_ip: &str) -> ServerBootstrapPlan {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![37120, 37119, 37125],
-        vec![(5, 37125)],
+        vec![(PublicRoomDescriptor::new(5, "Lido"), 37125)],
     )
 }
 
@@ -47,7 +48,7 @@ fn reports_java_compatible_startup_lines_from_listen_outcome() {
         vec![
             "Settting up server".to_owned(),
             "Server is listening on 10.0.0.25:37120".to_owned(),
-            "Public room 5 is listening on 10.0.0.25:37125".to_owned(),
+            "Public room Lido (5) is listening on 10.0.0.25:37125".to_owned(),
         ]
     );
 }

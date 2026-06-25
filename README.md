@@ -92,8 +92,8 @@ Example startup listener lines:
 
 ```text
 Server is listening on 127.0.0.1:37120
-Public room 5 is listening on 127.0.0.1:37125
-Public room 7 is listening on 127.0.0.1:37127
+Public room Lido (5) is listening on 127.0.0.1:37125
+Public room Theatredrome (7) is listening on 127.0.0.1:37127
 ```
 
 The only runtime options select config file locations:
@@ -112,6 +112,6 @@ A basic TCP smoke test against a bound listener should receive:
 
 - Main hotel listener: `server.port`.
 - Private room listener: `server.private.port`.
-- Public room listeners: `server.port + room_id` for every enabled, visible public room.
+- Public room listeners: `server.port + room_id` for every enabled, visible public room. Startup logs include the public room name and ID for each bound port.
 - Connections are always accepted; there is no max-tick, listener-index, or accept/skip mode in the CLI.
 - Broader live-flow testing is still needed for login, room entry, inventory, catalogue, messenger, moderation, and disconnect behavior.

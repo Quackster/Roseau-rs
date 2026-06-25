@@ -31,7 +31,15 @@ fn builds_server_plan_from_config_and_public_rooms() {
     let config = Config::parse(DEFAULT_MAIN_CONFIG).unwrap();
     let bootstrap = RoseauBootstrap::default_paths();
 
-    let plan = bootstrap.server_plan(&config, [5, 7]).unwrap();
+    let plan = bootstrap
+        .server_plan(
+            &config,
+            [
+                PublicRoomDescriptor::new(5, "Lido"),
+                PublicRoomDescriptor::new(7, "Theatredrome"),
+            ],
+        )
+        .unwrap();
 
     assert_eq!(plan.bind_ip(), "127.0.0.1");
     assert_eq!(plan.raw_config_ip(), "127.0.0.1");
@@ -49,7 +57,9 @@ fn hostname_configs_bind_to_wildcard_until_resolved_by_runtime() {
     .unwrap();
     let bootstrap = RoseauBootstrap::default_paths();
 
-    let plan = bootstrap.server_plan(&config, []).unwrap();
+    let plan = bootstrap
+        .server_plan(&config, Vec::<PublicRoomDescriptor>::new())
+        .unwrap();
 
     assert_eq!(plan.bind_ip(), "0.0.0.0");
     assert_eq!(plan.raw_config_ip(), "localhost");

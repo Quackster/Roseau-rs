@@ -150,9 +150,9 @@ impl<E: SqlExecutor> RoomDao for MySqlRoomDao<E> {
         self.execute_mutation(RoomQueries::save_chatlog(chatlog, self.now).execute_plan())
     }
 
-    fn public_room_ids(&self) -> Result<Vec<i32>, DaoError> {
-        let result = self.execute_plan(RoomQueries::public_room_ids().read_plan())?;
-        RoomResultMapper::public_room_ids(result)
+    fn public_room_descriptors(&self) -> Result<Vec<crate::dao::PublicRoomDescriptor>, DaoError> {
+        let result = self.execute_plan(RoomQueries::public_room_descriptors().read_plan())?;
+        RoomResultMapper::public_room_descriptors(result)
     }
 
     fn latest_player_rooms(

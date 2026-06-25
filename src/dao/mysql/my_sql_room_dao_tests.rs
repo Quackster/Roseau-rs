@@ -150,10 +150,10 @@ fn reads_public_player_single_latest_and_public_ids() {
         room_row(4, "Keep", RoomType::Private),
         room_row(5, "Skip", RoomType::Private),
     ]));
-    executor.push_result(SqlExecutionResult::rows([SqlRow::new([(
-        "id",
-        SqlValue::Integer(1),
-    )])]));
+    executor.push_result(SqlExecutionResult::rows([SqlRow::new([
+        ("id", SqlValue::Integer(1)),
+        ("name", SqlValue::Text("Lobby".to_owned())),
+    ])]));
     let dao = dao(executor);
 
     assert_eq!(dao.public_rooms(false).unwrap()[0].name(), "Lobby");

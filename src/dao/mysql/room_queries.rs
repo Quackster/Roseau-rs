@@ -20,9 +20,9 @@ impl RoomQueries {
         )
     }
 
-    pub fn public_room_ids() -> SqlQuery {
+    pub fn public_room_descriptors() -> SqlQuery {
         SqlQuery::new(
-            "SELECT id FROM rooms WHERE enabled = ? AND room_type = ? AND hidden = ? ORDER BY order_id ASC",
+            "SELECT id, name FROM rooms WHERE enabled = ? AND room_type = ? AND hidden = ? ORDER BY order_id ASC",
             [
                 SqlParameter::Bool(true),
                 SqlParameter::Integer(RoomType::Public.type_code()),

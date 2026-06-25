@@ -38,11 +38,11 @@ fn builds_public_room_reads() {
         "SELECT * FROM rooms WHERE enabled = ? AND room_type = ? ORDER BY order_id ASC"
     );
     assert_eq!(
-        RoomQueries::public_room_ids().sql(),
-        "SELECT id FROM rooms WHERE enabled = ? AND room_type = ? AND hidden = ? ORDER BY order_id ASC"
+        RoomQueries::public_room_descriptors().sql(),
+        "SELECT id, name FROM rooms WHERE enabled = ? AND room_type = ? AND hidden = ? ORDER BY order_id ASC"
     );
     assert_eq!(
-        RoomQueries::public_room_ids().parameters(),
+        RoomQueries::public_room_descriptors().parameters(),
         &[
             SqlParameter::Bool(true),
             SqlParameter::Integer(1),

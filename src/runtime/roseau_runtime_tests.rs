@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use crate::dao::mysql::DatabaseEngine;
+use crate::dao::PublicRoomDescriptor;
 use crate::runtime::roseau_bootstrap::{DEFAULT_HOTEL_CONFIG, DEFAULT_MAIN_CONFIG};
 use crate::runtime::ServerBootstrapPlan;
 use crate::server::{ServerListenEffectExecutor, ServerListenPlan, StdTcpSocketBinder};
@@ -75,7 +76,7 @@ fn builds_tcp_server_runtime_with_configured_logging_flags() {
         "roseau::server::ServerHandler",
         DatabaseEngine::MySql,
         vec![address.port()],
-        vec![],
+        Vec::<(PublicRoomDescriptor, u16)>::new(),
     );
     let mut tcp_runtime = runtime.tcp_server_runtime(&plan, 90).unwrap();
     client

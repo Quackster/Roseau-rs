@@ -109,14 +109,14 @@ fn maps_optional_room_and_empty_rows() {
 
 #[test]
 fn maps_ids_rights_connections_models_and_created_id() {
-    assert_eq!(
-        RoomResultMapper::public_room_ids(SqlExecutionResult::rows([SqlRow::new([(
-            "id",
-            SqlValue::Integer(42),
-        )])]))
-        .unwrap(),
-        vec![42]
-    );
+    let public_rooms =
+        RoomResultMapper::public_room_descriptors(SqlExecutionResult::rows([SqlRow::new([
+            ("id", SqlValue::Integer(42)),
+            ("name", SqlValue::Text("Lido".to_owned())),
+        ])]))
+        .unwrap();
+    assert_eq!(public_rooms[0].id(), 42);
+    assert_eq!(public_rooms[0].name(), "Lido");
     assert_eq!(
         RoomResultMapper::room_rights(SqlExecutionResult::rows([SqlRow::new([
             ("id", SqlValue::Integer(1)),
@@ -183,7 +183,7 @@ fn rejects_wrong_result_kind_invalid_columns_and_large_insert_id() {
         "SQL execution result contains affected rows, expected read rows"
     );
     assert_eq!(
-        RoomResultMapper::public_room_ids(SqlExecutionResult::rows([SqlRow::new([(
+        RoomResultMapper::public_room_descriptors(SqlExecutionResult::rows([SqlRow::new([(
             "id",
             SqlValue::Text("bad".to_owned()),
         )])]))

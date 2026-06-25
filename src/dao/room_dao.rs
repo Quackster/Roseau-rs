@@ -59,6 +59,29 @@ impl RoomChatlog {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PublicRoomDescriptor {
+    id: i32,
+    name: String,
+}
+
+impl PublicRoomDescriptor {
+    pub fn new(id: i32, name: impl Into<String>) -> Self {
+        Self {
+            id,
+            name: name.into(),
+        }
+    }
+
+    pub fn id(&self) -> i32 {
+        self.id
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+}
+
 pub trait RoomDao {
     fn public_rooms(&self, store_in_memory: bool) -> Result<Vec<RoomData>, DaoError>;
     fn player_rooms(
@@ -76,7 +99,14 @@ pub trait RoomDao {
     fn bots(&self, room_id: i32) -> Result<Vec<Bot>, DaoError>;
     fn save_room_rights(&self, room_id: i32, rights: &[i32]) -> Result<(), DaoError>;
     fn save_chatlog(&self, chatlog: &RoomChatlog) -> Result<(), DaoError>;
-    fn public_room_ids(&self) -> Result<Vec<i32>, DaoError>;
+    fn public_room_descriptors(&self) -> Result<Vec<PublicRoomDescriptor>, DaoError>;
+    fn public_room_ids(&self) -> Result<Vec<i32>, DaoError> {
+        Ok(self
+            .public_room_descriptors()?
+            .into_iter()
+            .map(|room| room.id())
+            .collect())
+    }
     fn latest_player_rooms(
         &self,
         blacklist: &[i32],

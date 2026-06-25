@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 use crate::config::Config;
 use crate::dao::mysql::DatabaseEngine;
+use crate::dao::PublicRoomDescriptor;
 use crate::runtime::{BootstrapError, ServerBootstrapPlan};
 use crate::util::has_valid_ip_address;
 
@@ -55,7 +56,7 @@ impl RoseauBootstrap {
     pub fn server_plan(
         &self,
         main_config: &Config,
-        public_room_ids: impl IntoIterator<Item = i32>,
+        public_rooms: impl IntoIterator<Item = PublicRoomDescriptor>,
     ) -> Result<ServerBootstrapPlan, BootstrapError> {
         let raw_config_ip = main_config.required("Server", "server.ip")?.to_owned();
         let bind_ip = if has_valid_ip_address(&raw_config_ip) {
@@ -72,7 +73,8 @@ impl RoseauBootstrap {
 
         let mut ports = vec![server_port, private_server_port];
         let mut public_room_ports = Vec::new();
-        for room_id in public_room_ids {
+        for room in public_rooms {
+            let room_id = room.id();
             let room_offset =
                 u16::try_from(room_id).map_err(|_| BootstrapError::RoomPortOutOfRange {
                     base_port: server_port,
@@ -86,7 +88,7 @@ impl RoseauBootstrap {
                         room_id,
                     })?;
             ports.push(port);
-            public_room_ports.push((room_id, port));
+            public_room_ports.push((room, port));
         }
 
         Ok(ServerBootstrapPlan::new(
