@@ -5,7 +5,7 @@ use std::time::Duration;
 use crate::messages::{IncomingCommand, IncomingContext};
 use crate::protocol::DecodeError;
 use crate::server::{
-    PlayerNetwork, PlayerNetworkEffect, ServerConnectionHandler, ServerHandler,
+    PlayerNetwork, PlayerNetworkEffect, Rc4Cipher, ServerConnectionHandler, ServerHandler,
     TcpConnectionRuntime,
 };
 
@@ -141,7 +141,42 @@ fn version_check_writes_handshake_packets_to_tcp_client() {
 
     assert_eq!(
         String::from_utf8_lossy(&response),
-        "#ENCRYPTION_OFF###SECRET_KEY\r31vw2swky25q9ko940i8x068ftxrmt0wa3vgj27qtrr3m35rn067o549fl##"
+        "#ENCRYPTION_ON###SECRET_KEY\rABAB##"
+    );
+}
+
+#[test]
+fn decrypts_rc4_hex_frames_after_version_check() {
+    let (mut runtime, mut client) = connected_runtime();
+    let mut server_handler = ServerHandler::new(vec![37120], "127.0.0.1");
+    let connection_handler = ServerConnectionHandler::new(false, true);
+    runtime
+        .set_read_timeout(Some(Duration::from_secs(1)))
+        .unwrap();
+
+    runtime.open(&mut server_handler, &connection_handler);
+    let mut hello = [0; 8];
+    client.read_exact(&mut hello).unwrap();
+    runtime
+        .read_bytes(
+            b"0012VERSIONCHECK",
+            &mut server_handler,
+            &connection_handler,
+        )
+        .unwrap();
+
+    let mut cipher = Rc4Cipher::new("1");
+    let encrypted_key = cipher.encipher_hex(b"0014KEYENCRYPTED 1");
+    runtime
+        .read_bytes(encrypted_key, &mut server_handler, &connection_handler)
+        .unwrap();
+
+    assert_eq!(
+        runtime.effect_executor().packet_logs(),
+        &[
+            "[15] Received: VERSIONCHECK ".to_owned(),
+            "[15] Received: KEYENCRYPTED 1".to_owned()
+        ]
     );
 }
 

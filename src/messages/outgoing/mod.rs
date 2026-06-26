@@ -10,9 +10,9 @@ pub mod rooms_flats;
 pub mod user_profile;
 
 pub use auth_session::{
-    bad_name, encryption_off, hello, logout, name_approved, name_unacceptable, secret_key,
-    wallet_balance, BadName, EncryptionOff, Hello, Logout, NameApproved, NameUnacceptable,
-    SecretKey, WalletBalance,
+    bad_name, encryption_off, encryption_on, hello, logout, name_approved, name_unacceptable,
+    secret_key, wallet_balance, BadName, EncryptionOff, EncryptionOn, Hello, Logout, NameApproved,
+    NameUnacceptable, SecretKey, WalletBalance,
 };
 pub use catalogue_purchase::{
     order_info, ph_no_tickets, ph_tickets, purchase_add_strip_item, purchase_ok, strip_info,

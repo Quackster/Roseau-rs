@@ -13,8 +13,8 @@ pub use connection::{
     ServerConnectionEffectExecutor, ServerConnectionHandler,
 };
 pub use encoding_decoding::{
-    network_decoder, network_encoder, network_frame_decoder, NetworkDecoder, NetworkEncoder,
-    NetworkFrameDecoder,
+    network_decoder, network_encoder, network_frame_decoder, rc4_cipher, secret_decode,
+    NetworkDecoder, NetworkEncoder, NetworkFrameDecoder, Rc4Cipher, Rc4HexStreamDecoder,
 };
 pub use listen::{
     server_listen_effect, server_listen_effect_executor, server_listen_outcome, server_listen_plan,

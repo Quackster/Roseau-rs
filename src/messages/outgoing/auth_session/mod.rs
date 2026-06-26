@@ -1,5 +1,6 @@
 pub mod bad_name;
 pub mod encryption_off;
+pub mod encryption_on;
 pub mod hello;
 pub mod logout;
 pub mod name_approved;
@@ -9,6 +10,7 @@ pub mod wallet_balance;
 
 pub use bad_name::BadName;
 pub use encryption_off::EncryptionOff;
+pub use encryption_on::EncryptionOn;
 pub use hello::Hello;
 pub use logout::Logout;
 pub use name_approved::NameApproved;

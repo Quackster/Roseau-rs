@@ -92,12 +92,11 @@ fn dispatches_immediate_response_packets_to_current_connection() {
         &[
             PlayerNetworkEffect::WriteResponse {
                 connection_id: 9,
-                packet: "#ENCRYPTION_OFF##".to_owned(),
+                packet: "#ENCRYPTION_ON##".to_owned(),
             },
             PlayerNetworkEffect::WriteResponse {
                 connection_id: 9,
-                packet: "#SECRET_KEY\r31vw2swky25q9ko940i8x068ftxrmt0wa3vgj27qtrr3m35rn067o549fl##"
-                    .to_owned(),
+                packet: "#SECRET_KEY\rABAB##".to_owned(),
             },
         ]
     );
