@@ -133,6 +133,21 @@ impl RoomMapping {
         self.tile(x, y).map(RoomTile::height).unwrap_or(0.0)
     }
 
+    pub fn walking_height(&self, x: i32, y: i32, items: &[Item]) -> f64 {
+        let Some(item_id) = self.highest_item_id(x, y) else {
+            return self.stack_height(x, y);
+        };
+        let Some(item) = items.iter().find(|item| item.id() == item_id) else {
+            return self.stack_height(x, y);
+        };
+        let behaviour = item.definition().behaviour();
+        if behaviour.can_sit_on_top() || behaviour.can_lay_on_top() {
+            item.position().z()
+        } else {
+            self.stack_height(x, y)
+        }
+    }
+
     pub fn tile(&self, x: i32, y: i32) -> Option<&RoomTile> {
         if self.model.invalid_xy_coords(x, y) {
             None

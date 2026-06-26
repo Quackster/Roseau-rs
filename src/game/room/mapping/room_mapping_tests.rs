@@ -38,6 +38,23 @@ fn regenerates_tile_heights_and_highest_items() {
 }
 
 #[test]
+fn walking_height_ignores_sit_and_lay_surface_height() {
+    let mut mapping = RoomMapping::new(model());
+    let chair = item(1, "1", 0, 0.25, "SFC", "chair");
+    let bed = item(2, "2", 0, 0.5, "SFB", "bed");
+    let table = item(3, "0", 0, 0.25, "SFH", "table");
+    let items = vec![chair.clone(), bed.clone(), table.clone()];
+
+    mapping.regenerate_collision_maps(items.clone());
+
+    assert_eq!(mapping.stack_height(1, 0), chair.total_height());
+    assert_eq!(mapping.walking_height(1, 0, &items), chair.position().z());
+    assert_eq!(mapping.stack_height(2, 0), bed.total_height());
+    assert_eq!(mapping.walking_height(2, 0, &items), bed.position().z());
+    assert_eq!(mapping.walking_height(0, 0, &items), table.total_height());
+}
+
+#[test]
 fn applies_affected_tile_height_without_lowering_higher_stack() {
     let mut mapping = RoomMapping::new(model());
     let large = Item::new(

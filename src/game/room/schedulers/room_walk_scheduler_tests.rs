@@ -51,7 +51,7 @@ fn emits_movement_effects_for_next_path_step() {
     assert!(effects.contains(&SchedulerEffect::SetStatus {
         entity_id: 7,
         key: "mv".to_owned(),
-        value: " 1,0,1".to_owned(),
+        value: " 1,0,0".to_owned(),
         infinite: true,
         duration: -1,
     }));
@@ -72,11 +72,11 @@ fn moves_to_existing_next_before_processing_path() {
 
     assert!(effects.contains(&SchedulerEffect::MoveTo {
         entity_id: 7,
-        position: Position::with_rotation(1, 0, 1.0, 2),
+        position: Position::with_rotation(1, 0, 0.0, 2),
     }));
     assert!(effects.contains(&SchedulerEffect::UpdateHeight {
         entity_id: 7,
-        height: 1.0,
+        height: 0.0,
     }));
 }
 

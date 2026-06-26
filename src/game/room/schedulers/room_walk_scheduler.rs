@@ -66,7 +66,7 @@ impl RoomWalkScheduler {
         let mut current_position = entity.position();
 
         if let Some(next) = entity.next() {
-            let height = mapping.stack_height(next.x(), next.y());
+            let height = mapping.walking_height(next.x(), next.y(), items);
             current_position = Position::with_rotation(next.x(), next.y(), height, next.rotation());
             effects.push(SchedulerEffect::MoveTo {
                 entity_id: entity.entity_id(),
@@ -119,7 +119,7 @@ impl RoomWalkScheduler {
             next_step.x(),
             next_step.y(),
         ) as i32;
-        let height = mapping.stack_height(next_step.x(), next_step.y());
+        let height = mapping.walking_height(next_step.x(), next_step.y(), items);
         let next_step = Position::with_rotation(next_step.x(), next_step.y(), height, rotation);
 
         effects.extend([
