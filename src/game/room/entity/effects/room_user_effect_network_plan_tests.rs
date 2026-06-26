@@ -205,7 +205,10 @@ fn broadcasts_single_user_status_and_entry_packets() {
     let effects = RoomUserEffectNetworkPlan::plan_all(
         &[
             RoomUserEffect::SendStatus { entity_id: 7 },
-            RoomUserEffect::SendUsers { entity_id: 7 },
+            RoomUserEffect::SendUsers {
+                entity_id: 7,
+                has_pool: true,
+            },
         ],
         7,
         &[7],
@@ -218,11 +221,11 @@ fn broadcasts_single_user_status_and_entry_packets() {
         vec![
             PlayerNetworkEffect::WriteResponse {
                 connection_id: 70,
-                packet: "#STATUS \rAlice 0,0,0,0,0/sit 1/##".to_owned(),
+                packet: "#STATUS \rAlice 0,0,0.0,0,0/sit 1/##".to_owned(),
             },
             PlayerNetworkEffect::WriteResponse {
                 connection_id: 70,
-                packet: "#USERS\r  Alice hd-100 0 0 0 hello##".to_owned(),
+                packet: "#USERS\r  Alice hd-100 0 0 0.0 hello##".to_owned(),
             },
         ]
     );

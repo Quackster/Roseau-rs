@@ -428,7 +428,8 @@ fn live_login_messenger_init_and_info_retrieve_in_one_read_send_packets() {
     application
         .apply_pending_incoming_commands(&player_dao, &room_dao, &navigator_dao, &messenger_dao)
         .unwrap();
-    let expected_prefix = b"#MYPERSISTENTMSG\r###MESSENGERREADY###USEROBJECT\rname=Alex";
+    // Java MESSENGER_INIT: MYPERSISTENTMSG, BUDDYLIST (always, even when empty), MESSENGERREADY.
+    let expected_prefix = b"#MYPERSISTENTMSG\r###BUDDYLIST###MESSENGERREADY###USEROBJECT\rname=Alex";
     let mut bytes = vec![0; expected_prefix.len()];
     client.read_exact(&mut bytes).unwrap();
 
@@ -850,27 +851,30 @@ fn live_try_flat_sends_flat_let_in_for_correct_password() {
 }
 
 #[test]
-fn live_private_room_login_uses_try_flat_room_on_private_socket() {
+fn live_private_room_login_on_room_socket_loads_private_room_like_java() {
+    // Java enters rooms (public or private) by connecting to port
+    // `mainPort + roomID` and sending a three-argument LOGIN; a two-argument
+    // login never triggers the room branch.
     let server_port = free_adjacent_port_pair();
-    let private_server_port = server_port + 1;
+    let room_server_port = server_port + 1;
     let (root, bootstrap) = bootstrap_with_config(
         "incoming-private-room-login",
         server_port,
-        private_server_port,
+        room_server_port,
     );
     let binder = StdTcpSocketBinder::new();
     let mut application =
         RoseauApplicationRuntime::prepare(&bootstrap, &binder, [], 1100, None).unwrap();
     let dao = InMemoryDao::new(player_dao_with_alex());
     dao.room()
-        .insert_room(private_room(37, 1, "Alex", "Alex Den"));
+        .insert_room(private_room(1, 1, "Alex", "Alex Den"));
     dao.room()
         .insert_model(RoomModel::new("model_a", "00\r00", 0, 0, 0, 2, false, false).unwrap());
     let navigator_dao = InMemoryNavigatorDao::new([]);
     let mut main_client = connect_client(&mut application, &binder);
     let mut burst = Vec::new();
     burst.extend(client_frame("LOGIN Alex 123"));
-    burst.extend(client_frame("TRYFLAT /37"));
+    burst.extend(client_frame("TRYFLAT /1"));
 
     main_client.write_all(&burst).unwrap();
     application.startup_runtime_mut().run_loop_step(&binder);
@@ -890,9 +894,30 @@ fn live_private_room_login_uses_try_flat_room_on_private_socket() {
     main_client.read_exact(&mut let_in).unwrap();
     assert_eq!(let_in, expected_let_in);
 
+    // Java: a two-argument login on the room socket loads no room.
+    let mut two_arg_client = connect_client_at(&mut application, &binder, 1);
+    two_arg_client
+        .write_all(&client_frame("LOGIN Alex 123"))
+        .unwrap();
+    application.startup_runtime_mut().run_loop_step(&binder);
+    application
+        .apply_pending_incoming_commands_with_catalogue(
+            dao.player(),
+            dao.room(),
+            dao.catalogue(),
+            dao.inventory(),
+            dao.item(),
+            &navigator_dao,
+            dao.messenger(),
+        )
+        .unwrap();
+    let text = read_available_text(&mut two_arg_client);
+    assert!(!text.contains("#ROOM_READY"), "{text:?}");
+
+    // Java: a three-argument login on `mainPort + roomID` loads the room.
     let mut room_client = connect_client_at(&mut application, &binder, 1);
     room_client
-        .write_all(&client_frame("LOGIN Alex 123"))
+        .write_all(&client_frame("LOGIN Alex 123 1"))
         .unwrap();
     application.startup_runtime_mut().run_loop_step(&binder);
     application
@@ -911,7 +936,7 @@ fn live_private_room_login_uses_try_flat_room_on_private_socket() {
     assert!(text.contains("#ROOM_READY\rdescription##"), "{text:?}");
     assert!(text.contains("#HEIGHTMAP\r0000##"), "{text:?}");
     assert!(
-        text.contains("#USERS\r  Alex figure 0 0 0 mission##"),
+        text.contains("#USERS\r  Alex figure 0 0 0.0 mission##"),
         "{text:?}"
     );
     assert!(application
@@ -920,9 +945,9 @@ fn live_private_room_login_uses_try_flat_room_on_private_socket() {
         .players()
         .values()
         .any(
-            |session| session.server_port() == i32::from(private_server_port)
+            |session| session.server_port() == i32::from(room_server_port)
                 && session.room_user().is_some()
-                && session.room_user().unwrap().room_id() == 37
+                && session.room_user().unwrap().room_id() == 1
         ));
 
     fs::remove_dir_all(root).unwrap();
@@ -1073,14 +1098,20 @@ fn pending_try_flat_leaves_current_room_like_java() {
     let mut bob_bytes = vec![0; expected_bob.len()];
     bob_client.read_exact(&mut bob_bytes).unwrap();
     assert_eq!(bob_bytes, expected_bob);
-    assert!(application
-        .game()
-        .player_manager()
-        .players()
-        .get(&960)
-        .unwrap()
-        .room_user()
-        .is_none());
+    // Java TRYFLAT: `leaveRoom` followed by `setRoom(room)`, so the
+    // connection's RoomUser now points at the new room.
+    assert_eq!(
+        application
+            .game()
+            .player_manager()
+            .players()
+            .get(&960)
+            .unwrap()
+            .room_user()
+            .unwrap()
+            .room_id(),
+        7
+    );
     assert_eq!(
         application
             .game()
@@ -1129,7 +1160,9 @@ fn live_room_login_then_chat_sends_chat_packet() {
 }
 
 #[test]
-fn live_public_room_login_sends_room_bootstrap_without_extra_login_argument() {
+fn live_public_room_login_sends_room_bootstrap_with_extra_login_argument() {
+    // Java only runs the room branch when the login has more than two
+    // arguments; the room ID is the connection port minus the main port.
     let server_port = free_adjacent_port_pair();
     let (root, bootstrap) = bootstrap_with_config("incoming-public-room-login", server_port, 0);
     let binder = StdTcpSocketBinder::new();
@@ -1153,7 +1186,7 @@ fn live_public_room_login_sends_room_bootstrap_without_extra_login_argument() {
     let navigator_dao = InMemoryNavigatorDao::new([]);
     let mut client = connect_client_at(&mut application, &binder, 2);
 
-    client.write_all(&client_frame("LOGIN Alex 123")).unwrap();
+    client.write_all(&client_frame("LOGIN Alex 123 1")).unwrap();
     application.startup_runtime_mut().run_loop_step(&binder);
     application
         .apply_pending_incoming_commands_with_catalogue(
@@ -1172,7 +1205,7 @@ fn live_public_room_login_sends_room_bootstrap_without_extra_login_argument() {
     assert!(text.contains("#HEIGHTMAP\r00\r00##"), "{text:?}");
     assert!(text.contains("# OBJECTS WORLD 0 pool_b##"), "{text:?}");
     assert!(
-        text.contains("#USERS\r  Alex figure 1 1 0 mission##"),
+        text.contains("#USERS\r  Alex figure 1 1 0.0 mission##"),
         "{text:?}"
     );
     assert!(application
@@ -1267,7 +1300,7 @@ fn pending_chat_turns_nearby_recipient_toward_speaker_like_java() {
     let bob_text = read_available_text(&mut bob_client);
     assert!(alice_text.contains("#CHAT\ralice hello##"));
     assert!(bob_text.contains("#CHAT\ralice hello##"));
-    assert!(bob_text.contains("#STATUS \rbob 2,0,0,1,0/##"));
+    assert!(bob_text.contains("#STATUS \rbob 2,0,0.0,1,0/##"));
 
     let bob_room_user = application
         .game()
@@ -1625,7 +1658,7 @@ fn live_pool_packets_broadcast_to_room_connections() {
         .apply_pending_incoming_commands(dao.player(), dao.room(), &navigator_dao, dao.messenger())
         .unwrap();
 
-    let expected_status = b"#STATUS \ralice 17,18,0,0,0/sign 3/swim/##";
+    let expected_status = b"#STATUS \ralice 17,18,0.0,0,0/sign 3/swim/##";
     let mut alice_status = vec![0; expected_status.len()];
     let mut bob_status = vec![0; expected_status.len()];
     alice.read_exact(&mut alice_status).unwrap();
@@ -2223,7 +2256,7 @@ fn pending_assign_rights_persists_and_sends_controller_packets() {
         .unwrap();
 
     let expected_controller = b"#YOUARECONTROLLER##";
-    let expected_status = b"#STATUS \rbob 0,0,0,0,0/flatctrl/##";
+    let expected_status = b"#STATUS \rbob 0,0,0.0,0,0/flatctrl/##";
     let mut bob_controller = vec![0; expected_controller.len()];
     let mut alice_status = vec![0; expected_status.len()];
     let mut bob_status = vec![0; expected_status.len()];
@@ -2315,11 +2348,11 @@ fn pending_assign_rights_all_rights_user_can_control_private_room_like_java() {
         "{bob_response}"
     );
     assert!(
-        bob_response.contains("#STATUS \rbob 0,0,0,0,0/flatctrl/##"),
+        bob_response.contains("#STATUS \rbob 0,0,0.0,0,0/flatctrl/##"),
         "{bob_response}"
     );
     assert!(
-        admin_response.contains("#STATUS \rbob 0,0,0,0,0/flatctrl/##"),
+        admin_response.contains("#STATUS \rbob 0,0,0.0,0,0/flatctrl/##"),
         "{admin_response}"
     );
     assert_eq!(room_dao.room_rights(42).unwrap(), vec![2]);
@@ -2448,7 +2481,7 @@ fn pending_remove_rights_persists_and_sends_no_controller_packets() {
         .unwrap();
 
     let expected_controller = b"#YOUARENOTCONTROLLER##";
-    let expected_status = b"#STATUS \rbob 0,0,0,0,0/##";
+    let expected_status = b"#STATUS \rbob 0,0,0.0,0,0/##";
     let mut bob_controller = vec![0; expected_controller.len()];
     let mut alice_status = vec![0; expected_status.len()];
     let mut bob_status = vec![0; expected_status.len()];
@@ -2766,6 +2799,14 @@ fn pending_pool_figure_update_persists_session_and_broadcasts_users() {
         RoseauApplicationRuntime::prepare(&bootstrap, &binder, [], 1030, None).unwrap();
     let player_dao = player_dao_with_alice_and_bob();
     let room_dao = InMemoryRoomDao::new();
+    // Java `UPDATE`: the pool figure is broadcast only when the room's model
+    // `hasPool()`, so give the room a pool model.
+    room_dao.insert_model(
+        crate::game::room::model::RoomModel::new(
+            "model_a", "00 00", 0, 0, 0, 2, true, false,
+        )
+        .unwrap(),
+    );
     let room = private_room(42, 1, "alice", "Pool Figure Room");
     room_dao.insert_room(room.clone());
     application
@@ -2813,7 +2854,7 @@ fn pending_pool_figure_update_persists_session_and_broadcasts_users() {
         )
         .unwrap();
 
-    let expected = b"#USERS\r  alice figure 0 0 0 mission ph=001##";
+    let expected = b"#USERS\r  alice figure 0 0 0.0 mission ph=001##";
     let mut alice_packet = vec![0; expected.len()];
     let mut bob_packet = vec![0; expected.len()];
     alice.read_exact(&mut alice_packet).unwrap();
@@ -2965,18 +3006,25 @@ fn pending_go_to_flat_sends_room_bootstrap_packets() {
     );
 
     let mut alice = connect_client(&mut application, &binder);
-    application
-        .game_mut()
-        .player_manager_mut()
-        .insert(PlayerSession::new(
-            1050,
-            42,
-            dao.player()
-                .login("alice", "secret")
-                .unwrap()
-                .unwrap()
-                .details,
-        ));
+    let alice_details = dao
+        .player()
+        .login("alice", "secret")
+        .unwrap()
+        .unwrap()
+        .details;
+    // Java GOTOFLAT re-enters the room attached to this connection's
+    // RoomUser (set by an earlier TRYFLAT), so the session needs one.
+    let mut alice_session = PlayerSession::new(1050, 42, alice_details.clone());
+    let mut alice_room_user = crate::game::room::entity::RoomUser::new(
+        alice_details.id(),
+        alice_details.username(),
+        alice_details.figure(),
+        alice_details.mission(),
+        None::<String>,
+    );
+    alice_room_user.set_room_id(42);
+    alice_session.set_room_user(alice_room_user);
+    application.game_mut().player_manager_mut().insert(alice_session);
 
     application
         .apply_pending_incoming_command_batches_with_catalogue(
@@ -3202,7 +3250,8 @@ fn pending_messenger_init_sends_persistent_message_and_ready() {
             )],
         )
         .unwrap();
-    let expected = b"#MYPERSISTENTMSG\r###MESSENGERREADY##";
+    // Java MESSENGER_INIT: MYPERSISTENTMSG, BUDDYLIST (always, even when empty), MESSENGERREADY.
+    let expected = b"#MYPERSISTENTMSG\r###BUDDYLIST###MESSENGERREADY##";
     let mut bytes = vec![0; expected.len()];
     client.read_exact(&mut bytes).unwrap();
 

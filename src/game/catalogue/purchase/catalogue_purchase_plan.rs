@@ -5,6 +5,7 @@ use crate::game::item::ItemDefinition;
 pub struct CataloguePurchasePlan {
     cost: i32,
     items: Vec<CataloguePurchaseItemPlan>,
+    is_deal: bool,
 }
 
 impl CataloguePurchasePlan {
@@ -12,6 +13,7 @@ impl CataloguePurchasePlan {
         Self {
             cost,
             items: items.into_iter().collect(),
+            is_deal: false,
         }
     }
 
@@ -35,6 +37,7 @@ impl CataloguePurchasePlan {
                 extra_data,
                 teleporter_pair,
             )],
+            is_deal: false,
         })
     }
 
@@ -59,11 +62,16 @@ impl CataloguePurchasePlan {
                     )
                 })
                 .collect(),
+            is_deal: true,
         })
     }
 
     pub fn cost(&self) -> i32 {
         self.cost
+    }
+
+    pub fn is_deal(&self) -> bool {
+        self.is_deal
     }
 
     pub fn items(&self) -> &[CataloguePurchaseItemPlan] {

@@ -1,7 +1,7 @@
 use crate::game::room::RoomSummary;
 use crate::messages::outgoing::{AllUnits, PublicUnit, UnitMembers};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct RoomUnitOutcome {
     public_rooms: Vec<RoomSummary>,
     member_names: Option<Vec<String>>,

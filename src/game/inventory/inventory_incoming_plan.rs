@@ -1,5 +1,6 @@
-use crate::dao::{DaoError, InventoryDao};
+use crate::dao::DaoError;
 use crate::game::inventory::{InventoryCommandExecution, InventoryCommandExecutor};
+use crate::game::item::Item;
 use crate::messages::IncomingExecutionEffect;
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -8,29 +9,26 @@ pub struct InventoryIncomingPlan;
 impl InventoryIncomingPlan {
     pub fn plan(
         effect: &IncomingExecutionEffect,
-        inventory_dao: &dyn InventoryDao,
-        user_id: i32,
+        items: &[Item],
     ) -> Result<Vec<InventoryCommandExecution>, DaoError> {
         let IncomingExecutionEffect::RefreshInventory { category } = effect else {
             return Ok(Vec::new());
         };
 
         Ok(vec![InventoryCommandExecutor::refresh_inventory(
-            inventory_dao,
-            user_id,
+            items,
             category,
         )?])
     }
 
     pub fn plan_all(
         effects: &[IncomingExecutionEffect],
-        inventory_dao: &dyn InventoryDao,
-        user_id: i32,
+        items: &[Item],
     ) -> Result<Vec<InventoryCommandExecution>, DaoError> {
         let mut executions = Vec::new();
 
         for effect in effects {
-            executions.extend(Self::plan(effect, inventory_dao, user_id)?);
+            executions.extend(Self::plan(effect, items)?);
         }
 
         Ok(executions)

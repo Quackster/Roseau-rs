@@ -14,9 +14,11 @@ impl TcpServerRuntime {
             PlayerNetworkEffect::WriteResponse { .. } => {
                 self.connections[index].apply_network_effect(effect);
             }
-            PlayerNetworkEffect::CloseConnection { .. } => {
+            PlayerNetworkEffect::CloseConnection { connection_id } => {
                 let _ = self.close_connection(index);
-                let _ = self.remove_connection(index);
+                if self.remove_connection(index).is_ok() {
+                    self.record_server_closed_connection(connection_id);
+                }
             }
         }
 

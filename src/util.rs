@@ -48,6 +48,17 @@ pub fn display_two_place_value(value: f64) -> String {
         .to_owned()
 }
 
+// Java `String.valueOf(StringUtil.format(z))`: rounded to two decimals and
+// always rendered with a decimal point ("7.0", not "7").
+pub fn display_java_double(value: f64) -> String {
+    let rounded = round_to_two_places(value);
+    if rounded.fract() == 0.0 {
+        format!("{}.0", rounded as i64)
+    } else {
+        rounded.to_string()
+    }
+}
+
 #[cfg(test)]
 #[path = "util_tests.rs"]
 mod tests;

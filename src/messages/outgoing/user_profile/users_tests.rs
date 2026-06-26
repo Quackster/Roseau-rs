@@ -11,10 +11,30 @@ fn composes_users_packet() {
         "hello",
         Some("pool"),
     )])
+    .with_has_pool(true)
     .compose();
 
     assert_eq!(
         response.get(),
         "#USERS\r  alice hd-100 1 2 3.5 hello pool##"
+    );
+}
+
+#[test]
+fn omits_pool_figure_when_room_has_no_pool() {
+    let mut response = Users::new([UserEntry::new(
+        "alice",
+        "hd-100",
+        1,
+        2,
+        3.5,
+        "hello",
+        Some("pool"),
+    )])
+    .compose();
+
+    assert_eq!(
+        response.get(),
+        "#USERS\r  alice hd-100 1 2 3.5 hello##"
     );
 }

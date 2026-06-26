@@ -10,14 +10,20 @@ use crate::game::item::interactors::{
 };
 use crate::game::item::Item;
 use crate::game::player::PlayerSession;
+use crate::game::pathfinder::make_path;
 use crate::game::room::entity::RoomUser;
+use crate::game::room::model::{Position, RoomModel};
 use crate::game::room::schedulers::{
-    RoomWalkEntity, RoomWalkScheduler, SchedulerEffect, SchedulerEffectExecutor,
+    BotTickState, LidoPlayerState, PoolQueueTile, RoomUserTickState, RoomWalkEntity,
+    RoomWalkScheduler, SchedulerEffect, SchedulerEffectExecutor,
 };
 use crate::game::room::settings::RoomType;
 use crate::game::room::{RoomMapping, RoomOccupant, RoomSummary};
 use crate::game::RoomAfkState;
-use crate::messages::outgoing::{ActiveObjects, HeightMap, Logout, ObjectsWorld, Status, Users};
+use crate::messages::outgoing::{
+    ActiveObjects, HeightMap, Logout, ObjectsWorld, ShowProgram, Status, Users,
+};
+use crate::runtime::errors::RandomSource;
 use crate::messages::OutgoingMessage;
 use crate::runtime::{
     HostResolver, RoseauApplicationLoopReport, RoseauApplicationRuntime, RoseauConsole,
@@ -135,7 +141,10 @@ impl RoseauApplicationLoopRunner {
                     incoming_daos.navigator,
                     incoming_daos.messenger,
                 )?;
+                Self::remove_server_closed_player_sessions(application);
                 Self::apply_room_walk_ticks(application, incoming_daos.room, incoming_daos.item)?;
+            } else {
+                Self::remove_server_closed_player_sessions(application);
             }
             Self::handle_pending_server_logs(application, &mut console);
             console.tick(application);
@@ -222,17 +231,20 @@ impl RoseauApplicationLoopRunner {
             .collect::<Vec<_>>();
 
         for (room_id, model_name, room_type, server_port) in rooms {
+            // Java: the room schedulers tick every entity in the room,
+            // whatever the connection port (main-server players included),
+            // so membership is by the RoomUser's room ID. Private rooms
+            // additionally require the private-port connection.
             let sessions = application
                 .game()
                 .player_manager()
                 .players()
                 .values()
-                .filter(|session| session.server_port() == server_port)
                 .filter(|session| {
-                    room_type == RoomType::Public
-                        || session
-                            .room_user()
-                            .is_some_and(|room_user| room_user.room_id() == room_id)
+                    session
+                        .room_user()
+                        .is_some_and(|room_user| room_user.room_id() == room_id)
+                        && (room_type == RoomType::Public || session.server_port() == server_port)
                 })
                 .filter_map(|session| {
                     session.room_user().map(|room_user| {
@@ -250,6 +262,14 @@ impl RoseauApplicationLoopRunner {
                 continue;
             }
 
+            let Some(mut room_summary) = application
+                .game()
+                .room_manager()
+                .get_room_by_id(room_id)
+                .cloned()
+            else {
+                continue;
+            };
             let Some(model) = room_dao.model(&model_name)? else {
                 continue;
             };
@@ -260,102 +280,357 @@ impl RoseauApplicationLoopRunner {
             .into_values()
             .collect::<Vec<_>>();
 
-            let mut mapping = RoomMapping::new(model);
+            let mut mapping = RoomMapping::new(model.clone());
             mapping.regenerate_collision_maps(items.clone());
 
             let room_connection_ids = sessions
                 .iter()
                 .map(|(connection_id, _, _, _)| *connection_id)
                 .collect::<Vec<_>>();
-            let mut room_users = sessions
+            let player_users: Vec<crate::game::room::entity::RoomUser> = sessions
                 .iter()
                 .map(|(_, _, _, room_user)| room_user.clone())
-                .collect::<Vec<_>>();
+                .collect();
+            let mut bot_users: Vec<Option<crate::game::room::entity::RoomUser>> = room_summary
+                .scheduler()
+                .map(|scheduler| scheduler.bots().iter().cloned().map(Some).collect())
+                .unwrap_or_default();
+            let mut room_users = player_users.clone();
+            for bot_user in bot_users.iter().flatten() {
+                room_users.push(bot_user.clone());
+            }
             let occupants = room_users
                 .iter()
                 .map(|user| RoomOccupant::new(user.entity_id(), user.position(), user.goal()))
                 .collect::<Vec<_>>();
             let mut all_scheduler_effects = Vec::new();
 
-            for (connection_id, user_id, pool_figure_available, user) in sessions {
-                let entity = RoomWalkEntity::new(user.entity_id(), user.position())
-                    .walking(user.is_walking())
-                    .needs_update(user.needs_update())
-                    .with_goal(user.goal())
-                    .with_next(user.next())
-                    .path(user.path().clone())
-                    .current_item_id(user.current_item_id());
-                let scheduler_effects = RoomWalkScheduler::tick(
-                    &[entity],
-                    &mapping,
-                    &items,
-                    &occupants,
-                    pool_figure_available,
-                );
+            // Java RoomEventScheduler: the room events tick every 500 ms.
+            if let Some(scheduler) = room_summary.scheduler_mut() {
+                let mut random = RandomSource::from_clock();
+                let user_states: Vec<RoomUserTickState> = room_users
+                    .iter()
+                    .map(Self::room_user_tick_state)
+                    .collect();
+                let event_effects = scheduler.user_status_event_mut().tick(&user_states);
+                all_scheduler_effects.extend(event_effects);
 
-                if scheduler_effects.is_empty() {
-                    continue;
+                let bot_starts: Vec<crate::game::room::model::Position> = scheduler
+                    .bot_start_positions()
+                    .to_vec();
+                let bot_patrols: Vec<Vec<(i32, i32)>> = scheduler
+                    .bot_patrol_positions()
+                    .iter()
+                    .cloned()
+                    .collect();
+                if let Some(bot_move) = scheduler.bot_move_event_mut() {
+                    let starts = &bot_starts;
+                    let patrols = &bot_patrols;
+                    let bot_states: Vec<BotTickState> = bot_users
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(index, user)| {
+                            let user = user.as_ref()?;
+                            let start = starts.get(index)?;
+                            // Java getNearbyPlayers: players within 3 of the
+                            // bot's start position.
+                            let nearby_players = player_users
+                                .iter()
+                                .filter(|player| start.distance(player.position()) <= 3)
+                                .count();
+                            let patrol_positions = patrols
+                                .get(index)
+                                .cloned()
+                                .unwrap_or_default();
+                            Some(
+                                BotTickState::new(user.entity_id(), user.position(), *start)
+                                    .walking(user.is_walking())
+                                    .nearby_player_count(nearby_players)
+                                    .patrol_positions(patrol_positions),
+                            )
+                        })
+                        .collect();
+                    let patrol_index = random.next_u64() as usize;
+                    all_scheduler_effects.extend(bot_move.tick(&bot_states, patrol_index));
                 }
 
-                if let Some(updated_user) = Self::apply_room_walk_effects(
-                    application,
-                    connection_id,
-                    &scheduler_effects,
-                    &items,
-                    &mut mapping,
-                    &occupants,
-                    pool_figure_available,
-                    &room_connection_ids,
-                ) {
-                    if let Some(room_user) = room_users
-                        .iter_mut()
-                        .find(|room_user| room_user.entity_id() == user_id)
-                    {
-                        *room_user = updated_user;
+                if let Some(lido) = scheduler.lido_event_mut() {
+                    let lido_players: Vec<LidoPlayerState> = player_users
+                        .iter()
+                        .map(|user| {
+                            LidoPlayerState::new(
+                                user.entity_id(),
+                                user.username(),
+                                user.position(),
+                                user.is_walking(),
+                            )
+                        })
+                        .collect();
+                    let pool_queue_tiles: Vec<PoolQueueTile> = items
+                        .iter()
+                        .filter(|item| item.definition().sprite() == "poolQueue")
+                        .filter_map(|item| {
+                            let position = item.position();
+                            let mut target = position;
+                            if let Some(custom_data) = item.custom_data() {
+                                if let Ok(parsed) = Position::parse(custom_data) {
+                                    target = parsed;
+                                }
+                            }
+                            Some(PoolQueueTile::new(position, target))
+                        })
+                        .collect();
+                    let camera_effect = random.next_i32(3).unwrap_or(0);
+                    let target_index = random.next_u64() as usize;
+                    all_scheduler_effects.extend(lido.tick(
+                        &lido_players,
+                        &pool_queue_tiles,
+                        camera_effect,
+                        target_index,
+                    ));
+                }
+
+                if let Some(disco) = scheduler.disco_event_mut() {
+                    let preferred_lamp_id = random.next_i32(5).unwrap_or(0) + 1;
+                    let disco_id = random.next_i32(14).unwrap_or(0) + 1;
+                    let include_floor_b = random.next_u64() & 1 == 1;
+                    all_scheduler_effects.extend(disco.tick(
+                        preferred_lamp_id,
+                        disco_id,
+                        include_floor_b,
+                    ));
+                }
+
+                // Apply the per-entity event effects to the player sessions
+                // (the same way the walk effects are applied) and to the
+                // persisted bot users. WalkTo / SHOWPROGRAM effects are
+                // handled below.
+                let entity_only = |effect: &SchedulerEffect| {
+                    !matches!(
+                        effect,
+                        SchedulerEffect::WalkTo { .. }
+                            | SchedulerEffect::ShowProgram(_)
+                            | SchedulerEffect::TargetCamera { .. }
+                            | SchedulerEffect::SetCamera(_)
+                            | SchedulerEffect::SendStatus(_)
+                    )
+                };
+                for (connection_id, user_id, pool_figure_available, user) in &sessions {
+                    let entity_effects: Vec<SchedulerEffect> = all_scheduler_effects
+                        .iter()
+                        .filter(|effect| effect.entity_id() == Some(user.entity_id()))
+                        .filter(|effect| entity_only(*effect))
+                        .cloned()
+                        .collect();
+                    if entity_effects.is_empty() {
+                        continue;
+                    }
+                    if let Some(updated_user) = Self::apply_room_walk_effects(
+                        application,
+                        *connection_id,
+                        &entity_effects,
+                        &items,
+                        &mut mapping,
+                        &occupants,
+                        *pool_figure_available,
+                        &room_connection_ids,
+                    ) {
+                        if let Some(room_user) = room_users
+                            .iter_mut()
+                            .find(|room_user| room_user.entity_id() == *user_id)
+                        {
+                            *room_user = updated_user;
+                        }
                     }
                 }
-
-                if room_type == RoomType::Public
-                    && scheduler_effects
+                for bot_user in bot_users.iter_mut().flatten() {
+                    let entity_id = bot_user.entity_id();
+                    let entity_effects: Vec<SchedulerEffect> = all_scheduler_effects
                         .iter()
-                        .any(|effect| matches!(effect, SchedulerEffect::StopWalking { .. }))
-                {
-                    let current_user = application
-                        .game()
-                        .player_manager()
-                        .players()
-                        .get(&connection_id)
-                        .and_then(|session| session.room_user())
-                        .cloned();
-                    if let Some(current_user) = current_user {
-                        if let Some(connection) = room_dao
-                            .room_connections(room_id)?
-                            .into_iter()
-                            .find(|connection| {
-                                connection.matches_source(
-                                    current_user.position().x(),
-                                    current_user.position().y(),
-                                )
-                            })
+                        .filter(|effect| effect.entity_id() == Some(entity_id))
+                        .filter(|effect| entity_only(*effect))
+                        .cloned()
+                        .collect();
+                    if entity_effects.is_empty() {
+                        continue;
+                    }
+                    SchedulerEffectExecutor::apply_all(bot_user, &entity_effects);
+                    if let Some(snapshot) = room_users
+                        .iter_mut()
+                        .find(|user| user.entity_id() == entity_id)
+                    {
+                        *snapshot = bot_user.clone();
+                    }
+                }
+                // WalkTo effects (bot patrol / lido queue) pathfind and start
+                // the walk, like Java's `RoomUser.walkTo`.
+                Self::apply_walk_to_effects(
+                    application,
+                    &mut room_users,
+                    &sessions,
+                    &all_scheduler_effects,
+                    &mut mapping,
+                    &occupants,
+                    &items,
+                    &model,
+                );
+            }
+
+            // Java RoomWalkScheduler: ticks all room entities together so the
+            // updated entities share one STATUS packet.
+            let all_entities: Vec<RoomWalkEntity> = room_users
+                .iter()
+                .map(|user| {
+                    RoomWalkEntity::new(user.entity_id(), user.position())
+                        .walking(user.is_walking())
+                        .needs_update(user.needs_update())
+                        .with_goal(user.goal())
+                        .with_next(user.next())
+                        .path(user.path().clone())
+                        .current_item_id(user.current_item_id())
+                })
+                .collect();
+            // Java checks `item.canWalk(entity, ...)` per entity; the Rust
+            // mapping takes one flag, so any session with a pool figure
+            // enables the pool-figure walk check for the whole tick.
+            let pool_figure_available = sessions
+                .iter()
+                .any(|(_, _, pool_figure_available, _)| *pool_figure_available);
+            let walk_effects = RoomWalkScheduler::tick(
+                &all_entities,
+                &mapping,
+                &items,
+                &occupants,
+                pool_figure_available,
+            );
+            if !walk_effects.is_empty() {
+                for (connection_id, user_id, pool_figure_available, user) in &sessions {
+                    // Players keep the TriggerCurrentItem effect: Java's
+                    // `stopWalking` triggers the current item (sit/lay).
+                    // The SendStatus effect (entity ID `None`) is included so
+                    // it can clear the needs-update flag.
+                    let entity_effects: Vec<SchedulerEffect> = walk_effects
+                        .iter()
+                        .filter(|effect| {
+                            effect.entity_id() == Some(user.entity_id())
+                                || matches!(effect, SchedulerEffect::SendStatus(_))
+                        })
+                        .cloned()
+                        .collect();
+                    if entity_effects.is_empty() {
+                        continue;
+                    }
+
+                    if let Some(updated_user) = Self::apply_room_walk_effects(
+                        application,
+                        *connection_id,
+                        &entity_effects,
+                        &items,
+                        &mut mapping,
+                        &occupants,
+                        *pool_figure_available,
+                        &room_connection_ids,
+                    ) {
+                        if let Some(room_user) = room_users
+                            .iter_mut()
+                            .find(|room_user| room_user.entity_id() == *user_id)
                         {
-                            let transition_effects = Self::public_room_transition_network_effects(
-                                application,
-                                room_dao,
-                                item_dao,
-                                connection_id,
-                                room_id,
-                                connection.to_id(),
-                                connection.door_position(),
-                            )?;
-                            application
-                                .startup_runtime_mut()
-                                .apply_network_effects(transition_effects);
+                            *room_user = updated_user;
+                        }
+                    }
+
+                    if room_type == RoomType::Public
+                        && entity_effects
+                            .iter()
+                            .any(|effect| matches!(effect, SchedulerEffect::StopWalking { .. }))
+                    {
+                        let current_user = application
+                            .game()
+                            .player_manager()
+                            .players()
+                            .get(connection_id)
+                            .and_then(|session| session.room_user())
+                            .cloned();
+                        if let Some(current_user) = current_user {
+                            if let Some(connection) = room_dao
+                                .room_connections(room_id)?
+                                .into_iter()
+                                .find(|connection| {
+                                    connection.matches_source(
+                                        current_user.position().x(),
+                                        current_user.position().y(),
+                                    )
+                                })
+                            {
+                                let transition_effects = Self::public_room_transition_network_effects(
+                                    application,
+                                    room_dao,
+                                    item_dao,
+                                    *connection_id,
+                                    room_id,
+                                    connection.to_id(),
+                                    connection.door_position(),
+                                )?;
+                                application
+                                    .startup_runtime_mut()
+                                    .apply_network_effects(transition_effects);
+                            }
                         }
                     }
                 }
 
-                all_scheduler_effects.extend(scheduler_effects);
+                // Bots: Java `stopWalking` for non-players only marks the
+                // update, so skip the player-only TriggerCurrentItem effect.
+                // The SendStatus effect (entity ID `None`) is included so it
+                // can clear the needs-update flag.
+                for bot_user in bot_users.iter_mut().flatten() {
+                    let entity_id = bot_user.entity_id();
+                    let entity_effects: Vec<SchedulerEffect> = walk_effects
+                        .iter()
+                        .filter(|effect| {
+                            (effect.entity_id() == Some(entity_id)
+                                || matches!(effect, SchedulerEffect::SendStatus(_)))
+                                && !matches!(effect, SchedulerEffect::TriggerCurrentItem { .. })
+                        })
+                        .cloned()
+                        .collect();
+                    if entity_effects.is_empty() {
+                        continue;
+                    }
+                    SchedulerEffectExecutor::apply_all(bot_user, &entity_effects);
+                    if let Some(snapshot) = room_users
+                        .iter_mut()
+                        .find(|user| user.entity_id() == entity_id)
+                    {
+                        *snapshot = bot_user.clone();
+                    }
+                }
             }
+
+            // Persist bot state and the event `ticked` counters back to the
+            // room manager so the next tick doesn't re-apply effects to
+            // stale bot state.
+            if let Some(scheduler) = room_summary.scheduler_mut() {
+                let updated_bots: Vec<RoomUser> = bot_users
+                    .iter()
+                    .filter_map(|user| user.as_ref())
+                    .cloned()
+                    .collect();
+                if scheduler.bots().len() == updated_bots.len() {
+                    *scheduler.bots_mut() = updated_bots;
+                }
+            }
+            if let Some(scheduler) = room_summary.scheduler().cloned() {
+                if let Some(room) = application
+                    .game_mut()
+                    .room_manager_mut()
+                    .get_room_by_id_mut(room_id)
+                {
+                    room.set_scheduler(Some(scheduler));
+                }
+            }
+
+            all_scheduler_effects.extend(walk_effects);
 
             if all_scheduler_effects.is_empty() {
                 continue;
@@ -366,9 +641,16 @@ impl RoseauApplicationLoopRunner {
                 &room_connection_ids,
                 &room_users,
             );
+            let show_program_effects = Self::room_show_program_network_effects(
+                &all_scheduler_effects,
+                &room_connection_ids,
+            );
             application
                 .startup_runtime_mut()
                 .apply_network_effects(network_effects);
+            application
+                .startup_runtime_mut()
+                .apply_network_effects(show_program_effects);
         }
 
         Ok(())
@@ -531,6 +813,159 @@ impl RoseauApplicationLoopRunner {
         }
     }
 
+    // Java `RoomUser` equivalents: the tick state and the pathfind for
+    // scheduler-initiated walks.
+    fn room_user_tick_state(user: &RoomUser) -> RoomUserTickState {
+        let mut state = RoomUserTickState::new(user.entity_id())
+            .walking(user.is_walking())
+            .needs_update(user.needs_update())
+            .look_reset_time(user.look_reset_time())
+            .rotations(user.position().rotation(), user.position().head_rotation())
+            .time_until_next_drink(user.time_until_next_drink());
+
+        for status in user.statuses().values() {
+            state = state.with_status(status.clone());
+        }
+
+        state
+    }
+
+    fn apply_walk_to_effects(
+        application: &mut RoseauApplicationRuntime,
+        room_users: &mut Vec<RoomUser>,
+        sessions: &[(i32, i32, bool, RoomUser)],
+        scheduler_effects: &[SchedulerEffect],
+        mapping: &mut RoomMapping,
+        occupants: &[RoomOccupant],
+        items: &[Item],
+        model: &RoomModel,
+    ) {
+        let walk_to_targets: Vec<(i32, i32, i32)> = scheduler_effects
+            .iter()
+            .filter_map(|effect| match effect {
+                SchedulerEffect::WalkTo { entity_id, x, y } => {
+                    Some((*entity_id, *x, *y))
+                }
+                _ => None,
+            })
+            .collect();
+
+        for (entity_id, x, y) in walk_to_targets {
+            let is_player = sessions
+                .iter()
+                .any(|(_, user_id, _, _)| *user_id == entity_id);
+
+            if is_player {
+                let Some((connection_id, _, _, _)) =
+                    sessions.iter().find(|(_, user_id, _, _)| *user_id == entity_id)
+                else {
+                    continue;
+                };
+                let Some(session_state) = application
+                    .game_mut()
+                    .player_manager_mut()
+                    .get_mut(*connection_id)
+                else {
+                    continue;
+                };
+                let Some(session_user) = session_state.room_user_mut() else {
+                    continue;
+                };
+                let path = Self::scheduler_walk_path(
+                    session_user,
+                    x,
+                    y,
+                    model,
+                    occupants,
+                    mapping,
+                    items,
+                );
+                if session_user.walk_to(x, y, path) {
+                    // Java `walkTo` marks the entity for an update.
+                    session_user.set_needs_update(true);
+                    if let Some(persisted) = room_users
+                        .iter_mut()
+                        .find(|user| user.entity_id() == entity_id)
+                    {
+                        *persisted = session_user.clone();
+                    }
+                }
+            } else if let Some(persisted) = room_users
+                .iter_mut()
+                .find(|user| user.entity_id() == entity_id)
+            {
+                let path = Self::scheduler_walk_path(
+                    persisted,
+                    x,
+                    y,
+                    model,
+                    occupants,
+                    mapping,
+                    items,
+                );
+                if persisted.walk_to(x, y, path) {
+                    persisted.set_needs_update(true);
+                }
+            }
+        }
+    }
+
+    fn scheduler_walk_path(
+        user: &RoomUser,
+        x: i32,
+        y: i32,
+        model: &RoomModel,
+        occupants: &[RoomOccupant],
+        mapping: &RoomMapping,
+        items: &[Item],
+    ) -> Vec<Position> {
+        make_path(
+            user.position(),
+            Position::new(x, y, 0.0),
+            model.map_size_x(),
+            model.map_size_y(),
+            |_, position, _| {
+                mapping.is_valid_tile(user.entity_id(), position.x(), position.y(), items, occupants, false)
+            },
+        )
+    }
+
+    // Java `room.send(new SHOWPROGRAM(...))` broadcasts the camera /
+    // lamp / floor programs to every player in the room.
+    fn room_show_program_network_effects(
+        scheduler_effects: &[SchedulerEffect],
+        room_connection_ids: &[i32],
+    ) -> Vec<PlayerNetworkEffect> {
+        let mut packets = Vec::new();
+
+        for effect in scheduler_effects {
+            let parameters: Vec<String> = match effect {
+                SchedulerEffect::ShowProgram(parameters) => parameters.clone(),
+                SchedulerEffect::TargetCamera { username, .. } => vec![
+                    "cam1".to_owned(),
+                    "targetcamera".to_owned(),
+                    username.clone(),
+                ],
+                SchedulerEffect::SetCamera(camera_type) => vec![
+                    "cam1".to_owned(),
+                    "setcamera".to_owned(),
+                    camera_type.to_string(),
+                ],
+                _ => continue,
+            };
+
+            let packet = ShowProgram::new(parameters).compose().get();
+            for connection_id in room_connection_ids {
+                packets.push(PlayerNetworkEffect::WriteResponse {
+                    connection_id: *connection_id,
+                    packet: packet.clone(),
+                });
+            }
+        }
+
+        packets
+    }
+
     fn room_walk_network_effects(
         scheduler_effects: &[SchedulerEffect],
         room_connection_ids: &[i32],
@@ -649,7 +1084,11 @@ impl RoseauApplicationLoopRunner {
             .collect::<Vec<_>>();
 
         let mut packets = Vec::new();
-        if let Some(model) = room_dao.model(room_data.model_name())? {
+        let room_model = room_dao.model(room_data.model_name())?;
+        // Java `USERS.write()`: the pool figure is appended for `PLAYER`
+        // entities only when `room.getData().getModel().hasPool()`.
+        let has_pool = room_model.as_ref().is_some_and(|model| model.has_pool());
+        if let Some(model) = room_model.as_ref() {
             packets.push(HeightMap::new(model.height_map()).compose().get());
         }
         packets.push(
@@ -669,6 +1108,7 @@ impl RoseauApplicationLoopRunner {
         );
         packets.push(
             Users::new(existing_room_users.iter().map(|user| user.user_entry()))
+                .with_has_pool(has_pool)
                 .compose()
                 .get(),
         );
@@ -682,7 +1122,18 @@ impl RoseauApplicationLoopRunner {
         current_user.set_room_id(room_data.id());
         current_user.set_position(door_position);
         current_user.force_stop_walking();
-        packets.push(Users::new([current_user.user_entry()]).compose().get());
+        // Java reads `entity.getDetails().getPoolFigure()` at compose time, so
+        // refresh the snapshot from the player's details.
+        current_user.set_pool_figure(
+            (!session.details().pool_figure().is_empty())
+                .then(|| session.details().pool_figure().to_owned()),
+        );
+        packets.push(
+            Users::new([current_user.user_entry()])
+                .with_has_pool(has_pool)
+                .compose()
+                .get(),
+        );
         packets.push(Status::new([current_user.status_entity()]).compose().get());
 
         if let Some(session) = application
@@ -740,6 +1191,24 @@ impl RoseauApplicationLoopRunner {
                 .game_mut()
                 .player_manager_mut()
                 .remove(*connection_id);
+        }
+    }
+
+    // Connections closed by the server itself (e.g. a GOTOFLAT kick) are
+    // removed from the runtime immediately, before the next tick's
+    // `removed_connection_ids`, so their player sessions are removed here.
+    fn remove_server_closed_player_sessions(application: &mut RoseauApplicationRuntime) {
+        let closed_ids = application
+            .startup_runtime_mut()
+            .tcp_runtime_mut()
+            .map(|runtime| runtime.drain_server_closed_connection_ids())
+            .unwrap_or_default();
+
+        for connection_id in closed_ids {
+            application
+                .game_mut()
+                .player_manager_mut()
+                .remove(connection_id);
         }
     }
 }

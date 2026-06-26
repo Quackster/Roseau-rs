@@ -85,7 +85,10 @@ impl RoomUserEffectNetworkPlan {
                     )
                 })
                 .unwrap_or_default(),
-            RoomUserEffect::SendUsers { entity_id } => room_users
+            RoomUserEffect::SendUsers {
+                entity_id,
+                has_pool,
+            } => room_users
                 .iter()
                 .find(|user| user.entity_id() == *entity_id)
                 .map(|user| {
@@ -93,7 +96,10 @@ impl RoomUserEffectNetworkPlan {
                         room_player_ids,
                         room_users,
                         player_manager,
-                        Users::new([user.user_entry()]).compose().get(),
+                        Users::new([user.user_entry()])
+                            .with_has_pool(*has_pool)
+                            .compose()
+                            .get(),
                     )
                 })
                 .unwrap_or_default(),

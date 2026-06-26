@@ -73,8 +73,12 @@ impl BotMoveRoomEvent {
                         entity_id: bot.entity_id,
                     });
                 }
-            } else if self.event.can_tick(10) && !bot.patrol_positions.is_empty() {
-                let (x, y) = bot.patrol_positions[patrol_index % bot.patrol_positions.len()];
+            } else if self.event.can_tick(10) && bot.patrol_positions.len() > 1 {
+                // Java: `get(Util.getRandom().nextInt(positions.size() - 1))`
+                // never selects the last patrol position; a single position
+                // makes `nextInt(0)` throw, which the Java handler swallows.
+                let index = patrol_index % (bot.patrol_positions.len() - 1);
+                let (x, y) = bot.patrol_positions[index];
                 effects.push(SchedulerEffect::WalkTo {
                     entity_id: bot.entity_id,
                     x,

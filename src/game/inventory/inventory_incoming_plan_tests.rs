@@ -1,5 +1,4 @@
 use super::*;
-use crate::dao::in_memory::{InMemoryInventoryDao, InMemoryItemDao};
 use crate::game::item::{Item, ItemDefinition};
 use crate::messages::OutgoingMessage;
 
@@ -23,11 +22,8 @@ fn item(id: i32, owner_id: i32, definition: ItemDefinition, custom_data: &str) -
     .unwrap()
 }
 
-fn inventory_dao() -> InMemoryInventoryDao {
-    let item_dao = InMemoryItemDao::new();
-    item_dao.insert_item(item(1, 7, definition(5, "SF", "chair", "Chair"), "blue"));
-    item_dao.insert_item(item(2, 8, definition(6, "SF", "table", "Table"), "hidden"));
-    InMemoryInventoryDao::new(item_dao)
+fn inventory_items() -> Vec<Item> {
+    vec![item(1, 7, definition(5, "SF", "chair", "Chair"), "blue")]
 }
 
 #[test]
@@ -36,8 +32,7 @@ fn plans_inventory_refresh_execution_from_incoming_effect() {
         &IncomingExecutionEffect::RefreshInventory {
             category: "new".to_owned(),
         },
-        &inventory_dao(),
-        7,
+        &inventory_items(),
     )
     .unwrap();
 
@@ -53,7 +48,7 @@ fn plans_inventory_refresh_execution_from_incoming_effect() {
 #[test]
 fn ignores_unrelated_incoming_effects() {
     assert!(
-        InventoryIncomingPlan::plan(&IncomingExecutionEffect::GoAway, &inventory_dao(), 7)
+        InventoryIncomingPlan::plan(&IncomingExecutionEffect::GoAway, &inventory_items())
             .unwrap()
             .is_empty()
     );
@@ -71,8 +66,7 @@ fn plans_all_inventory_refresh_effects_in_order() {
                 category: "last".to_owned(),
             },
         ],
-        &inventory_dao(),
-        7,
+        &inventory_items(),
     )
     .unwrap();
 

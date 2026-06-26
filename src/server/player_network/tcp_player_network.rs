@@ -64,8 +64,12 @@ impl TcpPlayerNetwork {
             Ok(bytes_read) => Ok(Some(bytes_read)),
             Err(error) if error.kind() == ErrorKind::WouldBlock => Ok(None),
             Err(error) => {
+                // A hard read error (e.g. ECONNRESET after the client fully
+                // closed) means the connection is over. Report a clean EOF
+                // so the runtime removes the connection instead of parking
+                // it in the Error state forever.
                 self.record_error(&error);
-                Err(error.to_string())
+                Ok(Some(0))
             }
         }
     }

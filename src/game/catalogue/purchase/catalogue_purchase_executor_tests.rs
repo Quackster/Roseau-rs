@@ -68,7 +68,7 @@ fn purchase(
         inventory,
         item_dao,
         players,
-        CataloguePurchaseRequest::new(call_id, buyer),
+        CataloguePurchaseRequest::new(call_id, buyer, true),
     )
     .unwrap()
 }
@@ -92,9 +92,15 @@ fn creates_item_and_debits_buyer_credits() {
         "chair alice",
     );
 
-    let CataloguePurchaseExecution::Purchased { items, buyer } = outcome else {
+    let CataloguePurchaseExecution::Purchased {
+        items,
+        buyer,
+        is_deal,
+    } = outcome
+    else {
         panic!("expected purchase");
     };
+    assert!(!is_deal);
     assert_eq!(items.len(), 1);
     assert_eq!(items[0].owner_id(), 7);
     assert_eq!(items[0].custom_data(), Some(""));
@@ -194,9 +200,15 @@ fn creates_deal_items_and_uses_deal_extra_data() {
         &catalogue, &inventory, &item_dao, &players, &buyer, "bundle",
     );
 
-    let CataloguePurchaseExecution::Purchased { items, buyer } = outcome else {
+    let CataloguePurchaseExecution::Purchased {
+        items,
+        buyer,
+        is_deal,
+    } = outcome
+    else {
         panic!("expected deal purchase");
     };
+    assert!(is_deal);
     assert_eq!(items.len(), 2);
     assert_eq!(items[1].custom_data(), Some("blue"));
     assert_eq!(buyer.credits(), 6);

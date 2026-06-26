@@ -232,7 +232,7 @@ fn plans_scheduler_effect_packets_from_loaded_player_sessions() {
         effects,
         vec![PlayerNetworkEffect::WriteResponse {
             connection_id: 70,
-            packet: "#STATUS \rAlice 0,0,0,0,0/mv 1,2,0/##".to_owned(),
+            packet: "#STATUS \rAlice 0,0,0.0,0,0/mv 1,2,0/##".to_owned(),
         }]
     );
 

@@ -2,7 +2,7 @@ use crate::game::item::Item;
 use crate::game::room::model::{calculate_direction, Position};
 use crate::game::room::schedulers::{RoomWalkEntity, SchedulerEffect};
 use crate::game::room::{RoomMapping, RoomOccupant};
-use crate::util::display_two_place_value;
+use crate::util::display_java_double;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct RoomWalkScheduler;
@@ -145,7 +145,7 @@ impl RoomWalkScheduler {
                     " {},{},{}",
                     next_step.x(),
                     next_step.y(),
-                    display_two_place_value(height)
+                    display_java_double(height)
                 ),
                 infinite: true,
                 duration: -1,

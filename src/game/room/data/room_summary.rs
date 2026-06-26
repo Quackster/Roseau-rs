@@ -1,10 +1,12 @@
 use crate::game::room::RoomData;
+use crate::game::room::schedulers::RoomScheduler;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct RoomSummary {
     data: RoomData,
     order_id: i32,
     player_count: usize,
+    scheduler: Option<RoomScheduler>,
 }
 
 impl RoomSummary {
@@ -13,6 +15,7 @@ impl RoomSummary {
             data,
             order_id: -1,
             player_count: 0,
+            scheduler: None,
         }
     }
 
@@ -38,5 +41,17 @@ impl RoomSummary {
 
     pub fn set_player_count(&mut self, player_count: usize) {
         self.player_count = player_count;
+    }
+
+    pub fn scheduler(&self) -> Option<&RoomScheduler> {
+        self.scheduler.as_ref()
+    }
+
+    pub fn scheduler_mut(&mut self) -> Option<&mut RoomScheduler> {
+        self.scheduler.as_mut()
+    }
+
+    pub fn set_scheduler(&mut self, scheduler: Option<RoomScheduler>) {
+        self.scheduler = scheduler;
     }
 }

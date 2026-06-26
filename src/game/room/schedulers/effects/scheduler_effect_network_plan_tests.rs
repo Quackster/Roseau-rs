@@ -38,11 +38,11 @@ fn broadcasts_batched_status_for_matching_room_users() {
         vec![
             PlayerNetworkEffect::WriteResponse {
                 connection_id: 70,
-                packet: "#STATUS \rAlice 0,0,0,0,0/mv 1,2,0/\rBob 0,0,0,0,0/##".to_owned(),
+                packet: "#STATUS \rAlice 0,0,0.0,0,0/mv 1,2,0/\rBob 0,0,0.0,0,0/##".to_owned(),
             },
             PlayerNetworkEffect::WriteResponse {
                 connection_id: 80,
-                packet: "#STATUS \rAlice 0,0,0,0,0/mv 1,2,0/\rBob 0,0,0,0,0/##".to_owned(),
+                packet: "#STATUS \rAlice 0,0,0.0,0,0/mv 1,2,0/\rBob 0,0,0.0,0,0/##".to_owned(),
             },
         ]
     );

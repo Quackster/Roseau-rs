@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::game::room::settings::RoomType;
 use crate::game::room::RoomSummary;
 
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct RoomManager {
     loaded_rooms: HashMap<i32, RoomSummary>,
 }

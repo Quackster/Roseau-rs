@@ -41,7 +41,7 @@ impl RoomUser {
     fn apply_talk_statuses(&mut self, message: &str) {
         let talk_duration = Self::talk_duration(message);
         if let Some(emote) = ChatUtility::detect_emote(message.split(' '), false) {
-            self.set_status("gest", format!(" {emote}"), false, 5);
+            self.set_status_with_update("gest", format!(" {emote}"), false, 5, true);
         }
         self.set_status_with_update("talk", "", false, talk_duration, true);
     }

@@ -87,18 +87,21 @@ fn dispatches_immediate_response_packets_to_current_connection() {
     let context = executor.apply_all(&mut server_handler, IncomingContext::new(), effects);
 
     assert!(context.sent().is_empty());
+    assert_eq!(executor.network_effects().len(), 2);
     assert_eq!(
-        executor.network_effects(),
-        &[
-            PlayerNetworkEffect::WriteResponse {
-                connection_id: 9,
-                packet: "#ENCRYPTION_ON##".to_owned(),
-            },
-            PlayerNetworkEffect::WriteResponse {
-                connection_id: 9,
-                packet: "#SECRET_KEY\rABAB##".to_owned(),
-            },
-        ]
+        executor.network_effects()[0],
+        PlayerNetworkEffect::WriteResponse {
+            connection_id: 9,
+            packet: "#ENCRYPTION_OFF##".to_owned(),
+        }
+    );
+    assert_eq!(
+        executor.network_effects()[1],
+        PlayerNetworkEffect::WriteResponse {
+            connection_id: 9,
+            packet: "#SECRET_KEY\r31vw2swky25q9ko940i8x068ftxrmt0wa3vgj27qtrr3m35rn067o549fl##"
+                .to_owned(),
+        }
     );
 }
 

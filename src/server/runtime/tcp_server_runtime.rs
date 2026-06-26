@@ -9,6 +9,7 @@ pub struct TcpServerRuntime {
     connection_handler: ServerConnectionHandler,
     acceptor: TcpConnectionAcceptor,
     pub(super) connections: Vec<TcpConnectionRuntime>,
+    server_closed_connection_ids: Vec<i32>,
 }
 
 impl TcpServerRuntime {
@@ -22,6 +23,7 @@ impl TcpServerRuntime {
             connection_handler,
             acceptor,
             connections: Vec::new(),
+            server_closed_connection_ids: Vec::new(),
         }
     }
 
@@ -47,6 +49,14 @@ impl TcpServerRuntime {
 
     pub fn connections(&self) -> &[TcpConnectionRuntime] {
         &self.connections
+    }
+
+    pub(crate) fn record_server_closed_connection(&mut self, connection_id: i32) {
+        self.server_closed_connection_ids.push(connection_id);
+    }
+
+    pub fn drain_server_closed_connection_ids(&mut self) -> Vec<i32> {
+        std::mem::take(&mut self.server_closed_connection_ids)
     }
 
     pub fn connection(&self, index: usize) -> Option<&TcpConnectionRuntime> {

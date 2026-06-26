@@ -22,6 +22,7 @@ pub enum RoomUserEffect {
     },
     SendUsers {
         entity_id: i32,
+        has_pool: bool,
     },
     ShowProgram(Vec<String>),
     NotEnoughTickets,

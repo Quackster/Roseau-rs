@@ -1,9 +1,11 @@
 use crate::messages::OutgoingMessage;
 use crate::protocol::NettyResponse;
+use crate::util::display_java_double;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Users {
     entities: Vec<UserEntry>,
+    has_pool: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -21,7 +23,15 @@ impl Users {
     pub fn new(entities: impl IntoIterator<Item = UserEntry>) -> Self {
         Self {
             entities: entities.into_iter().collect(),
+            has_pool: false,
         }
+    }
+
+    /// Java `USERS.write()`: the pool figure is appended for `PLAYER`
+    /// entities only when `room.getData().getModel().hasPool()`.
+    pub fn with_has_pool(mut self, has_pool: bool) -> Self {
+        self.has_pool = has_pool;
+        self
     }
 }
 
@@ -58,11 +68,13 @@ impl OutgoingMessage for Users {
             response.append_argument(&entity.figure);
             response.append_argument(entity.x);
             response.append_argument(entity.y);
-            response.append_argument(entity.z);
+            response.append_argument(display_java_double(entity.z));
             response.append_argument(&entity.mission);
 
-            if let Some(pool_figure) = &entity.pool_figure {
-                response.append_argument(pool_figure);
+            if self.has_pool {
+                if let Some(pool_figure) = &entity.pool_figure {
+                    response.append_argument(pool_figure);
+                }
             }
         }
     }

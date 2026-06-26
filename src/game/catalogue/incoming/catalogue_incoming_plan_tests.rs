@@ -76,6 +76,7 @@ fn plans_order_info_from_catalogue_manager() {
         item_dao.as_ref(),
         &players,
         &buyer,
+        true,
     )
     .unwrap();
 
@@ -106,6 +107,7 @@ fn plans_private_room_poster_order_info_from_catalogue_manager() {
         item_dao.as_ref(),
         &players,
         &buyer,
+        true,
     )
     .unwrap();
 
@@ -138,14 +140,21 @@ fn plans_normal_purchase_through_catalogue_executor() {
         item_dao.as_ref(),
         &players,
         &buyer,
+        true,
     )
     .unwrap();
 
-    let [CatalogueIncomingOutcome::Purchase(CataloguePurchaseExecution::Purchased { items, buyer })] =
-        outcomes.as_slice()
+    let [CatalogueIncomingOutcome::Purchase(
+        CataloguePurchaseExecution::Purchased {
+            items,
+            buyer,
+            is_deal,
+        }
+    )] = outcomes.as_slice()
     else {
         panic!("expected purchase execution");
     };
+    assert!(!is_deal);
     assert_eq!(items.len(), 1);
     assert_eq!(items[0].owner_id(), 7);
     assert_eq!(buyer.credits(), 15);
@@ -174,6 +183,7 @@ fn plans_ticket_purchase_before_normal_purchase() {
         item_dao.as_ref(),
         &players,
         &buyer,
+        true,
     )
     .unwrap();
 
@@ -202,6 +212,7 @@ fn ignores_unrelated_effects_and_unknown_order_info() {
         item_dao.as_ref(),
         &players,
         &buyer,
+        true,
     )
     .unwrap()
     .is_empty());
@@ -215,6 +226,7 @@ fn ignores_unrelated_effects_and_unknown_order_info() {
         item_dao.as_ref(),
         &players,
         &buyer,
+        true,
     )
     .unwrap()
     .is_empty());

@@ -156,7 +156,9 @@ fn builds_status_and_users_composer_entities() {
     user.set_status("sit", " 3", true, -1);
 
     let mut status = Status::new([user.status_entity()]).compose();
-    let mut users = Users::new([user.user_entry()]).compose();
+    let mut users = Users::new([user.user_entry()])
+        .with_has_pool(true)
+        .compose();
 
     assert_eq!(status.get(), "#STATUS \ralice 1,2,3.5,4,4/sit 3/##");
     assert_eq!(users.get(), "#USERS\r  alice hd-100 1 2 3.5 hello pool##");

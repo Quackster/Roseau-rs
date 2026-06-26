@@ -2,6 +2,7 @@ use std::collections::{HashMap, VecDeque};
 
 use crate::game::room::entity::{RoomUserEffect, RoomUserStatus};
 use crate::game::room::model::Position;
+use crate::util::display_java_double;
 use crate::messages::outgoing::{
     RoomUserStatus as OutgoingRoomUserStatus, StatusEntity, UserEntry,
 };
@@ -57,7 +58,10 @@ impl RoomUser {
             walking: false,
             needs_update: false,
             can_walk: true,
-            look_reset_time: -1,
+            // Java's `int lookResetTime` defaults to 0, so the first
+            // UserStatusEvent tick performs the look reset and marks the
+            // entity for a STATUS update.
+            look_reset_time: 0,
             current_item_id: None,
             afk_timer: DEFAULT_AFK_ROOM_KICK_TICKS,
             afk_room_kick_ticks: DEFAULT_AFK_ROOM_KICK_TICKS,
@@ -79,7 +83,6 @@ impl RoomUser {
         self.can_walk = true;
         self.dance_id = 0;
         self.time_until_next_drink = -1;
-        self.look_reset_time = -1;
         self.kick_when_stop = false;
         self.reset_afk_timer();
     }
@@ -90,16 +93,16 @@ impl RoomUser {
         value: impl Into<String>,
         infinite: bool,
         duration: i64,
-    ) {
+    ) -> bool {
         let key = key.into();
         if key == "carryd" {
             self.time_until_next_drink = CARRY_DRINK_INTERVAL_TICKS;
         }
 
-        self.statuses.insert(
-            key.clone(),
-            RoomUserStatus::new(key, value, infinite, duration),
-        );
+        let status = RoomUserStatus::new(key.clone(), value, infinite, duration);
+        let changed = self.statuses.get(&key) != Some(&status);
+        self.statuses.insert(key, status);
+        changed
     }
 
     pub fn set_status_with_update(
@@ -110,14 +113,18 @@ impl RoomUser {
         duration: i64,
         send_update: bool,
     ) {
-        self.set_status(key, value, infinite, duration);
-        if send_update {
+        let changed = self.set_status(key, value, infinite, duration);
+        if send_update && changed {
             self.needs_update = true;
         }
     }
 
     pub fn remove_status(&mut self, key: &str) -> Option<RoomUserStatus> {
         self.statuses.remove(key)
+    }
+
+    pub fn clear_statuses(&mut self) {
+        self.statuses.clear()
     }
 
     pub fn tick_status(&mut self, key: &str) {
@@ -140,9 +147,10 @@ impl RoomUser {
         }
     }
 
-    pub fn users_effect(&self) -> RoomUserEffect {
+    pub fn users_effect(&self, has_pool: bool) -> RoomUserEffect {
         RoomUserEffect::SendUsers {
             entity_id: self.entity_id,
+            has_pool,
         }
     }
 
@@ -154,13 +162,17 @@ impl RoomUser {
             &self.username,
             self.position.x(),
             self.position.y(),
-            self.position.z().to_string(),
+            display_java_double(self.position.z()),
             self.position.head_rotation(),
             self.position.rotation(),
             statuses
                 .into_iter()
                 .map(|status| OutgoingRoomUserStatus::new(status.key(), status.value())),
         )
+    }
+
+    pub fn set_pool_figure(&mut self, pool_figure: Option<impl Into<String>>) {
+        self.pool_figure = pool_figure.map(Into::into);
     }
 
     pub fn user_entry(&self) -> UserEntry {
@@ -181,6 +193,10 @@ impl RoomUser {
 
     pub fn entity_id(&self) -> i32 {
         self.entity_id
+    }
+
+    pub fn username(&self) -> &str {
+        &self.username
     }
 
     pub fn position(&self) -> Position {

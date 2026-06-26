@@ -126,6 +126,25 @@ fn caps_java_talk_status_duration_at_five_ticks() {
 }
 
 #[test]
+fn marks_update_when_chat_changes_emote_but_talk_status_matches() {
+    let mut user = room_user();
+    user.set_status("talk", "", false, 4);
+    user.set_status("gest", " sad", false, 5);
+
+    RoomUserCommandExecutor::apply(
+        &mut user,
+        &IncomingExecutionEffect::Talk {
+            mode: "CHAT".to_owned(),
+            message: "hello :)".to_owned(),
+        },
+    );
+
+    assert_eq!(user.status("talk").unwrap().duration(), 4);
+    assert_eq!(user.status("gest").unwrap().value(), " sml");
+    assert!(user.needs_update());
+}
+
+#[test]
 fn emits_targeted_whisper_effect_for_whisper_talk() {
     let mut user = room_user();
 

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::game::item::Item;
 use crate::game::player::{Permission, PlayerDetails};
 use crate::game::room::entity::RoomUser;
 
@@ -9,7 +10,7 @@ pub struct PlayerSession {
     server_port: i32,
     details: PlayerDetails,
     room_user: Option<RoomUser>,
-    pending_private_room_id: Option<i32>,
+    inventory_items: Vec<Item>,
 }
 
 impl PlayerSession {
@@ -19,7 +20,7 @@ impl PlayerSession {
             server_port,
             details,
             room_user: None,
-            pending_private_room_id: None,
+            inventory_items: Vec::new(),
         }
     }
 
@@ -59,16 +60,16 @@ impl PlayerSession {
         self.room_user = None;
     }
 
-    pub fn pending_private_room_id(&self) -> Option<i32> {
-        self.pending_private_room_id
+    pub fn inventory_items(&self) -> &[Item] {
+        &self.inventory_items
     }
 
-    pub fn set_pending_private_room_id(&mut self, room_id: i32) {
-        self.pending_private_room_id = Some(room_id);
+    pub fn set_inventory_items(&mut self, items: Vec<Item>) {
+        self.inventory_items = items;
     }
 
-    pub fn clear_pending_private_room_id(&mut self) {
-        self.pending_private_room_id = None;
+    pub fn append_inventory_item(&mut self, item: Item) {
+        self.inventory_items.push(item);
     }
 }
 
@@ -156,13 +157,6 @@ impl PlayerManager {
                 && session.server_port() == server_port
                 && session.connection_id() != connection_id
         })
-    }
-
-    pub fn pending_private_room_id_for_user(&self, user_id: i32) -> Option<i32> {
-        self.players
-            .values()
-            .find(|session| session.details().id() == user_id)
-            .and_then(PlayerSession::pending_private_room_id)
     }
 
     pub fn sync_player_tickets(&mut self, user_id: i32, tickets: i32) {

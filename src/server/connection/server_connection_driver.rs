@@ -1,8 +1,7 @@
 use crate::messages::IncomingContext;
 use crate::protocol::DecodeError;
 use crate::server::{
-    secret_decode, NetworkFrameDecoder, ServerConnectionEffectExecutor, ServerConnectionHandler,
-    ServerHandler,
+    NetworkFrameDecoder, ServerConnectionEffectExecutor, ServerConnectionHandler, ServerHandler,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -48,10 +47,6 @@ impl ServerConnectionDriver {
         self.decoder.buffered_len()
     }
 
-    pub fn rc4_enabled(&self) -> bool {
-        self.decoder.rc4_enabled()
-    }
-
     pub fn open(
         &mut self,
         server_handler: &mut ServerHandler,
@@ -76,7 +71,6 @@ impl ServerConnectionDriver {
         match self.decoder.push_bytes(bytes) {
             Ok(requests) => {
                 for request in requests {
-                    let enable_rc4 = request.header() == "VERSIONCHECK";
                     self.apply_effects(
                         server_handler,
                         effect_executor,
@@ -86,11 +80,6 @@ impl ServerConnectionDriver {
                             Some(request),
                         ),
                     );
-                    if enable_rc4 {
-                        self.decoder.enable_rc4(secret_decode(
-                            crate::messages::incoming::auth_session::version_check::V1_SECRET_KEY,
-                        ));
-                    }
                 }
                 Ok(())
             }

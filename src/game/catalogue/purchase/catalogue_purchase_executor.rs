@@ -37,7 +37,14 @@ impl CataloguePurchaseExecutor {
                 return Ok(CataloguePurchaseExecution::NotEnoughCredits);
             };
 
-            return Self::apply_plan(inventory_dao, item_dao, player_dao, request.buyer, plan);
+            return Self::apply_plan(
+                inventory_dao,
+                item_dao,
+                player_dao,
+                request.buyer,
+                plan,
+                request.private_room_player_present,
+            );
         }
 
         if let Some(deal) = catalogue_dao.item_deals()?.get(&call_id) {
@@ -56,7 +63,14 @@ impl CataloguePurchaseExecutor {
                 return Ok(CataloguePurchaseExecution::NotEnoughCredits);
             };
 
-            return Self::apply_plan(inventory_dao, item_dao, player_dao, request.buyer, plan);
+            return Self::apply_plan(
+                inventory_dao,
+                item_dao,
+                player_dao,
+                request.buyer,
+                plan,
+                request.private_room_player_present,
+            );
         }
 
         Ok(CataloguePurchaseExecution::Ignored)
@@ -68,6 +82,7 @@ impl CataloguePurchaseExecutor {
         player_dao: &dyn PlayerDao,
         buyer: &PlayerDetails,
         plan: CataloguePurchasePlan,
+        private_room_player_present: bool,
     ) -> Result<CataloguePurchaseExecution, DaoError> {
         let mut created_items = Vec::new();
         for item_plan in plan.items() {
@@ -90,6 +105,16 @@ impl CataloguePurchaseExecutor {
             created_items.push(item);
         }
 
+        if !private_room_player_present {
+            // Java: `player.getPrivateRoomPlayer()` is null on connections without a
+            // private-port session, so the handler NPEs on
+            // `p.getInventory().addItem(item)` after the DB insert: no credit
+            // deduction, no response, no inventory update.
+            return Ok(CataloguePurchaseExecution::PurchasedWithoutInventory {
+                items: created_items,
+            });
+        }
+
         let mut updated_buyer = buyer.clone();
         updated_buyer.set_credits(buyer.credits() - plan.cost());
         player_dao.update_player(&updated_buyer)?;
@@ -97,6 +122,7 @@ impl CataloguePurchaseExecutor {
         Ok(CataloguePurchaseExecution::Purchased {
             items: created_items,
             buyer: updated_buyer,
+            is_deal: plan.is_deal(),
         })
     }
 }
@@ -105,11 +131,20 @@ impl CataloguePurchaseExecutor {
 pub struct CataloguePurchaseRequest<'a> {
     pub call_id: &'a str,
     pub buyer: &'a PlayerDetails,
+    pub private_room_player_present: bool,
 }
 
 impl<'a> CataloguePurchaseRequest<'a> {
-    pub fn new(call_id: &'a str, buyer: &'a PlayerDetails) -> Self {
-        Self { call_id, buyer }
+    pub fn new(
+        call_id: &'a str,
+        buyer: &'a PlayerDetails,
+        private_room_player_present: bool,
+    ) -> Self {
+        Self {
+            call_id,
+            buyer,
+            private_room_player_present,
+        }
     }
 }
 
@@ -118,6 +153,10 @@ pub enum CataloguePurchaseExecution {
     Purchased {
         items: Vec<Item>,
         buyer: PlayerDetails,
+        is_deal: bool,
+    },
+    PurchasedWithoutInventory {
+        items: Vec<Item>,
     },
     NotEnoughCredits,
     Ignored,

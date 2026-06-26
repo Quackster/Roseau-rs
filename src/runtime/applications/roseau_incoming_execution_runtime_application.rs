@@ -45,7 +45,7 @@ use crate::messages::outgoing::{
     ActiveObjects, BuddyAddRequests, BuddyList, BuddyListFriend, FlatProperty, HeightMap, Items,
     MessengerMessage as MessengerMessagePacket, MessengerReady, MessengerSmsAccount,
     MessengersReady, MyPersistentMessage, ObjectsWorld, RoomReady, Status, StripInfo, Users,
-    WalletBalance, YouAreController, YouAreOwner,
+    WalletBalance, YouAreController, YouAreNotController, YouAreOwner,
 };
 use crate::messages::OutgoingMessage;
 use crate::messages::{
@@ -237,7 +237,12 @@ impl RoseauApplicationRuntime {
         network_effects.extend(self.player_incoming_network_effects(player_dao, batch, &effects)?);
         self.apply_personal_greeting_effects(player_dao, batch, &effects)?;
         network_effects
-            .extend(self.update_pool_figure_network_effects(player_dao, batch, &effects)?);
+            .extend(self.update_pool_figure_network_effects(
+                player_dao,
+                room_dao,
+                batch,
+                &effects,
+            )?);
         network_effects.extend(self.room_command_network_effects(
             room_dao,
             catalogue_daos.map(|daos| daos.item),
@@ -283,16 +288,20 @@ impl RoseauApplicationRuntime {
             )?);
             network_effects.extend(self.goto_flat_network_effects(
                 room_dao,
+                catalogue_daos.inventory,
                 catalogue_daos.item,
                 batch,
                 &effects,
+                false,
             )?);
             if has_room_login(&effects) {
                 network_effects.extend(self.goto_flat_network_effects(
                     room_dao,
+                    catalogue_daos.inventory,
                     catalogue_daos.item,
                     batch,
                     &[IncomingExecutionEffect::GoToFlat],
+                    true,
                 )?);
             }
             network_effects.extend(self.item_incoming_network_effects(
@@ -303,7 +312,6 @@ impl RoseauApplicationRuntime {
                 &effects,
             )?);
             network_effects.extend(self.inventory_incoming_network_effects(
-                catalogue_daos.inventory,
                 batch,
                 &effects,
             )?);
@@ -430,24 +438,8 @@ impl RoseauApplicationRuntime {
             };
 
             player_dao.update_last_login(details)?;
-            let private_server_port = i32::from(
-                self.startup_runtime()
-                    .startup_plan()
-                    .server_plan()
-                    .private_server_port(),
-            );
-            let pending_private_room_id = (batch.server_port() == private_server_port)
-                .then(|| {
-                    self.game()
-                        .player_manager()
-                        .pending_private_room_id_for_user(details.id())
-                })
-                .flatten();
-            let mut session =
+            let session =
                 PlayerSession::new(batch.connection_id(), batch.server_port(), details.clone());
-            if let Some(room_id) = pending_private_room_id {
-                session.set_pending_private_room_id(room_id);
-            }
             self.game_mut().player_manager_mut().insert(session);
             let room_login = login.public_room_lookup_id().is_some();
             let room_metadata = if room_login {
@@ -517,6 +509,7 @@ impl RoseauApplicationRuntime {
     fn update_pool_figure_network_effects(
         &mut self,
         player_dao: &dyn PlayerDao,
+        room_dao: &dyn RoomDao,
         batch: &PendingIncomingCommandBatch,
         effects: &[IncomingExecutionEffect],
     ) -> Result<Vec<crate::server::PlayerNetworkEffect>, DaoError> {
@@ -557,9 +550,23 @@ impl RoseauApplicationRuntime {
                 .into_iter()
                 .map(|other| room_user_from_session(other, self.room_id_for_batch(batch)))
                 .collect::<Vec<_>>();
+            // Java `UPDATE`: the pool-figure broadcast goes through
+            // `USERS.write()`, which appends the pool figure only when
+            // `room.getData().getModel().hasPool()`.
+            let room_id = self.room_id_for_batch(batch);
+            let model_name = self
+                .game()
+                .room_manager()
+                .get_room_by_id(room_id)
+                .map(|room| room.data().model_name().to_owned());
+            let has_pool = model_name
+                .as_ref()
+                .and_then(|name| room_dao.model(name).ok().flatten())
+                .is_some_and(|model| model.has_pool());
             network_effects.extend(RoomUserEffectNetworkPlan::plan_all(
                 &[RoomUserEffect::SendUsers {
                     entity_id: details.id(),
+                    has_pool,
                 }],
                 details.id(),
                 &room_player_ids,
@@ -987,12 +994,24 @@ impl RoseauApplicationRuntime {
                 self.game_mut()
                     .room_manager_mut()
                     .add(RoomSummary::new(room.data().clone()));
+                // Java TRYFLAT: `player.getRoomUser().setRoom(room)` attaches
+                // the room to this connection's RoomUser.
                 if let Some(session) = self
                     .game_mut()
                     .player_manager_mut()
                     .get_mut(batch.connection_id())
                 {
-                    session.set_pending_private_room_id(*room_id);
+                    let pool_figure = (!session_details.pool_figure().is_empty())
+                        .then(|| session_details.pool_figure().to_owned());
+                    let mut room_user = crate::game::room::entity::RoomUser::new(
+                        session_details.id(),
+                        session_details.username(),
+                        session_details.figure(),
+                        session_details.mission(),
+                        pool_figure,
+                    );
+                    room_user.set_room_id(*room_id);
+                    session.set_room_user(room_user);
                 }
             }
             let doorbell_effects = outcomes
@@ -1922,8 +1941,8 @@ impl RoseauApplicationRuntime {
                 crate::game::room::RoomDecorationOutcome::Applied { .. }
             )
         }) {
-            let refresh =
-                InventoryCommandExecutor::refresh_inventory(inventory_dao, context.user_id, "new")?;
+            let items = inventory_dao.inventory_items(context.user_id)?;
+            let refresh = InventoryCommandExecutor::refresh_inventory(&items, "new")?;
             let mut inventory_effects =
                 InventoryCommandNetworkPlan::plan(&refresh, batch.connection_id());
             if inventory_effects.is_empty() {
@@ -1995,11 +2014,8 @@ impl RoseauApplicationRuntime {
                 .players()
                 .get(&batch.connection_id())
             {
-                let refresh = InventoryCommandExecutor::refresh_inventory(
-                    inventory_dao,
-                    session.details().id(),
-                    "last",
-                )?;
+                let items = inventory_dao.inventory_items(session.details().id())?;
+                let refresh = InventoryCommandExecutor::refresh_inventory(&items, "last")?;
                 network_effects.extend(InventoryCommandNetworkPlan::plan(
                     &refresh,
                     batch.connection_id(),
@@ -2013,9 +2029,11 @@ impl RoseauApplicationRuntime {
     fn goto_flat_network_effects(
         &mut self,
         room_dao: &dyn RoomDao,
+        inventory_dao: &dyn InventoryDao,
         item_dao: &dyn ItemDao,
         batch: &PendingIncomingCommandBatch,
         effects: &[IncomingExecutionEffect],
+        from_login: bool,
     ) -> Result<Vec<crate::server::PlayerNetworkEffect>, DaoError> {
         if !effects
             .iter()
@@ -2045,10 +2063,16 @@ impl RoseauApplicationRuntime {
                 .server_plan()
                 .private_server_port(),
         );
-        let room = if batch.server_port() == private_server_port {
-            let Some(room_id) = session.pending_private_room_id() else {
-                return Ok(Vec::new());
-            };
+        let room_id = if from_login {
+            // Java LOGIN with > 2 args: room ID = connection port - main port.
+            Some(batch.server_port() - main_server_port)
+        } else {
+            // Java GOTOFLAT: the room attached to this connection's RoomUser
+            // (set by TRYFLAT on this connection).
+            session.room_user().map(|room_user| room_user.room_id())
+        };
+        let mut room = None;
+        if let Some(room_id) = room_id {
             if self.game().room_manager().get_room_by_id(room_id).is_none() {
                 if let Some(room_data) = room_dao.room(room_id, true)? {
                     self.game_mut()
@@ -2056,20 +2080,41 @@ impl RoseauApplicationRuntime {
                         .add(RoomSummary::new(room_data));
                 }
             }
-            self.game().room_manager().get_room_by_id(room_id).cloned()
-        } else {
-            self.game()
-                .room_manager()
-                .get_room_by_port(batch.server_port(), main_server_port)
-                .cloned()
-        };
+            room = self.game().room_manager().get_room_by_id(room_id).cloned();
+        }
         let Some(room) = room else {
-            return Ok(vec![crate::server::PlayerNetworkEffect::CloseConnection {
-                connection_id: batch.connection_id(),
-            }]);
+            if from_login {
+                // Java: Log.println("Grabbed new room from database: " + id); return;
+                return Ok(Vec::new());
+            }
+            // Java: player.getPrivateRoomPlayer().kick();
+            // (null when the user has no private-port connection, so nothing happens)
+            let private_player = self.game().player_manager().get_private_room_player(
+                session.details().id(),
+                private_server_port,
+            );
+            return Ok(match private_player {
+                Some(other) => vec![crate::server::PlayerNetworkEffect::CloseConnection {
+                    connection_id: other.connection_id(),
+                }],
+                None => Vec::new(),
+            });
         };
 
         let room_data = room.data();
+        if room_data.room_type() == RoomType::Private {
+            // Java loadRoom: `player.getInventory().load()` is called for
+            // private rooms only.
+            if let Some(session) = self
+                .game_mut()
+                .player_manager_mut()
+                .get_mut(batch.connection_id())
+            {
+                session.set_inventory_items(
+                    inventory_dao.inventory_items(session.details().id())?,
+                );
+            }
+        }
         let mut packets = Vec::new();
         let mut room_items = item_dao
             .room_items(room_data.id())?
@@ -2096,19 +2141,29 @@ impl RoseauApplicationRuntime {
             );
         }
 
+        // Java loadRoom: refreshFlatPrivileges always sends one of
+        // YOUAREOWNER / YOUARECONTROLLER / YOUARENOTCONTROLLER.
         let rights = room_dao.room_rights(room_data.id())?;
         let has_room_all_rights = self.has_room_all_rights(session.details().rank());
-        if room_data.owner_id() == session.details().id() || has_room_all_rights {
+        let privilege = if room_data.owner_id() == session.details().id() || has_room_all_rights {
             packets.push(YouAreOwner.compose().get());
+            2u8
         } else if room_data.has_all_super_user()
             || rights
                 .iter()
                 .any(|right_user_id| *right_user_id == session.details().id())
         {
             packets.push(YouAreController.compose().get());
-        }
+            1u8
+        } else {
+            packets.push(YouAreNotController.compose().get());
+            0u8
+        };
 
         let room_model = room_dao.model(room_data.model_name())?;
+        // Java `USERS.write()`: the pool figure is appended for `PLAYER`
+        // entities only when `room.getData().getModel().hasPool()`.
+        let has_pool = room_model.as_ref().is_some_and(|model| model.has_pool());
         if let Some(model) = room_model.as_ref() {
             packets.push(HeightMap::new(model.height_map()).compose().get());
         }
@@ -2140,7 +2195,7 @@ impl RoseauApplicationRuntime {
             );
         }
 
-        let existing_room_users = self
+        let mut existing_room_users = self
             .game()
             .player_manager()
             .players()
@@ -2153,8 +2208,77 @@ impl RoseauApplicationRuntime {
             })
             .map(|other| room_user_from_session(other, room_data.id()))
             .collect::<Vec<_>>();
+        // Java firstPlayerEntry: the first entry registers the room's
+        // schedulers and persists the bot entities for the 500 ms room
+        // schedulers; the bots appear in the USERS/STATUS packets.
+        let bot_rows = room_dao.bots(room_data.id())?;
+        if self
+            .game()
+            .room_manager()
+            .get_room_by_id(room_data.id())
+            .map_or(true, |summary| summary.scheduler().is_none())
+        {
+            let mut scheduler_bots = Vec::new();
+            let mut scheduler_starts = Vec::new();
+            let mut scheduler_patrols = Vec::new();
+            for bot in &bot_rows {
+                let details = bot.details();
+                let mut bot_user = crate::game::room::entity::RoomUser::new(
+                    details.id(),
+                    details.username(),
+                    details.figure(),
+                    details.mission(),
+                    None::<String>,
+                );
+                bot_user.set_position(bot.start_position());
+                bot_user.set_room_id(room_data.id());
+                scheduler_starts.push(bot.start_position());
+                scheduler_patrols.push(bot.positions().to_vec());
+                scheduler_bots.push(bot_user);
+            }
+            let scheduler = crate::game::room::schedulers::RoomScheduler::register(
+                room_data.model_name(),
+                scheduler_bots,
+                scheduler_starts,
+                scheduler_patrols,
+            );
+            if let Some(summary) = self
+                .game_mut()
+                .room_manager_mut()
+                .get_room_by_id_mut(room_data.id())
+            {
+                summary.set_scheduler(Some(scheduler));
+            }
+        }
+        let scheduler_bots = self
+            .game()
+            .room_manager()
+            .get_room_by_id(room_data.id())
+            .and_then(|summary| summary.scheduler())
+            .map(|scheduler| scheduler.bots().to_vec())
+            .unwrap_or_else(|| {
+                bot_rows
+                    .iter()
+                    .map(|bot| {
+                        let details = bot.details();
+                        let mut bot_user = crate::game::room::entity::RoomUser::new(
+                            details.id(),
+                            details.username(),
+                            details.figure(),
+                            details.mission(),
+                            None::<String>,
+                        );
+                        bot_user.set_position(bot.start_position());
+                        bot_user
+                    })
+                    .collect()
+            });
+        for bot_user in scheduler_bots {
+            existing_room_users.push(bot_user);
+        }
         packets.push(
             Users::new(existing_room_users.iter().map(|user| user.user_entry()))
+                .with_has_pool(has_pool)
                 .compose()
                 .get(),
         );
@@ -2165,6 +2289,12 @@ impl RoseauApplicationRuntime {
         );
 
         let mut current_user = room_user_from_session(&session, room_data.id());
+        // Java reads `entity.getDetails().getPoolFigure()` at compose time, so
+        // refresh the snapshot from the player's details.
+        current_user.set_pool_figure(
+            (!session.details().pool_figure().is_empty())
+                .then(|| session.details().pool_figure().to_owned()),
+        );
         if let Some(model) = room_model.as_ref() {
             let door_position = Position::with_rotation(
                 model.door_x(),
@@ -2174,7 +2304,42 @@ impl RoseauApplicationRuntime {
             );
             current_user.set_position(door_position);
         }
-        packets.push(Users::new([current_user.user_entry()]).compose().get());
+        // Java loadRoom: `roomEntity.getStatuses().clear()` before
+        // refreshFlatPrivileges re-applies the mod/flatctrl statuses.
+        current_user.clear_statuses();
+        match session.details().rank() {
+            2 => {
+                current_user.set_status("mod", " 1", true, -1);
+            }
+            3 => {
+                current_user.set_status("mod", " 2", true, -1);
+            }
+            4 => {
+                current_user.set_status("mod", " 3", true, -1);
+            }
+            5 => {
+                current_user.set_status("mod", " A", true, -1);
+            }
+            _ => {}
+        }
+        match privilege {
+            2 => {
+                current_user.set_status("flatctrl", " useradmin", true, -1);
+            }
+            1 => {
+                current_user.set_status("flatctrl", "", true, -1);
+            }
+            _ => {
+                current_user.remove_status("flatctrl");
+                current_user.remove_status("mod");
+            }
+        }
+        packets.push(
+            Users::new([current_user.user_entry()])
+                .with_has_pool(has_pool)
+                .compose()
+                .get(),
+        );
         packets.push(Status::new([current_user.status_entity()]).compose().get());
 
         if let Some(session) = self
@@ -2183,7 +2348,6 @@ impl RoseauApplicationRuntime {
             .get_mut(batch.connection_id())
         {
             session.set_room_user(current_user);
-            session.clear_pending_private_room_id();
         }
 
         self.startup_runtime_mut()
@@ -2388,7 +2552,6 @@ impl RoseauApplicationRuntime {
 
     fn inventory_incoming_network_effects(
         &self,
-        inventory_dao: &dyn InventoryDao,
         batch: &PendingIncomingCommandBatch,
         effects: &[IncomingExecutionEffect],
     ) -> Result<Vec<crate::server::PlayerNetworkEffect>, DaoError> {
@@ -2402,7 +2565,7 @@ impl RoseauApplicationRuntime {
         };
 
         let executions =
-            InventoryIncomingPlan::plan_all(effects, inventory_dao, session.details().id())?;
+            InventoryIncomingPlan::plan_all(effects, session.inventory_items())?;
         Ok(InventoryCommandNetworkPlan::plan_all(
             &executions,
             batch.connection_id(),
@@ -2426,6 +2589,17 @@ impl RoseauApplicationRuntime {
             return Ok(Vec::new());
         };
 
+        let private_server_port = i32::from(
+            self.startup_runtime()
+                .startup_plan()
+                .server_plan()
+                .private_server_port(),
+        );
+        let private_room_player_present = self
+            .game()
+            .player_manager()
+            .get_private_room_player(session.details().id(), private_server_port)
+            .is_some();
         let outcomes = CatalogueIncomingPlan::plan_all(
             effects,
             self.game().catalogue_manager(),
@@ -2434,6 +2608,7 @@ impl RoseauApplicationRuntime {
             catalogue_daos.item,
             player_dao,
             session.details(),
+            private_room_player_present,
         )?;
         let mut network_effects = Vec::new();
 
@@ -2447,15 +2622,55 @@ impl RoseauApplicationRuntime {
                 }
                 CatalogueIncomingOutcome::Purchase(execution) => {
                     let purchase_outcome = match &execution {
-                        CataloguePurchaseExecution::Purchased { buyer, .. } => {
-                            self.game_mut()
+                        CataloguePurchaseExecution::Purchased {
+                            items,
+                            buyer,
+                            is_deal,
+                        } => {
+                            if let Some(existing) = self
+                                .game_mut()
                                 .player_manager_mut()
-                                .insert(PlayerSession::new(
-                                    session.connection_id(),
-                                    session.server_port(),
-                                    buyer.clone(),
-                                ));
+                                .get_mut(session.connection_id())
+                            {
+                                *existing.details_mut() = buyer.clone();
+                            }
+                            // Java updates the private-port player's inventory
+                            // (item purchases append, deal purchases reload from
+                            // the database).
+                            let private_connection_id = self
+                                .game()
+                                .player_manager()
+                                .get_private_room_player(
+                                    session.details().id(),
+                                    private_server_port,
+                                )
+                                .map(|session| session.connection_id());
+                            if let Some(private_connection_id) = private_connection_id {
+                                if let Some(private_session) = self
+                                    .game_mut()
+                                    .player_manager_mut()
+                                    .get_mut(private_connection_id)
+                                {
+                                    if *is_deal {
+                                        private_session.set_inventory_items(
+                                            catalogue_daos.inventory
+                                                .inventory_items(session.details().id())
+                                                .unwrap_or_default(),
+                                        );
+                                    } else {
+                                        for item in items {
+                                            private_session.append_inventory_item(item.clone());
+                                        }
+                                    }
+                                }
+                            }
                             Some(CataloguePurchaseOutcome::AddedStripItem)
+                        }
+                        CataloguePurchaseExecution::PurchasedWithoutInventory { .. } => {
+                            // Java: the handler NPEs before any response or credit
+                            // update, so nothing is sent and the session is left
+                            // unchanged.
+                            None
                         }
                         CataloguePurchaseExecution::NotEnoughCredits => {
                             Some(CataloguePurchaseOutcome::NotEnoughCredits)
@@ -2612,12 +2827,12 @@ impl RoseauApplicationRuntime {
                 )
             })
             .collect::<Vec<_>>();
-        if !friends.is_empty() {
-            network_effects.push(write_response(
-                batch.connection_id(),
-                BuddyList::new(friends, None).compose().get(),
-            ));
-        }
+        // The original Java server always sends the buddy list, even when
+        // the list is empty.
+        network_effects.push(write_response(
+            batch.connection_id(),
+            BuddyList::new(friends, None).compose().get(),
+        ));
 
         for message in messenger_dao.unread_messages(session.details().id())? {
             let figure = player_dao

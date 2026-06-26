@@ -38,7 +38,9 @@ fn records_room_login_command_when_extra_argument_is_present() {
 }
 
 #[test]
-fn records_room_login_command_on_non_main_server_connection() {
+fn records_no_room_login_for_two_arg_login_on_non_main_server_connection() {
+    // Java: a two-argument login never triggers the room branch,
+    // even on room/private ports.
     let mut context = IncomingContext::new().main_server_connection(false);
     Login.handle(
         &mut context,
@@ -50,7 +52,7 @@ fn records_room_login_command_on_non_main_server_connection() {
         &[IncomingCommand::Login {
             username: "alice".to_owned(),
             password: "secret".to_owned(),
-            room_login: true,
+            room_login: false,
         }]
     );
 }

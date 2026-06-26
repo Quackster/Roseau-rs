@@ -41,3 +41,12 @@ fn rounding_matches_java_two_decimal_helper() {
     assert_eq!(display_two_place_value(1.2), "1.2");
     assert_eq!(display_two_place_value(1.0), "1");
 }
+
+#[test]
+fn java_double_display_keeps_the_decimal_point() {
+    // Java String.valueOf(StringUtil.format(z)): "7.0", not "7".
+    assert_eq!(display_java_double(7.0), "7.0");
+    assert_eq!(display_java_double(0.0), "0.0");
+    assert_eq!(display_java_double(7.5), "7.5");
+    assert_eq!(display_java_double(1.234), "1.23");
+}

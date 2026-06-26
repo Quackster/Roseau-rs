@@ -27,6 +27,7 @@ impl CatalogueIncomingPlan {
         item_dao: &dyn ItemDao,
         player_dao: &dyn PlayerDao,
         buyer: &PlayerDetails,
+        private_room_player_present: bool,
     ) -> Result<Vec<CatalogueIncomingOutcome>, DaoError> {
         match effect {
             IncomingExecutionEffect::GetOrderInfo { call_id } => Ok(
@@ -53,7 +54,11 @@ impl CatalogueIncomingPlan {
                         inventory_dao,
                         item_dao,
                         player_dao,
-                        CataloguePurchaseRequest::new(call_id, buyer),
+                        CataloguePurchaseRequest::new(
+                            call_id,
+                            buyer,
+                            private_room_player_present,
+                        ),
                     )?,
                 )])
             }
@@ -70,6 +75,7 @@ impl CatalogueIncomingPlan {
         item_dao: &dyn ItemDao,
         player_dao: &dyn PlayerDao,
         buyer: &PlayerDetails,
+        private_room_player_present: bool,
     ) -> Result<Vec<CatalogueIncomingOutcome>, DaoError> {
         let mut outcomes = Vec::new();
 
@@ -82,6 +88,7 @@ impl CatalogueIncomingPlan {
                 item_dao,
                 player_dao,
                 buyer,
+                private_room_player_present,
             )?);
         }
 

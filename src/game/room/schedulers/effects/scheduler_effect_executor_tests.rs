@@ -101,6 +101,16 @@ fn applies_user_status_tick_mutations() {
 }
 
 #[test]
+fn sent_status_clears_needs_update_for_included_user() {
+    let mut user = room_user();
+    user.set_needs_update(true);
+
+    SchedulerEffectExecutor::apply_all(&mut user, &[SchedulerEffect::SendStatus(vec![7])]);
+
+    assert!(!user.needs_update());
+}
+
+#[test]
 fn stop_walking_mutates_user_and_returns_room_user_effects() {
     let mut user = room_user();
     user.set_walking(true);

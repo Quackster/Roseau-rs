@@ -41,6 +41,10 @@ impl SchedulerEffectExecutor {
                 user.set_needs_update(true);
                 Vec::new()
             }
+            SchedulerEffect::SendStatus(entity_ids) if entity_ids.contains(&user.entity_id()) => {
+                user.set_needs_update(false);
+                Vec::new()
+            }
             SchedulerEffect::SetLookResetTime { entity_id, ticks }
                 if *entity_id == user.entity_id() =>
             {
@@ -95,12 +99,12 @@ impl SchedulerEffectExecutor {
             SchedulerEffect::StopWalking { entity_id } if *entity_id == user.entity_id() => {
                 user.stop_walking()
             }
-            SchedulerEffect::SendStatus(_)
-            | SchedulerEffect::ShowProgram(_)
+            SchedulerEffect::ShowProgram(_)
             | SchedulerEffect::TargetCamera { .. }
             | SchedulerEffect::SetCamera(_)
             | SchedulerEffect::WalkTo { .. }
             | SchedulerEffect::TriggerCurrentItem { .. }
+            | SchedulerEffect::SendStatus(_)
             | SchedulerEffect::SetHeadRotation { .. }
             | SchedulerEffect::RemoveStatus { .. }
             | SchedulerEffect::TickStatus { .. }

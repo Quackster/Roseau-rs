@@ -5,8 +5,7 @@ use std::time::Duration;
 use crate::messages::{IncomingCommand, IncomingContext};
 use crate::protocol::DecodeError;
 use crate::server::{
-    PlayerNetwork, PlayerNetworkEffect, Rc4Cipher, ServerConnectionHandler, ServerHandler,
-    TcpConnectionRuntime,
+    PlayerNetwork, PlayerNetworkEffect, ServerConnectionHandler, ServerHandler, TcpConnectionRuntime,
 };
 
 fn connected_runtime() -> (TcpConnectionRuntime, TcpStream) {
@@ -139,24 +138,19 @@ fn version_check_writes_handshake_packets_to_tcp_client() {
         response.extend_from_slice(&buffer[..bytes]);
     }
 
+    let response = String::from_utf8_lossy(&response);
     assert_eq!(
-        String::from_utf8_lossy(&response),
-        "#ENCRYPTION_ON###SECRET_KEY\rABAB##"
+        response,
+        "#ENCRYPTION_OFF###SECRET_KEY\r31vw2swky25q9ko940i8x068ftxrmt0wa3vgj27qtrr3m35rn067o549fl##"
     );
 }
 
 #[test]
-fn decrypts_rc4_hex_frames_after_version_check() {
-    let (mut runtime, mut client) = connected_runtime();
+fn keeps_plaintext_frames_after_version_check() {
+    let (mut runtime, _client) = connected_runtime();
     let mut server_handler = ServerHandler::new(vec![37120], "127.0.0.1");
     let connection_handler = ServerConnectionHandler::new(false, true);
-    runtime
-        .set_read_timeout(Some(Duration::from_secs(1)))
-        .unwrap();
 
-    runtime.open(&mut server_handler, &connection_handler);
-    let mut hello = [0; 8];
-    client.read_exact(&mut hello).unwrap();
     runtime
         .read_bytes(
             b"0012VERSIONCHECK",
@@ -164,11 +158,12 @@ fn decrypts_rc4_hex_frames_after_version_check() {
             &connection_handler,
         )
         .unwrap();
-
-    let mut cipher = Rc4Cipher::new("1");
-    let encrypted_key = cipher.encipher_hex(b"0014KEYENCRYPTED 1");
     runtime
-        .read_bytes(encrypted_key, &mut server_handler, &connection_handler)
+        .read_bytes(
+            b"0014KEYENCRYPTED 1",
+            &mut server_handler,
+            &connection_handler,
+        )
         .unwrap();
 
     assert_eq!(

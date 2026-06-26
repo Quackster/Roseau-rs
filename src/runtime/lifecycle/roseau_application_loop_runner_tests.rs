@@ -14,7 +14,7 @@ use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::fs;
 use std::io::{ErrorKind, Read, Write};
-use std::net::{Shutdown, TcpStream};
+use std::net::{Shutdown, TcpListener, TcpStream};
 use std::path::PathBuf;
 use std::time::Duration;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -273,7 +273,7 @@ fn run_with_incoming_daos_advances_room_walk_ticks_without_new_move_packets() {
         .unwrap();
 
     let response = read_available_text(&mut client);
-    assert_eq!(response, "#STATUS \rAlex 0,0,0,2,2/mv 1,0,0/##");
+    assert_eq!(response, "#STATUS \rAlex 0,0,0.0,2,2/mv 1,0,0.0/##");
 
     fs::remove_dir_all(root).unwrap();
 }
@@ -362,7 +362,7 @@ fn room_walk_tick_writes_to_room_socket_not_same_user_main_socket() {
     assert_eq!(read_available_text(&mut main_client), "");
     assert_eq!(
         read_available_text(&mut room_client),
-        "#STATUS \rAlex 0,0,0,2,2/mv 1,0,0/##"
+        "#STATUS \rAlex 0,0,0.0,2,2/mv 1,0,0.0/##"
     );
 
     fs::remove_dir_all(root).unwrap();
@@ -441,7 +441,7 @@ fn room_walk_tick_writes_private_room_status_to_private_room_socket() {
 
     assert_eq!(
         read_available_text(&mut private_client),
-        "#STATUS \rAlex 0,0,0,2,2/mv 1,0,0/##"
+        "#STATUS \rAlex 0,0,0.0,2,2/mv 1,0,0.0/##"
     );
 
     fs::remove_dir_all(root).unwrap();
@@ -554,7 +554,7 @@ fn room_walk_stop_on_public_connection_loads_target_lido_room() {
         "{response}"
     );
     assert!(
-        response.contains("#USERS\r  Alex figure 0 0 0 mission##"),
+        response.contains("#USERS\r  Alex figure 0 0 0.0 mission##"),
         "{response}"
     );
     let session = application
@@ -764,6 +764,166 @@ fn closed_tcp_connections_remove_game_player_sessions() {
             &binder,
             &[],
             &mut afk_states,
+        )
+        .unwrap();
+
+    assert!(application.game().player_manager().players().is_empty());
+    assert!(application
+        .startup_runtime()
+        .tcp_runtime()
+        .unwrap()
+        .connections()
+        .is_empty());
+
+    fs::remove_dir_all(root).unwrap();
+}
+
+fn free_adjacent_port_pair() -> u16 {
+    for _ in 0..100 {
+        let first = TcpListener::bind("127.0.0.1:0").unwrap();
+        let port = first.local_addr().unwrap().port();
+        let Some(next_port) = port.checked_add(1) else {
+            continue;
+        };
+        if let Ok(second) = TcpListener::bind(("127.0.0.1", next_port)) {
+            drop(second);
+            drop(first);
+            return port;
+        }
+    }
+
+    panic!("failed to find adjacent free ports");
+}
+
+#[test]
+fn server_side_gotoflat_kick_removes_game_player_session() {
+    let root = temp_dir("gotoflat-kick-removes-session");
+    let server_port = free_adjacent_port_pair();
+    fs::create_dir_all(&root).unwrap();
+    let main_path = root.join("roseau.properties");
+    let hotel_path = root.join("habbohotel.properties");
+    fs::write(
+        &main_path,
+        format!(
+            "[Server]\nserver.ip=127.0.0.1\nserver.port={server_port}\nserver.private.port={}\nserver.class.path=roseau::server::ServerHandler\n\n[Database]\ntype=mysql\n\n[Logging]\nlog.errors=true\nlog.output=true\nlog.connections=false\nlog.packets=false\n",
+            server_port + 1
+        ),
+    )
+    .unwrap();
+    fs::write(&hotel_path, DEFAULT_HOTEL_CONFIG).unwrap();
+    let bootstrap = RoseauBootstrap::new(main_path.to_owned(), hotel_path.to_owned());
+    let binder = StdTcpSocketBinder::new();
+    let mut application =
+        RoseauApplicationRuntime::prepare(&bootstrap, &binder, [], 1, None).unwrap();
+    let executor = RecordingExecutor::default();
+    for _ in 0..8 {
+        executor.push_result(SqlExecutionResult::affected_rows(1));
+    }
+    let tick_executor = MySqlApplicationTickExecutor::new(executor);
+    let dao = InMemoryDao::new(player_dao_with_alex());
+    let navigator_dao = InMemoryNavigatorDao::new([]);
+    let mut afk_states = Vec::new();
+    let address = binder.local_addresses().unwrap()[1];
+    let mut client = TcpStream::connect(address).unwrap();
+    application.startup_runtime_mut().run_loop_step(&binder);
+    let mut burst = Vec::new();
+    burst.extend(client_frame("LOGIN Alex 123"));
+    burst.extend(client_frame("GOTOFLAT"));
+    client.write_all(&burst).unwrap();
+    RoseauApplicationLoopRunner::bounded(1)
+        .run_with_incoming_daos(
+            &mut application,
+            &tick_executor,
+            &StaticResolver,
+            &binder,
+            &[],
+            &mut afk_states,
+            IncomingDaoSet::new(
+                dao.player(),
+                dao.room(),
+                dao.catalogue(),
+                dao.inventory(),
+                dao.item(),
+                &navigator_dao,
+                dao.messenger(),
+            ),
+        )
+        .unwrap();
+
+    // GOTOFLAT with no room on the private port kicks the connection, so the
+    // session must not survive the server-initiated close.
+    assert!(application.game().player_manager().players().is_empty());
+    assert!(application
+        .startup_runtime()
+        .tcp_runtime()
+        .unwrap()
+        .connections()
+        .is_empty());
+
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn full_client_close_after_login_removes_game_player_sessions() {
+    let (root, bootstrap) = bootstrap("full-close-removes-player-session");
+    let binder = StdTcpSocketBinder::new();
+    let mut application =
+        RoseauApplicationRuntime::prepare(&bootstrap, &binder, [], 1, None).unwrap();
+    let executor = RecordingExecutor::default();
+    for _ in 0..4 {
+        executor.push_result(SqlExecutionResult::affected_rows(1));
+    }
+    let tick_executor = MySqlApplicationTickExecutor::new(executor);
+    let dao = InMemoryDao::new(player_dao_with_alex());
+    let navigator_dao = InMemoryNavigatorDao::new([]);
+    let mut afk_states = Vec::new();
+    let address = binder.local_addresses().unwrap()[0];
+    let mut client = TcpStream::connect(address).unwrap();
+    application.startup_runtime_mut().run_loop_step(&binder);
+    let mut burst = Vec::new();
+    burst.extend(client_frame("LOGIN Alex 123"));
+    client.write_all(&burst).unwrap();
+    RoseauApplicationLoopRunner::bounded(1)
+        .run_with_incoming_daos(
+            &mut application,
+            &tick_executor,
+            &StaticResolver,
+            &binder,
+            &[],
+            &mut afk_states,
+            IncomingDaoSet::new(
+                dao.player(),
+                dao.room(),
+                dao.catalogue(),
+                dao.inventory(),
+                dao.item(),
+                &navigator_dao,
+                dao.messenger(),
+            ),
+        )
+        .unwrap();
+    assert!(application.game().player_manager().get_by_id(1).is_some());
+
+    // A full close (drop) can surface as ECONNRESET on the server side when
+    // replies are still in flight; the session must still be removed.
+    drop(client);
+    RoseauApplicationLoopRunner::bounded(1)
+        .run_with_incoming_daos(
+            &mut application,
+            &tick_executor,
+            &StaticResolver,
+            &binder,
+            &[],
+            &mut afk_states,
+            IncomingDaoSet::new(
+                dao.player(),
+                dao.room(),
+                dao.catalogue(),
+                dao.inventory(),
+                dao.item(),
+                &navigator_dao,
+                dao.messenger(),
+            ),
         )
         .unwrap();
 

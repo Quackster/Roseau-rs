@@ -1,4 +1,4 @@
-use crate::dao::{DaoError, InventoryDao};
+use crate::dao::DaoError;
 use crate::game::inventory::{Inventory, InventoryCommandExecution, InventoryRefresh};
 use crate::game::item::Item;
 use crate::messages::outgoing::{StripInfo, StripItem, StripItemKind};
@@ -8,11 +8,10 @@ pub struct InventoryCommandExecutor;
 
 impl InventoryCommandExecutor {
     pub fn refresh_inventory(
-        inventory_dao: &dyn InventoryDao,
-        user_id: i32,
+        items: &[Item],
         mode: &str,
     ) -> Result<InventoryCommandExecution, DaoError> {
-        let mut items = inventory_dao.inventory_items(user_id)?;
+        let mut items = items.to_vec();
         items.sort_by_key(Item::id);
         let mut inventory = Inventory::with_items(items);
 
@@ -23,7 +22,11 @@ impl InventoryCommandExecutor {
                     strip_info: StripInfo::new(strip_items),
                 })
             }
-            InventoryRefresh::Empty => Ok(InventoryCommandExecution::Empty),
+            // The original Java server answers an empty inventory with an
+            // empty STRIPINFO packet as well.
+            InventoryRefresh::Empty => Ok(InventoryCommandExecution::Refreshed {
+                strip_info: StripInfo::new(Vec::new()),
+            }),
         }
     }
 }

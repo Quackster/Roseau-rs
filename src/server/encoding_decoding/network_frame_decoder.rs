@@ -1,10 +1,8 @@
 use crate::protocol::{DecodeError, NettyRequest};
-use crate::server::Rc4HexStreamDecoder;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct NetworkFrameDecoder {
     buffer: Vec<u8>,
-    rc4_decoder: Option<Rc4HexStreamDecoder>,
 }
 
 impl NetworkFrameDecoder {
@@ -16,20 +14,8 @@ impl NetworkFrameDecoder {
         &mut self,
         bytes: impl AsRef<[u8]>,
     ) -> Result<Vec<NettyRequest>, DecodeError> {
-        if let Some(decoder) = &mut self.rc4_decoder {
-            self.buffer.extend(decoder.push_hex(bytes.as_ref()));
-        } else {
-            self.buffer.extend_from_slice(bytes.as_ref());
-        }
+        self.buffer.extend_from_slice(bytes.as_ref());
         self.decode_available()
-    }
-
-    pub fn enable_rc4(&mut self, key: impl AsRef<[u8]>) {
-        self.rc4_decoder = Some(Rc4HexStreamDecoder::new(key));
-    }
-
-    pub fn rc4_enabled(&self) -> bool {
-        self.rc4_decoder.is_some()
     }
 
     pub fn buffered_len(&self) -> usize {

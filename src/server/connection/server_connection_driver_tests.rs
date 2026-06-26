@@ -1,7 +1,7 @@
 use super::*;
 use crate::messages::IncomingCommand;
 use crate::protocol::DecodeError;
-use crate::server::{PlayerNetworkEffect, Rc4Cipher, SessionLifecycleEffect};
+use crate::server::{PlayerNetworkEffect, SessionLifecycleEffect};
 
 #[test]
 fn opens_and_closes_connection_through_handler_effects() {
@@ -109,7 +109,7 @@ fn closes_connection_on_decode_error() {
 }
 
 #[test]
-fn decrypts_rc4_hex_frames_after_version_check() {
+fn keeps_plaintext_frames_after_version_check() {
     let mut server_handler = ServerHandler::new(vec![37120], "127.0.0.1");
     let connection_handler = ServerConnectionHandler::new(false, true);
     let mut effect_executor = ServerConnectionEffectExecutor::new();
@@ -125,13 +125,22 @@ fn decrypts_rc4_hex_frames_after_version_check() {
         )
         .unwrap();
 
-    assert!(driver.rc4_enabled());
+    let sent: Vec<String> = effect_executor
+        .network_effects()
+        .iter()
+        .filter_map(|effect| match effect {
+            PlayerNetworkEffect::WriteResponse { packet, .. } => Some(packet.clone()),
+            _ => None,
+        })
+        .collect();
+    assert!(sent.contains(&"#ENCRYPTION_OFF##".to_owned()));
+    assert!(sent.contains(
+        &"#SECRET_KEY\r31vw2swky25q9ko940i8x068ftxrmt0wa3vgj27qtrr3m35rn067o549fl##".to_owned()
+    ));
 
-    let mut cipher = Rc4Cipher::new("1");
-    let encrypted = cipher.encipher_hex(b"0014KEYENCRYPTED 1");
     driver
         .read_bytes(
-            encrypted,
+            b"0014KEYENCRYPTED 1",
             37120,
             &mut server_handler,
             &connection_handler,
@@ -144,60 +153,6 @@ fn decrypts_rc4_hex_frames_after_version_check() {
         &[
             "[12] Received: VERSIONCHECK ".to_owned(),
             "[12] Received: KEYENCRYPTED 1".to_owned()
-        ]
-    );
-}
-
-#[test]
-fn keeps_rc4_stream_state_separate_per_connection() {
-    let mut server_handler = ServerHandler::new(vec![37120, 37119, 37121], "127.0.0.1");
-    let connection_handler = ServerConnectionHandler::new(false, true);
-    let mut effect_executor = ServerConnectionEffectExecutor::new();
-    let mut main = ServerConnectionDriver::new(21, "/127.0.0.1:37120");
-    let mut private = ServerConnectionDriver::new(22, "/127.0.0.1:37119")
-        .with_context(IncomingContext::new().main_server_connection(false));
-    let mut public = ServerConnectionDriver::new(23, "/127.0.0.1:37121")
-        .with_context(IncomingContext::new().main_server_connection(false));
-
-    for driver in [&mut main, &mut private, &mut public] {
-        driver
-            .read_bytes(
-                b"0012VERSIONCHECK",
-                37120,
-                &mut server_handler,
-                &connection_handler,
-                &mut effect_executor,
-            )
-            .unwrap();
-        assert!(driver.rc4_enabled());
-    }
-
-    for (driver, port) in [
-        (&mut main, 37120),
-        (&mut private, 37119),
-        (&mut public, 37121),
-    ] {
-        let mut cipher = Rc4Cipher::new("1");
-        driver
-            .read_bytes(
-                cipher.encipher_hex(b"0014KEYENCRYPTED 1"),
-                port,
-                &mut server_handler,
-                &connection_handler,
-                &mut effect_executor,
-            )
-            .unwrap();
-    }
-
-    assert_eq!(
-        effect_executor.packet_logs(),
-        &[
-            "[21] Received: VERSIONCHECK ".to_owned(),
-            "[22] Received: VERSIONCHECK ".to_owned(),
-            "[23] Received: VERSIONCHECK ".to_owned(),
-            "[21] Received: KEYENCRYPTED 1".to_owned(),
-            "[22] Received: KEYENCRYPTED 1".to_owned(),
-            "[23] Received: KEYENCRYPTED 1".to_owned(),
         ]
     );
 }

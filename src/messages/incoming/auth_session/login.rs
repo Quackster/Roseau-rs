@@ -16,7 +16,9 @@ impl IncomingEvent for Login {
         context.record(IncomingCommand::Login {
             username: username.to_owned(),
             password: password.to_owned(),
-            room_login: !context.is_main_server_connection() || request.get_argument_amount() > 2,
+            // Java: the room branch only runs when argumentAmount > 2,
+            // regardless of which port the login arrived on.
+            room_login: request.get_argument_amount() > 2,
         });
     }
 }

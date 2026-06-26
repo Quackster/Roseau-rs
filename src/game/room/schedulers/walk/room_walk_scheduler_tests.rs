@@ -51,7 +51,7 @@ fn emits_movement_effects_for_next_path_step() {
     assert!(effects.contains(&SchedulerEffect::SetStatus {
         entity_id: 7,
         key: "mv".to_owned(),
-        value: " 1,0,0".to_owned(),
+        value: " 1,0,0.0".to_owned(),
         infinite: true,
         duration: -1,
     }));
