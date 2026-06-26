@@ -19,7 +19,9 @@ use crate::game::room::{RoomMapping, RoomOccupant, RoomSummary};
 use crate::game::RoomAfkState;
 use crate::messages::outgoing::{ActiveObjects, HeightMap, Logout, ObjectsWorld, Status, Users};
 use crate::messages::OutgoingMessage;
-use crate::runtime::{HostResolver, RoseauApplicationLoopReport, RoseauApplicationRuntime};
+use crate::runtime::{
+    HostResolver, RoseauApplicationLoopReport, RoseauApplicationRuntime, RoseauConsole,
+};
 use crate::server::{PlayerNetworkEffect, ServerSocketBinder};
 use std::time::Duration;
 
@@ -101,6 +103,11 @@ impl RoseauApplicationLoopRunner {
     ) -> Result<RoseauApplicationLoopReport, DaoError> {
         let mut tick_reports = Vec::new();
         let mut stopped = false;
+        let mut console = if self.max_ticks.is_none() {
+            RoseauConsole::start()
+        } else {
+            RoseauConsole::disabled()
+        };
 
         loop {
             if self
@@ -130,7 +137,8 @@ impl RoseauApplicationLoopRunner {
                 )?;
                 Self::apply_room_walk_ticks(application, incoming_daos.room, incoming_daos.item)?;
             }
-            application.write_pending_server_logs();
+            Self::handle_pending_server_logs(application, &mut console);
+            console.tick(application);
             stopped = !report.should_continue();
             tick_reports.push(report);
 
@@ -146,7 +154,8 @@ impl RoseauApplicationLoopRunner {
                         incoming_daos.room,
                         incoming_daos.item,
                     )?;
-                    application.write_pending_server_logs();
+                    Self::handle_pending_server_logs(application, &mut console);
+                    console.tick(application);
                     std::thread::sleep(ROOM_WALK_TICK_INTERVAL);
                 } else {
                     std::thread::sleep(APPLICATION_TICK_INTERVAL);
@@ -155,6 +164,24 @@ impl RoseauApplicationLoopRunner {
         }
 
         Ok(RoseauApplicationLoopReport::new(tick_reports, stopped))
+    }
+
+    fn handle_pending_server_logs(
+        application: &mut RoseauApplicationRuntime,
+        console: &mut RoseauConsole,
+    ) {
+        let lines = application.drain_pending_server_log_lines();
+        if lines.is_empty() {
+            return;
+        }
+
+        if console.is_enabled() {
+            console.observe_logs(lines);
+        } else {
+            for line in lines {
+                println!("{line}");
+            }
+        }
     }
 
     fn apply_room_walk_ticks(

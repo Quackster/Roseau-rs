@@ -41,11 +41,18 @@ impl RoseauApplicationRuntime {
     }
 
     pub fn write_pending_server_logs(&mut self) {
-        let logger = self.runtime.logger().clone();
-        for line in self.startup_runtime.drain_pending_logs() {
+        for line in self.drain_pending_server_log_lines() {
             println!("{line}");
+        }
+    }
+
+    pub fn drain_pending_server_log_lines(&mut self) -> Vec<String> {
+        let logger = self.runtime.logger().clone();
+        let lines = self.startup_runtime.drain_pending_logs();
+        for line in &lines {
             let _ = logger.write_output_line(&line);
         }
+        lines
     }
 
     pub fn load_public_rooms(&mut self, public_rooms: impl IntoIterator<Item = RoomData>) {

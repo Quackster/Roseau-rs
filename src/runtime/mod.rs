@@ -37,6 +37,7 @@ pub mod roseau_application_tick_run_report;
 pub mod roseau_bootstrap;
 pub mod roseau_bounded_tick_runtime;
 pub mod roseau_command_effect_runtime_application;
+pub mod roseau_console;
 pub mod roseau_database_application_prepare;
 pub mod roseau_game_tick_runtime_action_plan;
 pub mod roseau_incoming_execution_runtime_application;
@@ -88,6 +89,7 @@ pub use roseau_application_tick_execution_report::RoseauApplicationTickExecution
 pub use roseau_application_tick_outcome::RoseauApplicationTickOutcome;
 pub use roseau_application_tick_run_report::RoseauApplicationTickRunReport;
 pub use roseau_bootstrap::RoseauBootstrap;
+pub use roseau_console::RoseauConsole;
 pub use roseau_game_tick_runtime_action_plan::RoseauGameTickRuntimeActionPlan;
 pub use roseau_incoming_execution_runtime_plan::RoseauIncomingExecutionRuntimePlan;
 pub use roseau_lifecycle_plan::RoseauLifecyclePlan;
