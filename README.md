@@ -4,6 +4,9 @@ Roseau-rs is a Rust port of [Quackster/Roseau](https://github.com/Quackster/Rose
 
 This project is intentionally close to the original server design, but written as a Rust crate with small protocol, runtime, DAO, message, and game-planning modules.
 
+## Screenshot
+
+<img width="1567" height="796" alt="image" src="https://github.com/user-attachments/assets/e4911598-b830-4bba-abe7-b0a85f2a2f46" />
 
 ## Requirements
 
