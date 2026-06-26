@@ -1,27 +1,18 @@
-pub mod bot_move_room_event;
-pub mod club_massiva_disco_event;
-pub mod habbo_lido_event;
-pub mod room_event;
-pub mod room_event_registration;
-pub mod room_event_scheduler;
-pub mod room_user_tick_state;
-pub mod room_walk_entity;
-pub mod room_walk_scheduler;
-pub mod scheduler_effect;
-pub mod scheduler_effect_executor;
-pub mod scheduler_effect_network_plan;
-pub mod user_status_event;
+pub mod effects;
+pub mod events;
+pub mod walk;
 
-pub use bot_move_room_event::{BotMoveRoomEvent, BotTickState};
-pub use club_massiva_disco_event::ClubMassivaDiscoEvent;
-pub use habbo_lido_event::{HabboLidoEvent, LidoPlayerState, PoolQueueTile};
-pub use room_event::RoomEvent;
-pub use room_event_registration::RoomEventRegistration;
-pub use room_event_scheduler::RoomEventScheduler;
-pub use room_user_tick_state::RoomUserTickState;
-pub use room_walk_entity::RoomWalkEntity;
-pub use room_walk_scheduler::RoomWalkScheduler;
-pub use scheduler_effect::SchedulerEffect;
-pub use scheduler_effect_executor::SchedulerEffectExecutor;
-pub use scheduler_effect_network_plan::SchedulerEffectNetworkPlan;
-pub use user_status_event::UserStatusEvent;
+pub use effects::{
+    scheduler_effect, scheduler_effect_executor, scheduler_effect_network_plan, SchedulerEffect,
+    SchedulerEffectExecutor, SchedulerEffectNetworkPlan,
+};
+pub use events::{
+    bot_move_room_event, club_massiva_disco_event, habbo_lido_event, room_event,
+    room_event_registration, room_event_scheduler, user_status_event, BotMoveRoomEvent,
+    BotTickState, ClubMassivaDiscoEvent, HabboLidoEvent, LidoPlayerState, PoolQueueTile, RoomEvent,
+    RoomEventRegistration, RoomEventScheduler, UserStatusEvent,
+};
+pub use walk::{
+    room_user_tick_state, room_walk_entity, room_walk_scheduler, RoomUserTickState, RoomWalkEntity,
+    RoomWalkScheduler,
+};

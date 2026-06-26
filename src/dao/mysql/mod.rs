@@ -1,169 +1,61 @@
-pub mod catalogue_command_queries;
-pub mod catalogue_purchase_queries;
-pub mod catalogue_purchase_result_mapper;
-pub mod catalogue_queries;
-pub mod catalogue_result_mapper;
-pub mod database_engine;
-pub mod decoration_command_result_mapper;
+pub mod command_queries;
 pub mod entity;
-pub mod game_tick_queries;
-pub mod inventory_command_queries;
-pub mod inventory_queries;
-pub mod item_command_data_mapper;
-pub mod item_command_placement_mapper;
-pub mod item_command_queries;
-#[cfg(test)]
-mod item_command_queries_tests;
-pub mod item_command_result_mapper;
-#[cfg(test)]
-mod item_command_result_mapper_ignore_tests;
-#[cfg(test)]
-mod item_command_result_mapper_placement_tests;
-#[cfg(test)]
-mod item_command_result_mapper_tests;
-pub mod item_interaction_queries;
-pub mod item_queries;
-#[cfg(test)]
-mod item_queries_tests;
-pub mod item_result_mapper;
-pub mod mapper;
-pub mod messenger_command_queries;
-pub mod messenger_queries;
-pub mod messenger_result_mapper;
-pub mod my_sql_application_tick_execution_report;
-pub mod my_sql_application_tick_executor;
-pub mod my_sql_catalogue_dao;
-pub mod my_sql_dao;
-pub mod my_sql_dao_connection_report;
-pub mod my_sql_dao_effect;
-pub mod my_sql_dao_facades;
-#[cfg(test)]
-mod my_sql_dao_tests;
-pub mod my_sql_driver;
-pub mod my_sql_game_tick_executor;
-pub mod my_sql_inventory_dao;
-pub mod my_sql_item_dao;
-pub mod my_sql_messenger_dao;
-pub mod my_sql_navigator_dao;
-pub mod my_sql_player_dao;
-#[cfg(test)]
-mod my_sql_player_dao_tests;
-pub mod my_sql_player_password_action_execution_report;
-pub mod my_sql_player_password_action_executor;
-pub mod my_sql_player_password_action_report;
-pub mod my_sql_room_dao;
-#[cfg(test)]
-mod my_sql_room_dao_tests;
-pub mod my_sql_storage_connector;
-pub mod navigator_command_queries;
-pub mod navigator_queries;
-pub mod navigator_result_mapper;
-pub mod player_command_queries;
-pub mod player_effect_queries;
-pub mod player_password_action_queries;
-pub mod player_password_queries;
-pub mod player_queries;
-#[cfg(test)]
-mod player_queries_tests;
-pub mod player_result_mapper;
-pub mod room_command_queries;
-#[cfg(test)]
-mod room_command_queries_tests;
-pub mod room_effect_queries;
-pub mod room_queries;
-#[cfg(test)]
-mod room_queries_tests;
-pub mod room_result_mapper;
-#[cfg(test)]
-mod room_result_mapper_tests;
-pub mod room_user_effect_queries;
-pub mod sql_batch_executor;
-pub mod sql_driver;
-pub mod sql_execution_batch_result;
-pub mod sql_execution_kind;
-pub mod sql_execution_plan;
-pub mod sql_execution_result;
-pub mod sql_executor;
-pub mod sql_parameter;
-pub mod sql_query;
-pub mod sql_row;
-pub mod sql_value;
-#[cfg(test)]
-mod std_storage_connector;
-pub mod storage;
-pub mod storage_connection_effect;
-pub mod storage_connection_outcome;
-pub mod storage_connector;
-pub mod storage_sql_executor;
-#[cfg(test)]
-mod unconfigured_sql_driver;
+pub mod executors;
+pub mod facades;
+pub mod queries;
+pub mod reports;
+pub mod result_mappers;
+pub mod storage_connectors;
 
-pub use catalogue_command_queries::CatalogueCommandQueries;
-pub use catalogue_purchase_queries::CataloguePurchaseQueries;
-pub use catalogue_purchase_result_mapper::CataloguePurchaseResultMapper;
-pub use catalogue_queries::CatalogueQueries;
-pub use catalogue_result_mapper::CatalogueResultMapper;
-pub use database_engine::{DatabaseEngine, ParseDatabaseEngineError};
-pub use decoration_command_result_mapper::DecorationCommandResultMapper;
-pub use game_tick_queries::GameTickQueries;
-pub use inventory_command_queries::InventoryCommandQueries;
-pub use inventory_queries::InventoryQueries;
-pub use item_command_data_mapper::ItemCommandDataMapper;
-pub use item_command_placement_mapper::ItemCommandPlacementMapper;
-pub use item_command_queries::ItemCommandQueries;
-pub use item_command_result_mapper::ItemCommandResultMapper;
-pub use item_interaction_queries::ItemInteractionQueries;
-pub use item_queries::ItemQueries;
-pub use item_result_mapper::ItemResultMapper;
-pub use messenger_command_queries::MessengerCommandQueries;
-pub use messenger_queries::MessengerQueries;
-pub use messenger_result_mapper::MessengerResultMapper;
-pub use my_sql_application_tick_execution_report::MySqlApplicationTickExecutionReport;
-pub use my_sql_application_tick_executor::MySqlApplicationTickExecutor;
-pub use my_sql_catalogue_dao::MySqlCatalogueDao;
-pub use my_sql_dao::MySqlDao;
-pub use my_sql_dao_connection_report::MySqlDaoConnectionReport;
-pub use my_sql_dao_effect::MySqlDaoEffect;
-pub use my_sql_dao_facades::MySqlDaoFacades;
-pub use my_sql_driver::MySqlDriver;
-pub use my_sql_game_tick_executor::MySqlGameTickExecutor;
-pub use my_sql_inventory_dao::MySqlInventoryDao;
-pub use my_sql_item_dao::MySqlItemDao;
-pub use my_sql_messenger_dao::MySqlMessengerDao;
-pub use my_sql_navigator_dao::MySqlNavigatorDao;
-pub use my_sql_player_dao::MySqlPlayerDao;
-pub use my_sql_player_password_action_execution_report::MySqlPlayerPasswordActionExecutionReport;
-pub use my_sql_player_password_action_executor::MySqlPlayerPasswordActionExecutor;
-pub use my_sql_player_password_action_report::MySqlPlayerPasswordActionReport;
-pub use my_sql_room_dao::MySqlRoomDao;
-pub use my_sql_storage_connector::MySqlStorageConnector;
-pub use navigator_command_queries::NavigatorCommandQueries;
-pub use navigator_queries::NavigatorQueries;
-pub use navigator_result_mapper::NavigatorResultMapper;
-pub use player_command_queries::PlayerCommandQueries;
-pub use player_effect_queries::PlayerEffectQueries;
-pub use player_password_action_queries::PlayerPasswordActionQueries;
-pub use player_password_queries::PlayerPasswordQueries;
-pub use player_queries::PlayerQueries;
-pub use player_result_mapper::PlayerResultMapper;
-pub use room_command_queries::RoomCommandQueries;
-pub use room_effect_queries::RoomEffectQueries;
-pub use room_queries::RoomQueries;
-pub use room_result_mapper::RoomResultMapper;
-pub use room_user_effect_queries::RoomUserEffectQueries;
-pub use sql_batch_executor::SqlBatchExecutor;
-pub use sql_driver::SqlDriver;
-pub use sql_execution_batch_result::SqlExecutionBatchResult;
-pub use sql_execution_kind::SqlExecutionKind;
-pub use sql_execution_plan::SqlExecutionPlan;
-pub use sql_execution_result::SqlExecutionResult;
-pub use sql_executor::SqlExecutor;
-pub use sql_parameter::SqlParameter;
-pub use sql_query::SqlQuery;
-pub use sql_row::SqlRow;
-pub use sql_value::SqlValue;
-pub use storage::Storage;
-pub use storage_connection_effect::StorageConnectionEffect;
-pub use storage_connection_outcome::StorageConnectionOutcome;
-pub use storage_connector::StorageConnector;
-pub use storage_sql_executor::StorageSqlExecutor;
+pub use command_queries::{
+    catalogue_command_queries, inventory_command_queries, item_command_queries,
+    messenger_command_queries, navigator_command_queries, player_command_queries,
+    room_command_queries, CatalogueCommandQueries, InventoryCommandQueries, ItemCommandQueries,
+    MessengerCommandQueries, NavigatorCommandQueries, PlayerCommandQueries, RoomCommandQueries,
+};
+pub use executors::{
+    my_sql_application_tick_executor, my_sql_game_tick_executor,
+    my_sql_player_password_action_executor, sql_batch_executor, storage_sql_executor,
+    MySqlApplicationTickExecutor, MySqlGameTickExecutor, MySqlPlayerPasswordActionExecutor,
+    SqlBatchExecutor, StorageSqlExecutor,
+};
+pub use facades::{
+    my_sql_catalogue_dao, my_sql_dao, my_sql_dao_effect, my_sql_dao_facades, my_sql_inventory_dao,
+    my_sql_item_dao, my_sql_messenger_dao, my_sql_navigator_dao, my_sql_player_dao,
+    my_sql_room_dao, MySqlCatalogueDao, MySqlDao, MySqlDaoEffect, MySqlDaoFacades,
+    MySqlInventoryDao, MySqlItemDao, MySqlMessengerDao, MySqlNavigatorDao, MySqlPlayerDao,
+    MySqlRoomDao,
+};
+pub use queries::{
+    catalogue_purchase_queries, catalogue_queries, game_tick_queries, inventory_queries,
+    item_interaction_queries, item_queries, messenger_queries, navigator_queries,
+    player_effect_queries, player_password_action_queries, player_password_queries, player_queries,
+    room_effect_queries, room_queries, room_user_effect_queries, CataloguePurchaseQueries,
+    CatalogueQueries, GameTickQueries, InventoryQueries, ItemInteractionQueries, ItemQueries,
+    MessengerQueries, NavigatorQueries, PlayerEffectQueries, PlayerPasswordActionQueries,
+    PlayerPasswordQueries, PlayerQueries, RoomEffectQueries, RoomQueries, RoomUserEffectQueries,
+};
+pub use reports::{
+    my_sql_application_tick_execution_report, my_sql_dao_connection_report,
+    my_sql_player_password_action_execution_report, my_sql_player_password_action_report,
+    MySqlApplicationTickExecutionReport, MySqlDaoConnectionReport,
+    MySqlPlayerPasswordActionExecutionReport, MySqlPlayerPasswordActionReport,
+};
+pub use result_mappers::{
+    catalogue_purchase_result_mapper, catalogue_result_mapper, decoration_command_result_mapper,
+    item_command_data_mapper, item_command_placement_mapper, item_command_result_mapper,
+    item_result_mapper, mapper, messenger_result_mapper, navigator_result_mapper,
+    player_result_mapper, room_result_mapper, CataloguePurchaseResultMapper, CatalogueResultMapper,
+    DecorationCommandResultMapper, ItemCommandDataMapper, ItemCommandPlacementMapper,
+    ItemCommandResultMapper, ItemResultMapper, MessengerResultMapper, NavigatorResultMapper,
+    PlayerResultMapper, RoomResultMapper,
+};
+pub use storage_connectors::{
+    database_engine, my_sql_driver, my_sql_storage_connector, sql_driver,
+    sql_execution_batch_result, sql_execution_kind, sql_execution_plan, sql_execution_result,
+    sql_executor, sql_parameter, sql_query, sql_row, sql_value, storage, storage_connection_effect,
+    storage_connection_outcome, storage_connector, DatabaseEngine, MySqlDriver,
+    MySqlStorageConnector, ParseDatabaseEngineError, SqlDriver, SqlExecutionBatchResult,
+    SqlExecutionKind, SqlExecutionPlan, SqlExecutionResult, SqlExecutor, SqlParameter, SqlQuery,
+    SqlRow, SqlValue, Storage, StorageConnectionEffect, StorageConnectionOutcome, StorageConnector,
+};

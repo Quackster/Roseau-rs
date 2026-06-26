@@ -1,31 +1,18 @@
-pub mod game_load_effect;
-pub mod game_load_readiness;
-pub mod game_load_runtime_action;
-pub mod game_load_runtime_executor;
-pub mod game_load_runtime_report;
-pub mod game_runtime_scheduler_effect;
-pub mod game_runtime_scheduler_execution_report;
-pub mod game_runtime_scheduler_executor;
-pub mod game_runtime_scheduler_plan;
-pub mod game_runtime_task;
-pub mod game_scheduler;
-#[cfg(test)]
-mod game_tests;
-pub mod game_tick_effect;
-pub mod game_tick_runtime_effect;
-pub mod game_variables;
+pub mod core;
+pub mod load;
+pub mod scheduler;
+pub mod tick;
 
-pub use game_load_effect::GameLoadEffect;
-pub use game_load_readiness::GameLoadReadiness;
-pub use game_load_runtime_action::GameLoadRuntimeAction;
-pub use game_load_runtime_executor::GameLoadRuntimeExecutor;
-pub use game_load_runtime_report::GameLoadRuntimeReport;
-pub use game_runtime_scheduler_effect::GameRuntimeSchedulerEffect;
-pub use game_runtime_scheduler_execution_report::GameRuntimeSchedulerExecutionReport;
-pub use game_runtime_scheduler_executor::GameRuntimeSchedulerExecutor;
-pub use game_runtime_scheduler_plan::GameRuntimeSchedulerPlan;
-pub use game_runtime_task::GameRuntimeTask;
-pub use game_scheduler::GameScheduler;
-pub use game_tick_effect::GameTickEffect;
-pub use game_tick_runtime_effect::GameTickRuntimeEffect;
-pub use game_variables::GameVariables;
+pub use core::{game_variables, GameVariables};
+pub use load::{
+    game_load_effect, game_load_readiness, game_load_runtime_action, game_load_runtime_executor,
+    game_load_runtime_report, GameLoadEffect, GameLoadReadiness, GameLoadRuntimeAction,
+    GameLoadRuntimeExecutor, GameLoadRuntimeReport,
+};
+pub use scheduler::{
+    game_runtime_scheduler_effect, game_runtime_scheduler_execution_report,
+    game_runtime_scheduler_executor, game_runtime_scheduler_plan, game_runtime_task,
+    game_scheduler, GameRuntimeSchedulerEffect, GameRuntimeSchedulerExecutionReport,
+    GameRuntimeSchedulerExecutor, GameRuntimeSchedulerPlan, GameRuntimeTask, GameScheduler,
+};
+pub use tick::{game_tick_effect, game_tick_runtime_effect, GameTickEffect, GameTickRuntimeEffect};

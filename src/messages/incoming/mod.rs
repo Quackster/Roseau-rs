@@ -1,147 +1,55 @@
-pub mod add_item;
-pub mod add_strip_item;
-pub mod approve_name;
-pub mod assign_rights;
-pub mod carry_drink;
-pub mod carry_item;
-pub mod close_uimakoppi;
-pub mod compatibility_noop;
-pub mod create_flat;
-pub mod cry_for_help;
-pub mod dance;
-pub mod delete_flat;
-pub mod find_user;
-pub mod flat_property_by_item;
-pub mod get_credits;
-pub mod get_flat_info;
-pub mod get_order_info;
-pub mod get_strip;
-pub mod get_unit_users;
-pub mod give_tickets;
-pub mod go_away;
-pub mod go_to_flat;
-pub mod incoming_command;
-pub mod incoming_command_executor;
-#[cfg(test)]
-mod incoming_command_executor_routing_tests;
-#[cfg(test)]
-mod incoming_command_executor_tests;
-pub mod incoming_context;
-pub mod incoming_event;
-pub mod incoming_execution_effect;
-pub mod incoming_execution_effect_network_plan;
-mod incoming_messenger_command_plan;
-mod incoming_password_command_plan;
-pub mod info_retrieve;
-pub mod init_unit_listener;
-pub mod into_door;
-pub mod jump_performance;
-pub mod kill_user;
-pub mod let_user_in;
-pub mod login;
-pub mod look_to;
-pub mod messenger_accept_buddy;
-pub mod messenger_assign_personal_message;
-pub mod messenger_decline_buddy;
-pub mod messenger_init;
-pub mod messenger_mark_read;
-pub mod messenger_remove_buddy;
-pub mod messenger_request_buddy;
-pub mod messenger_send_message;
-pub mod move_event;
-pub mod move_stuff;
-pub mod pending_incoming_command_batch;
-pub mod place_item_from_strip;
-pub mod place_stuff_from_strip;
-pub mod purchase;
-pub mod register;
-pub mod remove_item;
-pub mod remove_rights;
-pub mod remove_stuff;
-pub mod search_busy_flats;
-pub mod search_flat;
-pub mod search_flat_for_user;
-pub mod set_flat_info;
-pub mod set_item_data;
-pub mod set_strip_item_data;
-pub mod set_stuff_data;
-pub mod sign;
-pub mod splash_position;
-pub mod status_ok;
-pub mod stop;
-pub mod talk;
-pub mod try_flat;
-pub mod update;
-pub mod update_flat;
-pub mod version_check;
+pub mod auth_session;
+pub mod catalogue_purchase;
+pub mod generic;
+pub mod infrastructure;
+pub mod inventory_items;
+pub mod messenger;
+pub mod moderation;
+pub mod movement;
+pub mod rooms_flats;
+pub mod user_profile;
 
-pub use add_item::AddItem;
-pub use add_strip_item::AddStripItem;
-pub use approve_name::ApproveName;
-pub use assign_rights::AssignRights;
-pub use carry_drink::CarryDrink;
-pub use carry_item::CarryItem;
-pub use close_uimakoppi::CloseUimakoppi;
-pub use compatibility_noop::CompatibilityNoop;
-pub use create_flat::CreateFlat;
-pub use cry_for_help::CryForHelp;
-pub use dance::Dance;
-pub use delete_flat::DeleteFlat;
-pub use find_user::FindUser;
-pub use flat_property_by_item::FlatPropertyByItem;
-pub use get_credits::GetCredits;
-pub use get_flat_info::GetFlatInfo;
-pub use get_order_info::GetOrderInfo;
-pub use get_strip::GetStrip;
-pub use get_unit_users::GetUnitUsers;
-pub use give_tickets::GiveTickets;
-pub use go_away::GoAway;
-pub use go_to_flat::GoToFlat;
-pub use incoming_command::IncomingCommand;
-pub use incoming_command_executor::IncomingCommandExecutor;
-pub use incoming_context::IncomingContext;
-pub use incoming_event::IncomingEvent;
-pub use incoming_execution_effect::IncomingExecutionEffect;
-pub use incoming_execution_effect_network_plan::IncomingExecutionEffectNetworkPlan;
-pub use info_retrieve::InfoRetrieve;
-pub use init_unit_listener::InitUnitListener;
-pub use into_door::IntoDoor;
-pub use jump_performance::JumpPerformance;
-pub use kill_user::KillUser;
-pub use let_user_in::LetUserIn;
-pub use login::Login;
-pub use look_to::LookTo;
-pub use messenger_accept_buddy::MessengerAcceptBuddy;
-pub use messenger_assign_personal_message::MessengerAssignPersonalMessage;
-pub use messenger_decline_buddy::MessengerDeclineBuddy;
-pub use messenger_init::MessengerInit;
-pub use messenger_mark_read::MessengerMarkRead;
-pub use messenger_remove_buddy::MessengerRemoveBuddy;
-pub use messenger_request_buddy::MessengerRequestBuddy;
-pub use messenger_send_message::MessengerSendMessage;
-pub use move_event::Move;
-pub use move_stuff::MoveStuff;
-pub use pending_incoming_command_batch::PendingIncomingCommandBatch;
-pub use place_item_from_strip::PlaceItemFromStrip;
-pub use place_stuff_from_strip::PlaceStuffFromStrip;
-pub use purchase::Purchase;
-pub use register::Register;
-pub use remove_item::RemoveItem;
-pub use remove_rights::RemoveRights;
-pub use remove_stuff::RemoveStuff;
-pub use search_busy_flats::SearchBusyFlats;
-pub use search_flat::SearchFlat;
-pub use search_flat_for_user::SearchFlatForUser;
-pub use set_flat_info::SetFlatInfo;
-pub use set_item_data::SetItemData;
-pub use set_strip_item_data::SetStripItemData;
-pub use set_stuff_data::SetStuffData;
-pub use sign::Sign;
-pub use splash_position::SplashPosition;
-pub use status_ok::StatusOk;
-pub use stop::Stop;
-pub use talk::Talk;
-pub use try_flat::TryFlat;
-pub use update::Update;
-pub use update_flat::UpdateFlat;
-pub use version_check::VersionCheck;
+pub(crate) use auth_session::incoming_password_command_plan;
+pub use auth_session::{
+    approve_name, get_credits, info_retrieve, login, register, version_check, ApproveName,
+    GetCredits, InfoRetrieve, Login, Register, VersionCheck,
+};
+pub use catalogue_purchase::{
+    add_strip_item, get_order_info, get_strip, give_tickets, place_item_from_strip, purchase,
+    AddStripItem, GetOrderInfo, GetStrip, GiveTickets, PlaceItemFromStrip, Purchase,
+};
+pub use generic::{close_uimakoppi, compatibility_noop, CloseUimakoppi, CompatibilityNoop};
+pub use infrastructure::{
+    incoming_command, incoming_command_executor, incoming_context, incoming_event,
+    incoming_execution_effect, incoming_execution_effect_network_plan,
+    pending_incoming_command_batch, IncomingCommand, IncomingCommandExecutor, IncomingContext,
+    IncomingEvent, IncomingExecutionEffect, IncomingExecutionEffectNetworkPlan,
+    PendingIncomingCommandBatch,
+};
+pub use inventory_items::{
+    add_item, carry_drink, carry_item, flat_property_by_item, move_stuff, place_stuff_from_strip,
+    remove_item, remove_stuff, set_item_data, set_strip_item_data, set_stuff_data, splash_position,
+    update, AddItem, CarryDrink, CarryItem, FlatPropertyByItem, MoveStuff, PlaceStuffFromStrip,
+    RemoveItem, RemoveStuff, SetItemData, SetStripItemData, SetStuffData, SplashPosition, Update,
+};
+pub(crate) use messenger::incoming_messenger_command_plan;
+pub use messenger::{
+    messenger_accept_buddy, messenger_assign_personal_message, messenger_decline_buddy,
+    messenger_init, messenger_mark_read, messenger_remove_buddy, messenger_request_buddy,
+    messenger_send_message, MessengerAcceptBuddy, MessengerAssignPersonalMessage,
+    MessengerDeclineBuddy, MessengerInit, MessengerMarkRead, MessengerRemoveBuddy,
+    MessengerRequestBuddy, MessengerSendMessage,
+};
+pub use moderation::{cry_for_help, CryForHelp};
+pub use movement::{
+    dance, jump_performance, look_to, move_event, sign, status_ok, stop, talk, Dance,
+    JumpPerformance, LookTo, Move, Sign, StatusOk, Stop, Talk,
+};
+pub use rooms_flats::{
+    assign_rights, create_flat, delete_flat, get_flat_info, get_unit_users, go_away, go_to_flat,
+    init_unit_listener, into_door, let_user_in, remove_rights, search_busy_flats, search_flat,
+    search_flat_for_user, set_flat_info, try_flat, update_flat, AssignRights, CreateFlat,
+    DeleteFlat, GetFlatInfo, GetUnitUsers, GoAway, GoToFlat, InitUnitListener, IntoDoor, LetUserIn,
+    RemoveRights, SearchBusyFlats, SearchFlat, SearchFlatForUser, SetFlatInfo, TryFlat, UpdateFlat,
+};
+pub use user_profile::{find_user, kill_user, FindUser, KillUser};
