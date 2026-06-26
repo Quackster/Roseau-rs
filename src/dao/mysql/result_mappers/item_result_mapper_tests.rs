@@ -2,13 +2,17 @@ use super::*;
 use crate::dao::mysql::{SqlRow, SqlValue};
 
 fn definition_row(id: i32, sprite: &str, behaviour: &str) -> SqlRow {
+    definition_row_with_height(id, sprite, behaviour, 1.0)
+}
+
+fn definition_row_with_height(id: i32, sprite: &str, behaviour: &str, height: f64) -> SqlRow {
     SqlRow::new([
         ("id", SqlValue::Integer(id)),
         ("sprite", SqlValue::Text(sprite.to_owned())),
         ("color", SqlValue::Text("red".to_owned())),
         ("length", SqlValue::Integer(1)),
         ("width", SqlValue::Integer(1)),
-        ("height", SqlValue::Float(1.0)),
+        ("height", SqlValue::Float(height)),
         ("dataclass", SqlValue::Text(String::new())),
         ("behaviour", SqlValue::Text(behaviour.to_owned())),
         ("name", SqlValue::Text("Name".to_owned())),
@@ -83,6 +87,21 @@ fn maps_public_room_item_rows_using_room_id_and_definitions() {
 
     assert_eq!(items[&20].room_id(), 77);
     assert_eq!(items[&20].custom_data(), Some("ON"));
+}
+
+#[test]
+fn normalizes_public_room_seat_height_to_one() {
+    let definitions = ItemResultMapper::definitions(SqlExecutionResult::rows([
+        definition_row_with_height(8, "chair", "SFC", 0.4),
+        definition_row_with_height(9, "table", "SFH", 0.4),
+    ]))
+    .unwrap();
+    let result = SqlExecutionResult::rows([public_item_row(20, 8), public_item_row(21, 9)]);
+
+    let items = ItemResultMapper::public_room_items(result, 77, &definitions).unwrap();
+
+    assert_eq!(items[&20].definition().height(), 1.0);
+    assert_eq!(items[&21].definition().height(), 0.4);
 }
 
 #[test]

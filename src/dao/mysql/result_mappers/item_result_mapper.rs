@@ -54,6 +54,11 @@ impl ItemResultMapper {
             let Some(definition) = definitions.get(&item_row.definition_id).cloned() else {
                 continue;
             };
+            let definition = if definition.behaviour().can_sit_on_top() {
+                definition.with_height(1.0)
+            } else {
+                definition
+            };
             let Ok(item) = public_item_from_row(&item_row, room_id, definition) else {
                 continue;
             };

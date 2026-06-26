@@ -79,6 +79,11 @@ impl ItemDefinition {
         self.height
     }
 
+    pub fn with_height(mut self, height: f64) -> Self {
+        self.height = height;
+        self
+    }
+
     pub fn behaviour_flags(&self) -> &str {
         &self.behaviour_flags
     }
