@@ -1,0 +1,15 @@
+use crate::messages::OutgoingMessage;
+use crate::protocol::NettyResponse;
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Ok;
+
+impl OutgoingMessage for Ok {
+    fn write(&self, response: &mut NettyResponse) {
+        response.init("OK");
+    }
+}
+
+#[cfg(test)]
+#[path = "ok_tests.rs"]
+mod tests;

@@ -1,0 +1,13 @@
+use super::*;
+
+#[test]
+fn calculates_java_room_direction_values() {
+    assert_eq!(calculate_direction(5, 5, 4, 4), 7);
+    assert_eq!(calculate_direction(5, 5, 6, 6), 3);
+    assert_eq!(calculate_direction(5, 5, 4, 6), 5);
+    assert_eq!(calculate_direction(5, 5, 6, 4), 1);
+    assert_eq!(calculate_direction(5, 5, 4, 5), 6);
+    assert_eq!(calculate_direction(5, 5, 6, 5), 2);
+    assert_eq!(calculate_direction(5, 5, 5, 6), 4);
+    assert_eq!(calculate_direction(5, 5, 5, 4), 0);
+}

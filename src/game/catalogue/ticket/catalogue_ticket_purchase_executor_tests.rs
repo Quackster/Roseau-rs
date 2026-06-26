@@ -1,0 +1,149 @@
+use super::*;
+use crate::dao::in_memory::InMemoryPlayerDao;
+use crate::dao::{CreatePlayer, PlayerDao};
+
+fn create_player(username: &str, credits: i32) -> CreatePlayer {
+    CreatePlayer::new(
+        username,
+        "secret",
+        format!("{username}@example.test"),
+        "hello",
+        "hd=100",
+        credits,
+        "Male",
+        "08.08.1997",
+    )
+}
+
+fn seed_player(dao: &InMemoryPlayerDao, username: &str, credits: i32, tickets: i32) {
+    dao.create_player(&create_player(username, credits))
+        .unwrap();
+    let mut details = dao.details_by_username(username).unwrap().unwrap();
+    details.set_tickets(tickets);
+    dao.update_player(&details).unwrap();
+}
+
+fn seeded_dao() -> InMemoryPlayerDao {
+    let dao = InMemoryPlayerDao::new();
+    seed_player(&dao, "alice", 20, 1);
+    seed_player(&dao, "bob", 5, 3);
+    dao
+}
+
+#[test]
+fn ignores_non_ticket_purchase_calls() {
+    let dao = seeded_dao();
+    let buyer = dao.details_by_username("alice").unwrap().unwrap();
+
+    let execution = CatalogueTicketPurchaseExecutor::purchase_tickets(
+        &dao,
+        CatalogueTicketPurchaseRequest::new("chair", &buyer),
+    )
+    .unwrap();
+
+    assert_eq!(execution, CatalogueTicketPurchaseExecution::Ignored);
+}
+
+#[test]
+fn rejects_ticket_purchase_when_buyer_has_too_few_credits() {
+    let dao = seeded_dao();
+    let buyer = dao.details_by_username("bob").unwrap().unwrap();
+
+    let execution = CatalogueTicketPurchaseExecutor::purchase_tickets(
+        &dao,
+        CatalogueTicketPurchaseRequest::new("x hyppy alice", &buyer),
+    )
+    .unwrap();
+
+    assert_eq!(
+        execution,
+        CatalogueTicketPurchaseExecution::Rejected(
+            CatalogueTicketPurchaseOutcome::InsufficientCredits
+        )
+    );
+    assert_eq!(
+        dao.details_by_username("bob").unwrap().unwrap().credits(),
+        5
+    );
+}
+
+#[test]
+fn rejects_ticket_purchase_when_target_is_missing() {
+    let dao = seeded_dao();
+    let buyer = dao.details_by_username("alice").unwrap().unwrap();
+
+    let execution = CatalogueTicketPurchaseExecutor::purchase_tickets(
+        &dao,
+        CatalogueTicketPurchaseRequest::new("x hyppy carol", &buyer),
+    )
+    .unwrap();
+
+    assert_eq!(
+        execution,
+        CatalogueTicketPurchaseExecution::Rejected(CatalogueTicketPurchaseOutcome::MissingTarget {
+            target_username: "carol".to_owned()
+        })
+    );
+}
+
+#[test]
+fn buys_tickets_for_self_and_persists_combined_ticket_credit_update() {
+    let dao = seeded_dao();
+    let buyer = dao.details_by_username("alice").unwrap().unwrap();
+
+    let execution = CatalogueTicketPurchaseExecutor::purchase_tickets(
+        &dao,
+        CatalogueTicketPurchaseRequest::new("x hyppy alice", &buyer),
+    )
+    .unwrap();
+
+    let CatalogueTicketPurchaseExecution::Purchased {
+        buyer,
+        target,
+        outcome,
+    } = execution
+    else {
+        panic!("expected ticket purchase");
+    };
+    let persisted = dao.details_by_username("alice").unwrap().unwrap();
+    assert_eq!(outcome, CatalogueTicketPurchaseOutcome::BoughtForSelf);
+    assert!(target.is_none());
+    assert_eq!(buyer.credits(), 15);
+    assert_eq!(buyer.tickets(), 11);
+    assert_eq!(persisted.credits(), 15);
+    assert_eq!(persisted.tickets(), 11);
+}
+
+#[test]
+fn buys_tickets_for_other_player_and_persists_both_players() {
+    let dao = seeded_dao();
+    let buyer = dao.details_by_username("alice").unwrap().unwrap();
+
+    let execution = CatalogueTicketPurchaseExecutor::purchase_tickets(
+        &dao,
+        CatalogueTicketPurchaseRequest::new("x hyppy bob", &buyer),
+    )
+    .unwrap();
+
+    let CatalogueTicketPurchaseExecution::Purchased {
+        buyer,
+        target: Some(target),
+        outcome,
+    } = execution
+    else {
+        panic!("expected cross-player ticket purchase");
+    };
+    let persisted_buyer = dao.details_by_username("alice").unwrap().unwrap();
+    let persisted_target = dao.details_by_username("bob").unwrap().unwrap();
+    assert_eq!(
+        outcome,
+        CatalogueTicketPurchaseOutcome::BoughtForOther {
+            buyer_username: "alice".to_owned(),
+            target_username: "bob".to_owned(),
+        }
+    );
+    assert_eq!(buyer.credits(), 15);
+    assert_eq!(target.tickets(), 13);
+    assert_eq!(persisted_buyer.credits(), 15);
+    assert_eq!(persisted_target.tickets(), 13);
+}

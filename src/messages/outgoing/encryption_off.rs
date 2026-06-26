@@ -1,0 +1,15 @@
+use crate::messages::OutgoingMessage;
+use crate::protocol::NettyResponse;
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct EncryptionOff;
+
+impl OutgoingMessage for EncryptionOff {
+    fn write(&self, response: &mut NettyResponse) {
+        response.init("ENCRYPTION_OFF");
+    }
+}
+
+#[cfg(test)]
+#[path = "encryption_off_tests.rs"]
+mod tests;

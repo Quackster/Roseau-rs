@@ -1,0 +1,54 @@
+use crate::dao::mysql::{DatabaseEngine, MySqlDriver, Storage, StorageConnector};
+use crate::dao::DaoError;
+
+#[derive(Debug, Default, Clone)]
+pub struct MySqlStorageConnector {
+    driver: Option<MySqlDriver>,
+}
+
+impl MySqlStorageConnector {
+    pub fn new() -> Self {
+        Self { driver: None }
+    }
+
+    pub fn with_driver(driver: MySqlDriver) -> Self {
+        Self {
+            driver: Some(driver),
+        }
+    }
+
+    pub fn driver(&self) -> Option<&MySqlDriver> {
+        self.driver.as_ref()
+    }
+}
+
+impl StorageConnector for MySqlStorageConnector {
+    fn connect(&self, storage: &Storage) -> Result<(), DaoError> {
+        validate_mysql_storage(storage)?;
+
+        let driver = match &self.driver {
+            Some(driver) => driver.clone(),
+            None => MySqlDriver::connect_storage(storage)?,
+        };
+        driver
+            .pool()
+            .get_conn()
+            .map(drop)
+            .map_err(|error| DaoError::new(format!("MySQL storage connection failed: {error}")))
+    }
+}
+
+fn validate_mysql_storage(storage: &Storage) -> Result<(), DaoError> {
+    if storage.engine() == DatabaseEngine::MySql {
+        Ok(())
+    } else {
+        Err(DaoError::new(format!(
+            "MySQL connector cannot validate {} storage",
+            storage.engine().config_prefix()
+        )))
+    }
+}
+
+#[cfg(test)]
+#[path = "my_sql_storage_connector_tests.rs"]
+mod tests;

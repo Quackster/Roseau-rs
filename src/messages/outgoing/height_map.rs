@@ -1,0 +1,26 @@
+use crate::messages::OutgoingMessage;
+use crate::protocol::NettyResponse;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct HeightMap {
+    height_map: String,
+}
+
+impl HeightMap {
+    pub fn new(height_map: impl Into<String>) -> Self {
+        Self {
+            height_map: height_map.into(),
+        }
+    }
+}
+
+impl OutgoingMessage for HeightMap {
+    fn write(&self, response: &mut NettyResponse) {
+        response.init("HEIGHTMAP");
+        response.append_new_argument(&self.height_map);
+    }
+}
+
+#[cfg(test)]
+#[path = "height_map_tests.rs"]
+mod tests;

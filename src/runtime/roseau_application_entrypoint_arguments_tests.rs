@@ -1,0 +1,34 @@
+use std::path::Path;
+
+use super::*;
+
+#[test]
+fn routes_help_requests_to_usage() {
+    assert_eq!(
+        RoseauApplicationEntrypointArguments::parse(["--help".to_owned()]),
+        RoseauApplicationEntrypointArguments::Usage
+    );
+}
+
+#[test]
+fn routes_valid_arguments_to_run_settings() {
+    let parsed = RoseauApplicationEntrypointArguments::parse([
+        "--main-config".to_owned(),
+        "custom.properties".to_owned(),
+    ]);
+
+    let RoseauApplicationEntrypointArguments::Run(settings) = parsed else {
+        panic!("expected run settings");
+    };
+    assert_eq!(settings.main_config_path(), Path::new("custom.properties"));
+}
+
+#[test]
+fn routes_invalid_arguments_to_error() {
+    let parsed = RoseauApplicationEntrypointArguments::parse(["--bad".to_owned()]);
+
+    let RoseauApplicationEntrypointArguments::Error(error) = parsed else {
+        panic!("expected settings error");
+    };
+    assert_eq!(error.message(), "unknown argument --bad");
+}

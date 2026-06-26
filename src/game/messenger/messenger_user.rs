@@ -1,0 +1,40 @@
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MessengerUser {
+    user_id: i32,
+    online: bool,
+    in_room: bool,
+}
+
+impl MessengerUser {
+    pub fn new(user_id: i32) -> Self {
+        Self {
+            user_id,
+            online: false,
+            in_room: false,
+        }
+    }
+
+    pub fn with_presence(user_id: i32, online: bool, in_room: bool) -> Self {
+        Self {
+            user_id,
+            online,
+            in_room: online && in_room,
+        }
+    }
+
+    pub fn user_id(&self) -> i32 {
+        self.user_id
+    }
+
+    pub fn is_online(&self) -> bool {
+        self.online
+    }
+
+    pub fn in_room(&self) -> bool {
+        self.online && self.in_room
+    }
+}
+
+#[cfg(test)]
+#[path = "messenger_user_tests.rs"]
+mod tests;

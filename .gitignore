@@ -1,0 +1,25 @@
+# Rust build output
+/target/
+/Cargo.lock
+
+# Local runtime configuration
+/roseau.properties
+/habbohotel.properties
+
+# Runtime logs and scratch state
+/log/
+*.log
+/tmp/
+/session-cookies/
+
+# Editor and OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Legacy build/cache leftovers from pre-Rust checkouts
+/.gradle/
+/build/
+/out/
+/bin/

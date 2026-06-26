@@ -1,0 +1,42 @@
+use crate::dao::mysql::{PlayerQueries, SqlExecutionPlan};
+use crate::game::item::interactors::ItemInteractionEffect;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ItemInteractionQueries;
+
+impl ItemInteractionQueries {
+    pub fn plans(
+        effects: &[ItemInteractionEffect],
+        user_id: i32,
+        current_tickets: i32,
+    ) -> Vec<SqlExecutionPlan> {
+        let ticket_delta: i32 = effects
+            .iter()
+            .filter_map(|effect| match effect {
+                ItemInteractionEffect::DecrementTickets { amount } => Some(*amount),
+                _ => None,
+            })
+            .sum();
+
+        let should_save_player = effects
+            .iter()
+            .any(|effect| matches!(effect, ItemInteractionEffect::SavePlayer));
+
+        if should_save_player && ticket_delta != 0 {
+            vec![Self::update_tickets_plan(
+                user_id,
+                current_tickets - ticket_delta,
+            )]
+        } else {
+            Vec::new()
+        }
+    }
+
+    pub fn update_tickets_plan(user_id: i32, tickets: i32) -> SqlExecutionPlan {
+        PlayerQueries::update_tickets(user_id, tickets).execute_plan()
+    }
+}
+
+#[cfg(test)]
+#[path = "item_interaction_queries_tests.rs"]
+mod tests;

@@ -1,0 +1,105 @@
+use crate::dao::{mysql::SqlRow, DaoError};
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RoomRow {
+    pub id: i32,
+    pub name: String,
+    pub order_id: i32,
+    pub room_type: i32,
+    pub enabled: bool,
+    pub hidden: bool,
+    pub owner_id: i32,
+    pub description: String,
+    pub password: String,
+    pub state: i32,
+    pub show_owner_name: bool,
+    pub all_super_user: bool,
+    pub users_now: i32,
+    pub users_max: i32,
+    pub cct: String,
+    pub model: String,
+    pub wallpaper: String,
+    pub floor: String,
+}
+
+impl RoomRow {
+    pub const TABLE: &'static str = "rooms";
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        id: i32,
+        name: impl Into<String>,
+        order_id: i32,
+        room_type: i32,
+        enabled: bool,
+        hidden: bool,
+        owner_id: i32,
+        description: impl Into<String>,
+        password: impl Into<String>,
+        state: i32,
+        show_owner_name: bool,
+        all_super_user: bool,
+        users_now: i32,
+        users_max: i32,
+        cct: impl Into<String>,
+        model: impl Into<String>,
+        wallpaper: impl Into<String>,
+        floor: impl Into<String>,
+    ) -> Self {
+        Self {
+            id,
+            name: name.into(),
+            order_id,
+            room_type,
+            enabled,
+            hidden,
+            owner_id,
+            description: description.into(),
+            password: password.into(),
+            state,
+            show_owner_name,
+            all_super_user,
+            users_now,
+            users_max,
+            cct: cct.into(),
+            model: model.into(),
+            wallpaper: wallpaper.into(),
+            floor: floor.into(),
+        }
+    }
+}
+
+impl TryFrom<&SqlRow> for RoomRow {
+    type Error = DaoError;
+
+    fn try_from(row: &SqlRow) -> Result<Self, Self::Error> {
+        Ok(Self::new(
+            row.required_i32("id")?,
+            row.required_string("name")?,
+            row.required_i32("order_id")?,
+            row.required_i32("room_type")?,
+            row.required_bool("enabled")?,
+            row.required_bool("hidden")?,
+            row.required_i32("owner_id")?,
+            optional_text(row, "description")?,
+            optional_text(row, "password")?,
+            row.required_i32("state")?,
+            row.required_bool("show_owner_name")?,
+            row.required_bool("allsuperuser")?,
+            row.required_i32("users_now")?,
+            row.required_i32("users_max")?,
+            optional_text(row, "cct")?,
+            optional_text(row, "model")?,
+            optional_text(row, "wallpaper")?,
+            optional_text(row, "floor")?,
+        ))
+    }
+}
+
+fn optional_text(row: &SqlRow, column: &'static str) -> Result<String, DaoError> {
+    Ok(row.optional_string(column)?.unwrap_or_default())
+}
+
+#[cfg(test)]
+#[path = "room_row_tests.rs"]
+mod tests;
