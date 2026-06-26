@@ -17,7 +17,8 @@ fn ticks_expiring_statuses_every_second_interval() {
                 entity_id: 7,
                 key: "wave".to_owned()
             },
-            SchedulerEffect::MarkNeedsUpdate { entity_id: 7 }
+            SchedulerEffect::MarkNeedsUpdate { entity_id: 7 },
+            SchedulerEffect::SendStatus(vec![7])
         ]
     );
     assert!(event.tick(&[user]).is_empty());

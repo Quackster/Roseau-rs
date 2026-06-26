@@ -13,6 +13,7 @@ pub struct IncomingContext {
     carry_drink_time: i32,
     credits: i32,
     username_chars: String,
+    rc4_secret_key: Option<String>,
     sent: Vec<NettyResponse>,
     commands: Vec<IncomingCommand>,
 }
@@ -29,6 +30,7 @@ impl IncomingContext {
             carry_drink_time: 0,
             credits: 0,
             username_chars: "*".to_owned(),
+            rc4_secret_key: None,
             sent: Vec::new(),
             commands: Vec::new(),
         }
@@ -142,6 +144,14 @@ impl IncomingContext {
 
     pub fn username_chars_value(&self) -> &str {
         &self.username_chars
+    }
+
+    pub fn set_rc4_secret_key(&mut self, key: impl Into<String>) {
+        self.rc4_secret_key = Some(key.into());
+    }
+
+    pub fn rc4_secret_key_value(&self) -> Option<&str> {
+        self.rc4_secret_key.as_deref()
     }
 
     pub fn send(&mut self, response: NettyResponse) {

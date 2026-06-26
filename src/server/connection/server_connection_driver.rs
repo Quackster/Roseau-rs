@@ -87,9 +87,9 @@ impl ServerConnectionDriver {
                         ),
                     );
                     if enable_rc4 {
-                        self.decoder.enable_rc4(secret_decode(
-                            crate::messages::incoming::auth_session::version_check::V1_SECRET_KEY,
-                        ));
+                        if let Some(secret_key) = self.context.rc4_secret_key_value() {
+                            self.decoder.enable_rc4(secret_decode(secret_key));
+                        }
                     }
                 }
                 Ok(())

@@ -5,8 +5,8 @@ use std::time::Duration;
 use crate::messages::{IncomingCommand, IncomingContext};
 use crate::protocol::DecodeError;
 use crate::server::{
-    PlayerNetwork, PlayerNetworkEffect, Rc4Cipher, ServerConnectionHandler, ServerHandler,
-    TcpConnectionRuntime,
+    secret_decode, PlayerNetwork, PlayerNetworkEffect, Rc4Cipher, ServerConnectionHandler,
+    ServerHandler, TcpConnectionRuntime,
 };
 
 fn connected_runtime() -> (TcpConnectionRuntime, TcpStream) {
@@ -139,10 +139,15 @@ fn version_check_writes_handshake_packets_to_tcp_client() {
         response.extend_from_slice(&buffer[..bytes]);
     }
 
-    assert_eq!(
-        String::from_utf8_lossy(&response),
-        "#ENCRYPTION_ON###SECRET_KEY\rABAB##"
-    );
+    let response = String::from_utf8_lossy(&response);
+    assert!(response.starts_with("#ENCRYPTION_ON###SECRET_KEY\r"));
+    let secret_key = response
+        .trim_start_matches("#ENCRYPTION_ON###SECRET_KEY\r")
+        .trim_end_matches("##");
+    assert_eq!(secret_key.len(), 62);
+    assert!(secret_key
+        .chars()
+        .all(|character| character.is_ascii_alphanumeric()));
 }
 
 #[test]
@@ -157,6 +162,9 @@ fn decrypts_rc4_hex_frames_after_version_check() {
     runtime.open(&mut server_handler, &connection_handler);
     let mut hello = [0; 8];
     client.read_exact(&mut hello).unwrap();
+    client
+        .set_read_timeout(Some(Duration::from_secs(1)))
+        .unwrap();
     runtime
         .read_bytes(
             b"0012VERSIONCHECK",
@@ -165,7 +173,17 @@ fn decrypts_rc4_hex_frames_after_version_check() {
         )
         .unwrap();
 
-    let mut cipher = Rc4Cipher::new("1");
+    let mut response = Vec::new();
+    let mut buffer = [0; 128];
+    while !String::from_utf8_lossy(&response).contains("#SECRET_KEY\r") {
+        let bytes = client.read(&mut buffer).unwrap();
+        response.extend_from_slice(&buffer[..bytes]);
+    }
+    let response = String::from_utf8_lossy(&response);
+    let secret_key = response
+        .trim_start_matches("#ENCRYPTION_ON###SECRET_KEY\r")
+        .trim_end_matches("##");
+    let mut cipher = Rc4Cipher::new(secret_decode(secret_key));
     let encrypted_key = cipher.encipher_hex(b"0014KEYENCRYPTED 1");
     runtime
         .read_bytes(encrypted_key, &mut server_handler, &connection_handler)

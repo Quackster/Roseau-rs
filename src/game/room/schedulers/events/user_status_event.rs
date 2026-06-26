@@ -114,6 +114,7 @@ impl UserStatusEvent {
                     effects.push(SchedulerEffect::MarkNeedsUpdate {
                         entity_id: user.entity_id(),
                     });
+                    effects.push(SchedulerEffect::SendStatus(vec![user.entity_id()]));
                 }
             }
         }

@@ -90,16 +90,16 @@ impl RoomUser {
         value: impl Into<String>,
         infinite: bool,
         duration: i64,
-    ) {
+    ) -> bool {
         let key = key.into();
         if key == "carryd" {
             self.time_until_next_drink = CARRY_DRINK_INTERVAL_TICKS;
         }
 
-        self.statuses.insert(
-            key.clone(),
-            RoomUserStatus::new(key, value, infinite, duration),
-        );
+        let status = RoomUserStatus::new(key.clone(), value, infinite, duration);
+        let changed = self.statuses.get(&key) != Some(&status);
+        self.statuses.insert(key, status);
+        changed
     }
 
     pub fn set_status_with_update(
@@ -110,8 +110,8 @@ impl RoomUser {
         duration: i64,
         send_update: bool,
     ) {
-        self.set_status(key, value, infinite, duration);
-        if send_update {
+        let changed = self.set_status(key, value, infinite, duration);
+        if send_update && changed {
             self.needs_update = true;
         }
     }

@@ -1,7 +1,7 @@
 use super::*;
 use crate::messages::IncomingCommand;
 use crate::protocol::DecodeError;
-use crate::server::{PlayerNetworkEffect, Rc4Cipher, SessionLifecycleEffect};
+use crate::server::{secret_decode, PlayerNetworkEffect, Rc4Cipher, SessionLifecycleEffect};
 
 #[test]
 fn opens_and_closes_connection_through_handler_effects() {
@@ -127,7 +127,8 @@ fn decrypts_rc4_hex_frames_after_version_check() {
 
     assert!(driver.rc4_enabled());
 
-    let mut cipher = Rc4Cipher::new("1");
+    let rc4_key = secret_decode(driver.context().rc4_secret_key_value().unwrap());
+    let mut cipher = Rc4Cipher::new(rc4_key);
     let encrypted = cipher.encipher_hex(b"0014KEYENCRYPTED 1");
     driver
         .read_bytes(
@@ -177,7 +178,8 @@ fn keeps_rc4_stream_state_separate_per_connection() {
         (&mut private, 37119),
         (&mut public, 37121),
     ] {
-        let mut cipher = Rc4Cipher::new("1");
+        let rc4_key = secret_decode(driver.context().rc4_secret_key_value().unwrap());
+        let mut cipher = Rc4Cipher::new(rc4_key);
         driver
             .read_bytes(
                 cipher.encipher_hex(b"0014KEYENCRYPTED 1"),
